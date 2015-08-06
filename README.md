@@ -21,10 +21,10 @@ var people = [
                   etc.
 }];
 </pre></code>
-#####The Where function
+####The Where function
 <b>.Where</b>(whereConditions [,keepOrder])<br>
--<b>whereConditions</b> - Type: Object - One or more search criterions to evaluate the array items.<br>
--<b>keepOrder</b> - Type: boolean, default false - Indicates if the order of the array items have to be mantained or not.
+&nbsp;&nbsp;&nbsp;&nbsp;<b>whereConditions</b> - Type: Object - One or more search criterions to evaluate the array items.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>keepOrder</b> - Type: boolean, default false - Indicates if the order of the array items have to be mantained or not.
 
 <ul>
       <li><b>To search for people called 'Sherlock', you could use:</b><br>
