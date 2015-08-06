@@ -4,8 +4,8 @@ Power Array extends the Array prototype by adding many additional features.
 <b>What does this script changes on the Array prototype?</b><br>
 Nothing, it just add new functions and properties, and only if they were not already used.
 
-<h2>Short introduction</h2>
-The following examples assumes that the variable "people" contains an array of objects. Each object represents a person and have some standard fields (id, name, age, address, etc.) and the function getChilds(), that returns another array of people.
+<h2>The basics, short introduction</h2>
+The following examples assumes that the variable "people" contains an array of objects. Each object represents a person and have some standard fields (id, name, lastname, age, address, etc.) and the function getChilds(), that returns another array of people.
 
 <ul>
       <li><b>To search for people called 'Sherlock' (case sensitive), use:</b><br>
@@ -15,5 +15,6 @@ The following examples assumes that the variable "people" contains an array of o
             <code>var peopleCalledSherlockHolmes = people.Where({name: 'Charles', lastname: 'Holmes'});</code>
       </li>
 </ul>
+There are also some auxiliar functions availabe, to make op
 
 I'll continue writting, sorry :)
