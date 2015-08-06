@@ -9,10 +9,10 @@ The following examples assumes that the variable "people" contains an array of o
 
 <ul>
       <li><b>To search for people called 'Sherlock' (case sensitive), use:</b><br>
-            <code>var peopleCalledCharly = people.Where({name: 'charles'});</code>
+            <code>var peopleCalledSherlock = people.Where({name: 'charles'});</code>
       </li>
       <li><b>To search for people called 'Sherlock Holmes' (case sensitive), use:</b><br>
-            <code>var peopleCalledCharly = people.Where({name: 'Charles', lastname: 'Holmes'});</code>
+            <code>var peopleCalledSherlockHolmes = people.Where({name: 'Charles', lastname: 'Holmes'});</code>
       </li>
 </ul>
 
