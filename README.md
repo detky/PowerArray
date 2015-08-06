@@ -15,9 +15,9 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
 <code><pre>
 var people = [
-                  {id : 0, name: 'Max', lastname: 'Muster', getChilds : function() { return [{......}]},
-                  {id : 1, name: 'Juan', lastname: 'Perez', getChilds : function() { return [{......}]},
-                  {id : 1, name: 'Sherlock', lastname: 'Holmes', getChilds : function() { return [{......}]},
+                  {id : 0, name: 'Max', lastname: 'Muster', age : 20, getChilds : function() { return [{......}]},
+                  {id : 1, name: 'Juan', lastname: 'Perez', age : 31, getChilds : function() { return [{......}]},
+                  {id : 1, name: 'Sherlock', lastname: 'Holmes', age : 45, getChilds : function() { return [{......}]},
                   etc.
 }];
 </pre></code>
