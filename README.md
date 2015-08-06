@@ -7,20 +7,20 @@ Nothing, it just add new functions and properties, and only if they were not alr
 <h2>The basics, short introduction</h2>
 The following examples assumes that the variable "people" contains an array of objects. Each object represents a person and have some standard fields (id, name, lastname, age, address, etc.) and the function getChilds(), that returns another array of people.
 <ul>
-      <li><b>To search for people called 'Sherlock' (case sensitive), use:</b><br>
+      <li><b>To search for people called 'Sherlock', use:</b><br>
             <code>var newArray = people.Where({name: 'Sherlock'});</code>
       </li>
-      <li><b>To search for people called 'Sherlock Holmes' (case sensitive), use:</b><br>
+      <li><b>To search for people called 'Sherlock Holmes', use:</b><br>
             <code>var newArray = people.Where({name: 'Sherlock', lastname: 'Holmes'});</code> 
       </li>
 </ul>
-PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over. All they are accesible under the pa object. For example:
+PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over. All they are accesible under the "pa" (window.pa) object. For example:
 <ul>
-      <li><b>To search for people called 'Sherlock' (case sensitive) and also older than 33 years, use:</b><br>
-            <code>var newArray = people.Where({name: 'charles', age : pa.biggerThan(33)});</code>
+      <li><b>To search for people called 'Sherlock' and also older than 33 years, use:</b><br>
+            <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33)});</code>
       </li>
-      <li><b>To search for people called 'Sherlock Holmes' (case sensitive), use:</b><br>
-            <code>var newArray = people.Where({name: 'Charles', lastname: 'Holmes'});</code>
+      <li><b>To search for people called 'Sherlock', older than 33, and having the characters 'H', 'l' on his lastname:</b><br>
+            <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33), lastname : pa.Like(['H','l'])});</code>
       </li>
 </ul>
 
