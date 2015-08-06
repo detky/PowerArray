@@ -22,6 +22,9 @@ PowerArray adds also some auxiliar functions to avoid writing the same snippets 
       <li><b>To search for people called 'Sherlock', older than 33, and having the characters 'H', 'l' on his lastname:</b><br>
             <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33), lastname : pa.Like(['H','l'])});</code>
       </li>
+        <li><b>To repeat the last example, but searching for name and lastname case insensitive, use:</b><br>
+            <code>var newArray = people.Where({name: pa.LikeIgnoreCase('Sherlock'), age : pa.biggerThan(33), lastname : pa.LikeIgnoreCase(['H','l'])});</code>
+      </li>
 </ul>
 
 
