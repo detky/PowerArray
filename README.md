@@ -5,9 +5,9 @@ Power Array extends the Array prototype by adding many additional features to fi
 By loading the library, all arrays become many extra functions that are designed to simplify and reduce the code you have to write to interact with arrays in javascript. 
 
 ###What does this script changes on the Array prototype?
-Nothing, it just add new functions and properties, and only if they not already exists. If some other library 
+Nothing, it just add new functions and properties, and only if they not already exists. 
 
-<h2>The basics, short introduction</h2>
+<h2>The basics in examples</h2>
 The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each object have some fields (id, name, lastname, age, address, etc.), and a method called getChilds(), that returns another array of people.
 <h2>The Where function</h2>Where({conditions
 <ul>
