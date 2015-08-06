@@ -4,11 +4,23 @@ Power Array extends the Array prototype by adding many additional features to fi
 ###How is implemented?
 By loading the library, all arrays become many extra functions that are designed to simplify and reduce the code you have to write to interact with arrays in javascript. 
 
-###What does this script changes on the Array prototype?
+####What does this script changes on the Array prototype?
 Nothing, it just add new functions and properties, and only if they not already exists. 
 
-<h2>The basics in examples</h2>
-The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each object have some fields (id, name, lastname, age, address, etc.), and a method called getChilds(), that returns another array of people.
+###Filtering basics 
+Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
+At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the array items you're searching for. The PowerArray function "Where" allows you to write complex operations into a single, readable, and intuitive statement.
+
+###Some examples
+The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
+<code><pre>
+var people = [
+                  {id : 0, name: 'Max', lastname: 'Muster', getChilds : function() { return [{......}]},
+                  {id : 1, name: 'Juan', lastname: 'Perez', getChilds : function() { return [{......}]},
+                  {id : 1, name: 'Sherlock', lastname: 'Holmes', getChilds : function() { return [{......}]},
+                  etc.
+}];
+</pre></code>
 <h2>The Where function</h2>Where({conditions
 <ul>
       <li><b>To search for people called 'Sherlock', you could use:</b><br>
