@@ -110,6 +110,38 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
+<table>
+<tr>
+	<td colspan=2><b>pa.EqualTo3</b>(value)<br></td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
+		Compares the affected element with the passed Value. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. The evaluation is made by identity (===) operator (no type conversion is done)
+	</td>
+</tr>
+</table>
+<table>
+<tr>
+	<td colspan=2><b>pa.EqualTo2</b>(value)<br></td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
+		Compares the affected element with the passed Value. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. The evaluation is made by equality (==) operator
+	</td>
+</tr>
+</table>
 </ul>
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
