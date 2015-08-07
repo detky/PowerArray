@@ -11,7 +11,7 @@ Nothing, it just add new functions and properties, and only if they not already 
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the array items you're searching for. The PowerArray functions "Where" and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
 
-###Some examples
+###Examples introduction
 The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
 <code><pre>
 var people = [
