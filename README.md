@@ -87,7 +87,7 @@ When the power array library loads, it stores all standard functions under the p
 <tr>
 	<td>
 		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
-		Compares the affected element with the passed Value. 
+		The value to compare to 
 	</td>
 </tr>
 <tr>
@@ -103,12 +103,14 @@ When the power array library loads, it stores all standard functions under the p
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.SmallerThan</b>(value)<br></td>
+	<td colspan=2><b>pa.SmallerThan</b>(value)<br>
+	Evaluate if the value of the property to be evaluated is smaller than the passed value.
+</td>
 </tr>
 <tr>
 	<td>
 		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
-		Compares the affected element with the passed Value. 
+		The value to compare to 
 	</td>
 </tr>
 <tr>
@@ -116,20 +118,28 @@ When the power array library loads, it stores all standard functions under the p
 		Return</td><td><b>Boolean</b> - true if the evaluated value is smaller than the passed value parameter, else false.
 	</td>
 </tr>
+<tr>
+	<td>
+		Example</td><td><code>var subset = someArray.Where({age : pa.SmallerThan(50)})</code><br>Variable subset becomes an array of all people younger than 50 years.</td>
+	</td>
+</tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.EqualTo3</b>(value)<br></td>
+	<td colspan=2><b>pa.EqualTo3</b>(value)<br>
+	Checks if the property to be evaluated is equal to the value passed on parameter "value". 
+	The evaluation is made by identity (===) operator (no type conversion is done)
+</td>
 </tr>
 <tr>
 	<td>
 		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
-		Compares the affected element with the passed Value. 
+		The value to compare to
 	</td>
 </tr>
 <tr>
 	<td>
-		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. The evaluation is made by identity (===) operator (no type conversion is done)
+		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. 
 	</td>
 </tr>
 </table>
