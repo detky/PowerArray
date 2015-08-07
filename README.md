@@ -5,7 +5,7 @@ Power Array extends the native Array prototype by adding many additional feature
 By loading the library, all arrays become many extra functions that are designed to simplify and reduce the code you have to write to interact with arrays in javascript. 
 
 ####What does this script changes on the Array prototype?
-Nothing, it just add new functions and properties, and only if they not already exists. 
+Nothing, it just adds new functions and properties, and only if they not already exists. 
 
 ####Dependencies / Requirements
 There is no. Just include the library and that's all.
