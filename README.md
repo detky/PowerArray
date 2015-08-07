@@ -76,18 +76,41 @@ PowerArray adds also some auxiliary functions (i call them Standard PA Functions
 When the power array library loads, it stores all standard functions under the pa object (window.pa) and they can be accessed from everywhere with the prefix "pa".
 
 #####Standard PA Functions list:
+
+<ul><li><table>
+<tr>
+	<td colspan=2><b>pa.biggerThan</b>(value)<br></td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
+		Compares the affected element with the passed Value. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the evaluated value is bigger than the passed value parameter, else false.
+	</td>
+</tr>
+</table></li>
+<li>
 <table>
 <tr>
-	<td>Function</td><td><b>pa.biggerThan</b>(value)<br></td>
+	<td colspan=2><b>pa.biggerThan</b>(value)<br></td>
 </tr>
 <tr>
-	<td>Param</td><td><b>value</b> - Type: String, Number, Boolean or Date
-	Compares the affected element with the passed Value. Returns true if the evaluated value is bigger than the passed value parameter
-</td>
+	<td>
+		Param</td><td><b>value</b> - Type: String, Number, Boolean or Date<br>
+		Compares the affected element with the passed Value. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the evaluated value is bigger than the passed value parameter, else false.
+	</td>
 </tr>
 </table>
-
-
+</li></ul>
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
 
