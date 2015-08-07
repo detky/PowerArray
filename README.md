@@ -1,4 +1,4 @@
-# PowerArray
+**# PowerArray
 Power Array extends the native Array prototype by adding many additional features to  [filter](#filtering), manipulate, sort and extract subsets from complex arrays.
 
 ###How is implemented?
@@ -77,9 +77,10 @@ When the power array library loads, it stores all standard functions under the p
 
 #####Standard PA Functions list:
 
-<ul style="list-style:none"><li><table>
+<ul style="list-style:none">
+<table>
 <tr>
-	<td colspan=2><b>pa.biggerThan</b>(value)<br></td>
+	<td colspan=2><b>pa.BiggerThan</b>(value)<br></td>
 </tr>
 <tr>
 	<td>
@@ -96,7 +97,7 @@ When the power array library loads, it stores all standard functions under the p
 <li>
 <table>
 <tr>
-	<td colspan=2><b>pa.biggerThan</b>(value)<br></td>
+	<td colspan=2><b>pa.SmallerThan</b>(value)<br></td>
 </tr>
 <tr>
 	<td>
@@ -106,11 +107,11 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td>
-		Return</td><td><b>Boolean</b> - true if the evaluated value is bigger than the passed value parameter, else false.
+		Return</td><td><b>Boolean</b> - true if the evaluated value is smaller than the passed value parameter, else false.
 	</td>
 </tr>
 </table>
-</li></ul>
+</ul>
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
 
@@ -137,4 +138,5 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE.*
+*
