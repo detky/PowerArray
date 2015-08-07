@@ -13,7 +13,7 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function), to "select" the array elements you're interested in.
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function), to "filter" only the array elements you're interested in.
  
 <table>
 <tr>
@@ -31,6 +31,8 @@ This function allows you to get a subset of an existing array, by passing a [con
 </tr>
 </table>
  
+To graphically explain how the function works, and how it could be used, i recommend you to take a look to the following basic examples
+
 ###Examples introduction
 The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
 <code><pre>
