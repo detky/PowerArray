@@ -21,9 +21,9 @@ This function allows you to get a subset of an existing array, by passing a Cond
 		A "<b>criterion</b>" can be also different things: 
 		<ul>
 			<li>A fix value (string, date, number, etc.)</li>
-			<li>A [Standard pa Function](#WherePAStandardFunction)</li>
-			<li>or a custom function</li>
-		</ul>
+			<li>A Standard pa Function (see Auxiliar functions / Standard PA Functions)</li>
+			<li>or a custom function (which will get the desired property as first parameter)</li>
+		</ul><br>
 	</li>
 	<li>
 		A custom function (that will receive as first parameter an array item) that should return true or false, indicating if the current item should be included on the resultant array or not 
