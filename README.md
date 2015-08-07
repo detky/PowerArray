@@ -13,7 +13,7 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction)(an auxiliar PowerArray function).
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliar PowerArray function).
  
 <table>
 <tr>
@@ -53,7 +53,7 @@ There are many different ways to specify conditions, but the best way to underst
       </li>
 </ul>
 
-PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object. For example:
+PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction). For example:
 <ul>
       <li><b>To search for people called 'Sherlock' and also older than 33 years, use:</b><br>
             <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33)});</code></br></br>
@@ -71,4 +71,11 @@ When using the Where() function to filter a big amount of data, you have to cons
 consider the order of the filter conditions you provide
 
 
-I'll continue writting, sorry :)
+###Auxiliar functions
+PowerArray adds also some auxiliar functions that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to provide a standard way to fulfill small tasks, to reduce the quantity of tests and anonymous functions you have to write.
+
+ 
+
+Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
+
+I'll continue writing, sorry :)
