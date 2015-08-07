@@ -13,7 +13,8 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing an object containing the conditions that has to be checked on each array element. 
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction)(an auxiliar PowerArray function).
+ 
 <table>
 <tr>
 	<td>Function</td><td><b>.Where</b>(whereConditions [,keepOrder])<br></td>
