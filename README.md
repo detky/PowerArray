@@ -80,7 +80,9 @@ When the power array library loads, it stores all standard functions under the p
 <ul style="list-style:none">
 <table>
 <tr>
-	<td colspan=2><b>pa.BiggerThan</b>(value)<br></td>
+	<td colspan=2><b>pa.BiggerThan</b>(value)<br>
+	Evaluate if the value of the property to be evaluated is bigger than the passed value.
+	</td>
 </tr>
 <tr>
 	<td>
@@ -91,6 +93,11 @@ When the power array library loads, it stores all standard functions under the p
 <tr>
 	<td>
 		Return</td><td><b>Boolean</b> - true if the evaluated value is bigger than the passed value parameter, else false.
+	</td>
+</tr>
+<tr>
+	<td>
+		Example</td><td><code>var subset = someArray.Where({age : pa.BiggerThan(18)})</code><br>Variable subset becomes an array of all people older than 18 years.</td>
 	</td>
 </tr>
 </table>
