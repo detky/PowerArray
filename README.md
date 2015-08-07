@@ -142,6 +142,23 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
+<table>
+<tr>
+	<td colspan=2><b>pa.Like</b>(value)<br></td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>value</b> - Type: String or Array of Strings<br>
+		Searches the passed value(s) to be present in the corresponding property of the affected element. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the passed value is present on the affected element. If value is an array, true is only returned when all array positions are found. 
+	</td>
+</tr>
+</table>
+
 </ul>
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
