@@ -13,7 +13,7 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliar PowerArray function).
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function).
  
 <table>
 <tr>
@@ -71,10 +71,12 @@ When using the Where() function to filter a big amount of data, you have to cons
 consider the order of the filter conditions you provide
 
 
-###Auxiliar functions
-PowerArray adds also some auxiliar functions that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to provide a standard way to fulfill small tasks, to reduce the quantity of tests and anonymous functions you have to write.
+###Auxiliar functions / Standard PA Functions
+PowerArray adds also some auxiliary functions (i call them Standard PA Functions) that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to reduce the syntax complexity of the Where function, and to standarize many small tasks that normally are x times repeated in practically any JS project.
+When the power array library loads, it stores all standard functions under the pa object (window.pa) and all they can be accessed from everywhere with the prefix "pa".
 
- 
+
+
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
 
