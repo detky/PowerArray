@@ -158,6 +158,44 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
+<table>
+<tr>
+	<td colspan=2><b>pa.LikeIgnoreCase</b>(value)<br></td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>value</b> - Type: String or Array of Strings<br>
+		Searches the passed value(s) to be present in the corresponding property of the affected element. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - Similar to pa.Like, with the only difference that the strings are compared ignoring case. 
+	</td>
+</tr>
+</table>
+<table>
+<tr>
+	<td colspan=2><b>pa.EqualTo</b>(referenceObject, func)<br>Used to compare all array elements with a single object(referenceObject), throug a custom function(func)</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>referenceObject</b> - Type: Object<br>
+		Searches the passed value(s) to be present in the corresponding property of the affected element. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>func</b> - Type: Function(a,b)<br>
+		A custom function that will be called for each element on the array. It should return a boolean value, and accept two parameters that will be automatically passed: the first one, will be always the originally passed referenceObject, the second will be the current array item. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - Similar to pa.Like, with the only difference that the strings are compared ignoring case. 
+	</td>
+</tr>
+</table>
 
 </ul>
 
