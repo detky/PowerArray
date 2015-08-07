@@ -1,11 +1,14 @@
 # PowerArray
-Power Array extends the native Array prototype by adding many additional features to  [filter](#filtering), manipulate, sort and extract subsets from complex arrays.
+Power Array extends the native Array prototype by adding many additional features to  [filter](#filtering), manipulate, sort and extract subsets from complex arrays. 
 
 ###How is implemented?
 By loading the library, all arrays become many extra functions that are designed to simplify and reduce the code you have to write to interact with arrays in javascript. 
 
 ####What does this script changes on the Array prototype?
 Nothing, it just add new functions and properties, and only if they not already exists. 
+
+####Dependencies / Requirements
+There is no. Just include the library and that's all. 
 
 ###Filtering basics <a name="filtering"></a>
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
