@@ -11,7 +11,7 @@ Nothing, it just add new functions and properties, and only if they not already 
 There is no. Just include the library and that's all.
 
 ###What are the benefits of using this library?
-You're going to write less code. No more incomprehensible loops
+You're going to write much less code. No more incomprehensible loops.
 
 ----------
 ###Filtering basics <a name="filtering"></a>
