@@ -73,8 +73,19 @@ consider the order of the filter conditions you provide
 
 ###Auxiliar functions / Standard PA Functions
 PowerArray adds also some auxiliary functions (i call them Standard PA Functions) that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to reduce the syntax complexity of the Where function, and to standarize many small tasks that normally are x times repeated in practically any JS project.
-When the power array library loads, it stores all standard functions under the pa object (window.pa) and all they can be accessed from everywhere with the prefix "pa".
+When the power array library loads, it stores all standard functions under the pa object (window.pa) and they can be accessed from everywhere with the prefix "pa".
 
+#####Standard PA Functions list:
+<table>
+<tr>
+	<td>Function</td><td><b>pa.biggerThan</b>(value)<br></td>
+</tr>
+<tr>
+	<td>Param</td><td><b>value</b> - Type: String, Number, Boolean or Date
+	Compares the affected element with the passed Value. Returns true if the evaluated value is bigger than the passed value parameter
+</td>
+</tr>
+</table>
 
 
 
