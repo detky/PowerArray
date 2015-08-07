@@ -1,4 +1,4 @@
-**# PowerArray
+# PowerArray
 Power Array extends the native Array prototype by adding many additional features to  [filter](#filtering), manipulate, sort and extract subsets from complex arrays.
 
 ###How is implemented?
