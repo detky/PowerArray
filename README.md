@@ -8,8 +8,12 @@ By loading the library, all arrays become many extra functions that are designed
 Nothing, it just add new functions and properties, and only if they not already exists. 
 
 ####Dependencies / Requirements
-There is no. Just include the library and that's all. 
+There is no. Just include the library and that's all.
 
+###What are the benefits of using this library?
+You'll simply write much less code.  
+
+----------
 ###Filtering basics <a name="filtering"></a>
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. The PowerArray functions [Where](#WhereFunction) and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
