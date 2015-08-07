@@ -13,7 +13,7 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function).
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function), to "select" the array elements you're interested in.
  
 <table>
 <tr>
@@ -119,7 +119,7 @@ Each auxiliar to avoid writing the same snippets over and over again. All they a
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2013 Sebastian Menendez (sebastian.menendez[at]gmail.com)
+Copyright (c) 2015 Sebastian Menendez (sebastian.menendez[at]gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
