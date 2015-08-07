@@ -77,7 +77,7 @@ When the power array library loads, it stores all standard functions under the p
 
 #####Standard PA Functions list:
 
-<ul><li><table>
+<ul style="list-style:none"><li><table>
 <tr>
 	<td colspan=2><b>pa.biggerThan</b>(value)<br></td>
 </tr>
