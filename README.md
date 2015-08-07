@@ -13,10 +13,11 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject). What is a conditions-object? it can be different things:
+This function allows you to get a subset of an existing array, by passing a Conditions-Object. What is a conditions-object? it can be different things:
 <ul>
 <li>
-	Any object having the required format: <code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>Each "<b>propertyToEvaluate</b>" represents the field that should be evaluated.<br> A "<b>criterion</b>" can be also different things: 
+	Any object having the required format: <code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>
+	Each "<b>propertyToEvaluate</b>" indicates which field of the array elements should be evaluated with the corresponding Criterion.<br> A "<b>criterion</b>" can be also different things: 
 	<ul>
 		<li>a [Standard pa Function](#WherePAStandardFunction)</li>
 		<li>A fix value (string, date, number, etc.)</li>
@@ -27,7 +28,7 @@ This function allows you to get a subset of an existing array, by passing a [con
 	A custom function (that will receive as first parameter an array item) that should return true or false, indicating if the current item should be included on the resultant array or not 
 </li>
 <li>
-	An instance of the standard pa-function EqualTo. The pa EqualTo function receives an object that will be compared through a custom function that you have to provide
+	An instance of the standard pa-function EqualTo. This is a very special case, in which the pa EqualTo function receives an object that will be compared through a custom function (that you have to provide) with each array item.
 </li>
 ####Where Function signature
 <table>
