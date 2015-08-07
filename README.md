@@ -9,7 +9,7 @@ Nothing, it just add new functions and properties, and only if they not already 
 
 ###Filtering basics <a name="filtering"></a>
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
-At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the array items you're searching for. The PowerArray functions "Where" and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
+At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. The PowerArray functions "Where" and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
 
 
 ###The Where function
