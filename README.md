@@ -20,9 +20,9 @@ This function allows you to get a subset of an existing array, by passing a Cond
 		Each "<b>propertyToEvaluate</b>" indicates which field of the array elements should be evaluated with the corresponding Criterion.<br>
 		A "<b>criterion</b>" can be also different things: 
 		<ul>
-			<li>A fix primitive value (a string, a date, etc. for situations in which you search something specific.<br> For example <b>someArray.Where({id : 31})</b></li>
-			<li>A Standard pa Function (see Auxiliar functions / Standard PA Functions. <br> For example: <code><b>someArray.Where({id : pa.BiggerThan(10), id: pa.SmallerThan(20)})</b></code>, to get a new array of elements having values between 10 and 20 on his field 'id')</li>
-			<li>A custom function (which will get the "propertyToEvaluate" value as first parameter)</li>
+			<li>A fix <b>primitive value</b> (a string, a date, etc. for situations in which you search something specific.<br> For example <b>someArray.Where({id : 31})</b><br><br></li>
+			<li>A <b>Standard pa Function</b> (see Auxiliar functions / Standard PA Functions. <br> For example: <code><b>someArray.Where({id : pa.BiggerThan(10), id: pa.SmallerThan(20)})</b></code>, to get a new array of elements having values between 10 and 20 on his field 'id')<br><br></li>
+			<li>A <b>custom function</b>, which will get the "propertyToEvaluate" value as first parameter.<br>For example: <code><b>someArray.Where(function(item){return item.id > 10 && item.id < 20})</b></code></li>
 		</ul><br>
 	</li>
 	<li>
