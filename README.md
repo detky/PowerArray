@@ -13,11 +13,26 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject), a [custom function](#WhereCustomFunction), or an [standard pa-function](#WherePAStandardFunction) (an auxiliary PowerArray function), to "filter" only the array elements you're interested in.
- 
+This function allows you to get a subset of an existing array, by passing a [conditions-object](#WhereConditionsObject). What is a conditions-object? it can be different things:
+<ul>
+<li>
+	Any object having the required format: <code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>Each "<b>propertyToEvaluate</b>" represents the field that should be evaluated.<br> A "<b>criterion</b>" can be also different things: 
+	<ul>
+		<li>a [Standard pa Function](#WherePAStandardFunction)</li>
+		<li>A fix value (string, date, number, etc.)</li>
+		<li>or a custom function</li>
+	</ul>
+</li>
+<li>
+	A custom function (that will receive as first parameter an array item) that should return true or false, indicating if the current item should be included on the resultant array or not 
+</li>
+<li>
+	An instance of the standard pa-function EqualTo. The pa EqualTo function receives an object that will be compared through a custom function that you have to provide
+</li>
+####Where Function signature
 <table>
 <tr>
-	<td>Function</td><td><b>.Where</b>(whereConditions [,keepOrder])<br></td>
+	<td colspan=2><b>.Where</b>(whereConditions [,keepOrder])<br></td>
 </tr>
 <tr>
 	<td>Param</td><td><b>whereConditions</b> - Type: Object, Function, or pa.EqualTo<br>
