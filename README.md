@@ -11,17 +11,9 @@ Nothing, it just add new functions and properties, and only if they not already 
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the array items you're searching for. The PowerArray functions "Where" and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
 
-###Examples introduction
-The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
-<code><pre>
-var people = [
-			{id : 0, name: 'Max', lastname: 'Muster', age : 20, getChilds : function() { return [{......}]},
-        	{id : 1, name: 'Juan', lastname: 'Perez', age : 31, getChilds : function() { return [{......}]},
-            {id : 1, name: 'Sherlock', lastname: 'Holmes', age : 45, getChilds : function() { return [{......}]},
-            etc.
-}];
-</pre></code>
+
 ###The Where function
+This function allows you to get a subset of an existing array, by passing an object containing the conditions that has to be checked on each array element. 
 <table>
 <tr>
 	<td>Function</td><td><b>.Where</b>(whereConditions [,keepOrder])<br></td>
@@ -38,6 +30,19 @@ var people = [
 </tr>
 </table>
  
+###Examples introduction
+The following examples assumes that the variable "people" is an array of objects. Each object represents a person and each person-object have some fields (id, name, lastname, age, address, etc.), and also a method called getChilds(), that returns another array of people. Let's say:
+<code><pre>
+var people = [
+			{id : 0, name: 'Max', lastname: 'Muster', age : 20, getChilds : function() { return [{......}]},
+        	{id : 1, name: 'Juan', lastname: 'Perez', age : 31, getChilds : function() { return [{......}]},
+            {id : 1, name: 'Sherlock', lastname: 'Holmes', age : 45, getChilds : function() { return [{......}]},
+            etc.
+}];
+</pre></code>
+
+There are many different ways to specify conditions, but the best way to understand the possibilities, is to see it in action
+
 <ul>
       <li><b>To search for people called 'Sherlock', you could use:</b><br>
        <code>var newArray = people.Where({name: 'Sherlock'});</code></br></br>
