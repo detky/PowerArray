@@ -31,7 +31,7 @@ var people = [
             etc.
 }];
 </pre></code>
-####The Where function
+###The Where function
 <table>
 <tr>
 	<td>Function</td><td><b>.Where</b>(whereConditions [,keepOrder])<br></td>
@@ -48,10 +48,6 @@ var people = [
 </tr>
 </table>
  
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;<b>keepOrder</b> - Type: boolean, default false - 
-
 <ul>
       <li><b>To search for people called 'Sherlock', you could use:</b><br>
        <code>var newArray = people.Where({name: 'Sherlock'});</code></br></br>
