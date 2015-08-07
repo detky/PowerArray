@@ -19,7 +19,7 @@ This function allows you to get a subset of an existing array, by passing an obj
 	<td>Function</td><td><b>.Where</b>(whereConditions [,keepOrder])<br></td>
 </tr>
 <tr>
-	<td>Param</td><td><b>whereConditions</b> - Type: Object or any primitive (String, Number, Date, Boolean)<br>
+	<td>Param</td><td><b>whereConditions</b> - Type: Object, Function, or pa.EqualTo<br>
 	One or more search criterions to be evaluated on each array element
 </td>
 </tr>
