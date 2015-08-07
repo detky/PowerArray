@@ -93,8 +93,7 @@ When the power array library loads, it stores all standard functions under the p
 		Return</td><td><b>Boolean</b> - true if the evaluated value is bigger than the passed value parameter, else false.
 	</td>
 </tr>
-</table></li>
-<li>
+</table>
 <table>
 <tr>
 	<td colspan=2><b>pa.SmallerThan</b>(value)<br></td>
