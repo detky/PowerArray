@@ -24,7 +24,7 @@ At the end you always have to write at least 10 or 20 lines, deppending on the c
 This function allows you to get a subset of an existing array, by passing a Conditions-Object. What is a conditions-object? It can be different things:
 <ul>
 	<li>
-		An object having the required format: <code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>
+		A Json object (that describes how the array should be filtered), having the following format:<br><code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>
 		Each "<b>propertyToEvaluate</b>" indicates which field of the array elements should be evaluated with the corresponding Criterion.<br>
 		A "<b>criterion</b>" can be also different things: 
 		<ul>
@@ -243,6 +243,7 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 </table>
 
+<br>//TODO: document missing functions: NotLIke, NotLikeIgnoreCase, NotIn, NotInIgnoreCase
 </ul>
 
 Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
