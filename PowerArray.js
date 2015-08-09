@@ -369,6 +369,25 @@ window.pa = window.pa || {
                 return true;
             };
         }
+    }, NotLike: function (value) {
+        if (!value.paIsArray) {
+            //normal search, single string parameter
+            return function (val) {
+                return val.indexOf(value) === -1;
+            };
+        } else {
+            //multiple search, parameters array
+
+            return function (val) {
+                var l = value.length;
+                while (l--) {
+                    if (val.indexOf(value[l]) > -1) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        }
     }, LikeIgnoreCase: function (value) {
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
@@ -385,6 +404,27 @@ window.pa = window.pa || {
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
                     if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        }
+    }, NotLikeIgnoreCase: function (value) {
+        var valueCaseInsensitive = '';
+        if (!value.paIsArray) {
+            //normal search, single string parameter
+            valueCaseInsensitive = value.toUpperCase();
+            return function (val) {
+                return val.toUpperCase().indexOf(valueCaseInsensitive) === -1;
+            };
+        } else {
+            //multiple search, parameters array
+            return function (val) {
+                var l = value.length;
+                while (l--) {
+                    valueCaseInsensitive = value[l].toUpperCase();
+                    if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
                         return false;
                     }
                 }
