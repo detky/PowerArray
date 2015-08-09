@@ -1,6 +1,6 @@
 // JavaScript source code
 if (!Array.prototype.getPropertyFlat) {
-    Array.prototype.getPropertyFlat = function (property, keepOrder, includeDuplicates, includeUndefineds) {
+    Array.prototype.getPropertyFlat = function (property, keepOrder, includeDuplicates, includeUndefineds) { // jshint ignore:line
         var array = this;
         var result = [], t = array.length;
         if (keepOrder === true) {
@@ -25,7 +25,7 @@ if (!Array.prototype.getPropertyFlat) {
 }
 
 if (!Array.prototype.getByProperty) {
-    Array.prototype.getByProperty = function (valueToSearchFor) {
+    Array.prototype.getByProperty = function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
@@ -69,7 +69,7 @@ if (!Array.prototype.getByProperty) {
 }
 
 if (!Array.prototype.getIndexByProperty) {
-    Array.prototype.getIndexByProperty = function (valueToSearchFor) {
+    Array.prototype.getIndexByProperty = function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
@@ -103,6 +103,7 @@ if (!Array.prototype.getIndexByProperty) {
                 var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
                 tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
                 // Converting comparison needed (e.g. string id vs integer id)
+                // ReSharper disable once CoercedEqualsUsing
                 if (ia + 1 === la && tmpObj == valueToSearchFor) { // jshint ignore:line
                     return io;
                 }
@@ -113,7 +114,7 @@ if (!Array.prototype.getIndexByProperty) {
 }
 
 if (!Array.prototype.getByProperty) {
-    Array.prototype.getByProperty = function (valueToSearchFor) {
+    Array.prototype.getByProperty = function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
@@ -162,7 +163,6 @@ if (!Array.prototype.getByProperty) {
  //    '(',
  //    function() {
  //        //Long-running work here
-
  //        var _array, _func, _len, l;
  //        //choto....puede q self en la siguiente linea este mal
  //        self.onmessage = function(paMessage) {
@@ -170,14 +170,11 @@ if (!Array.prototype.getByProperty) {
  //            case pa.paEachParalellsHelper.actionKeys.Runeach:
  //                _array = paMessage.array;
  //                _func = paMessage.func;
-
  //                _len = _array.length;
  //                l = _len;
-
  //                while (l--) {
  //                    _func(this._array[l]);
  //                }
-
  //                self.postMessage({
  //                    event: pa.paEachParalellsHelper.eventKeys.RuneachDone
  //                });
@@ -190,16 +187,10 @@ if (!Array.prototype.getByProperty) {
  //                break;
  //            }
  //        };
-
-
  //    }.toString(),
  //    ')()'
  //], { type: 'application/javascript' }));
-
-
  //var w = new Worker(blobURL);
-
-
  var l = this.length;
  while (l--) {
  var w = new Worker("PowerArrayWorker.js");
@@ -218,7 +209,7 @@ if (!Array.prototype.getByProperty) {
  }*/
 
 if (!Array.prototype.RunEach) {
-    Array.prototype.RunEach = function (task, context, callback) {
+    Array.prototype.RunEach = function (task, context, callback) {// jshint ignore:line
         var l = this.length;
         while (l--) {
             task.call((context) ? context : this[l], task);
@@ -255,19 +246,82 @@ window.pa = window.pa || {
             var l = conditions.length, condition;
             while (l--) {
                 condition = conditions[l];
-                if (!condition.condition(item[condition.column]))
+                //conditions can be functions or single values, if there are single values, they have to ve evaluated by
+                //===. if they are functions everything should continue as by default
+                if (typeof condition.condition !== 'function') { //transforms an explicit value into an === evaluation
+                    condition.condition = pa.EqualTo3(condition.condition);
+                }
+
+                if (!condition.condition(item[condition.column])) {
                     return false;
+                }
             }
             return true;
+        },
+        ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions) {
+            //to call this function, "this" should be an array!
+            var fc = window.pa.paWhereHelper.FillConditions,
+                i, w, item, lw, assert, l = this.length, result = [];
+
+            if (!isArrayOfConditions) {
+                //whereConditions is not an array, but i need it in that form
+                whereConditions = [whereConditions];
+            }
+
+            for (i = 0, l = whereConditions.length; i < l; i++) {
+                var whereConditionObject = whereConditions[i], realConditions = [];
+                for (var property in whereConditionObject) {
+                    if (property !== 'realConditions' && whereConditionObject.hasOwnProperty(property)) {
+                        //transform the keys into a better object with properties Column and Condition
+                        realConditions.push({
+                            column: property,
+                            condition: whereConditionObject[property]
+                        });
+                    }
+                }
+                whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
+            }
+            l = this.length;
+            if (keepOrder) {
+                for (i = 0; i < l; i++) {
+                    item = this[i];
+                    //aca iterar por los objetos con condiciones, 
+                    //y si uno se cumple, ya dar como positivo el item
+                    //y no evaluar las demas. Las condiciones funcionan como OR
+                    //Si una se cumple ya alcanza
+                    for (w = 0, lw = whereConditions.length; w < lw; w++) {
+                        assert = fc(item, whereConditions[w].realConditions);
+                        if (assert) {
+                            break;
+                        }
+                    }
+                    if (assert) {
+                        result.push(item);
+                    }
+                }
+            } else {
+                while (l--) {
+                    item = this[l];
+                    for (w = 0, lw = whereConditions.length; w < lw; w++) {
+                        assert = fc(item, whereConditions[w].realConditions);
+                        if (assert) {
+                            result.push(item);
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
         }
+
     },
 
-    biggerThan: function (value) {
+    BiggerThan: function (value) {
         return function (val) {
             return val > value;
         };
     },
-    smallerThan: function (value) {
+    SmallerThan: function (value) {
         return function (val) {
             return val < value;
         };
@@ -282,12 +336,22 @@ window.pa = window.pa || {
             return val == value; // jshint ignore:line
         };
     },
-    EqualTo: function (object, func) {
+    In: function (list) {
+        return function (val) {
+            return list.indexOf(val) !== -1; // jshint ignore:line
+        };
+    },
+    NotIn: function (list) {
+        return function (val) {
+            return list.indexOf(val) === -1; // jshint ignore:line
+        };
+    }
+    , EqualTo: function (object, func) {
         return function (val) {
             return func(val, object);
         };
     }, Like: function (value) {
-        if (!value.isArray) {
+        if (!value.paIsArray) {
             //normal search, single string parameter
             return function (val) {
                 return val.indexOf(value) > -1;
@@ -297,16 +361,17 @@ window.pa = window.pa || {
 
             return function (val) {
                 var l = value.length;
-                while(l--) {
-                    if(val.indexOf(value[l]) === -1)
+                while (l--) {
+                    if (val.indexOf(value[l]) === -1) {
                         return false;
+                    }
                 }
-                return  true;
+                return true;
             };
         }
     }, LikeIgnoreCase: function (value) {
-        var valueCaseInsensitive='';
-        if (!value.isArray) {
+        var valueCaseInsensitive = '';
+        if (!value.paIsArray) {
             //normal search, single string parameter
             valueCaseInsensitive = value.toUpperCase();
             return function (val) {
@@ -317,24 +382,24 @@ window.pa = window.pa || {
 
             return function (val) {
                 var l = value.length;
-                while(l--) {
+                while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
-                    if(val.toUpperCase().indexOf(valueCaseInsensitive) === -1)
+                    if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
                         return false;
+                    }
                 }
-                return  true;
+                return true;
             };
         }
     }
 };
 
 if (!Array.prototype.RunEachParalell) {
-    Array.prototype.RunEachParalell = function (task, quantProcesses, callback) {
+    Array.prototype.RunEachParalell = function (task, quantProcesses, callback) {// jshint ignore:line
         if (!self.Worker) { //if no workers supported, switch to normal RunEach
             return this.RunEach(task, this, callback);
         }
-        var that = this;
-        var i, l = task.length, startFrom;
+        var that = this, startFrom;
         var paralellId = "RunEachParalell_" + Math.floor((Math.random() * 1000000000) + 1);
         window.pa.paEachParalellsHelper.currentParalellIds[paralellId] = {
             CompletedTasks: 0,
@@ -351,7 +416,9 @@ if (!Array.prototype.RunEachParalell) {
                 that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
                     window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
                     if (window.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
-                        if (callback) callback();
+                        if (callback) {
+                            callback();
+                        }
                     }
                 });
             }, 0); // jshint ignore:line
@@ -359,51 +426,36 @@ if (!Array.prototype.RunEachParalell) {
     };
 }
 
-if (!Array.prototype.isArray) {
-    Array.prototype.isArray = true;
+if (!Array.prototype.paIsArray) {
+    Array.prototype.paIsArray = true;// jshint ignore:line
 }
 
 if (!Array.prototype.Where) {
-    Array.prototype.Where = function (whereConditions, keepOrder) {
-        var i, l = this.length, item, result = [], realConditions = [], fc;
-
-        if (typeof whereConditions === 'object' && !(whereConditions.isArray)) {
-            fc = window.pa.paWhereHelper.FillConditions
-            //normal array of conditions
-            for (var property in whereConditions) {
-                if (whereConditions.hasOwnProperty(property)) {
-                    realConditions.push({
-                        column: property,
-                        condition: whereConditions[property]
-                    });
-                }
-            }
-            if (keepOrder) {
-                for (i = 0; i < l; i++) {
-                    item = this[i];
-                    if (fc(item, realConditions))
-                        result.push(item);
-                }
-            } else {
-                while (l--) {
-                    item = this[l];
-                    if (fc(item, realConditions))
-                        result.push(item);
-                }
-            }
+    Array.prototype.Where = function (whereConditions, keepOrder) {// jshint ignore:line
+        var i, l = this.length, item, result = [];
+        if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
+            //If It's an object, but not an array, it's an eplicit object with N filters
+            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false);
         } else {
-            //it's something else, an EqualTo
-            if (keepOrder) {
-                for (i = 0; i < l; i++) {
-                    item = this[i];
-                    if (whereConditions(item))
-                        result.push(item);
-                }
+            //At this point, whereConditions could be a function (a custom function), an pa.EqualTo, OR an Array of condition-objects
+            if (whereConditions.paIsArray) {
+                //It's a conditions array
+                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true));
             } else {
-                while (l--) {
-                    item = this[l];
-                    if (whereConditions(item))
-                        result.push(item);
+                //whereConditions it's a function. It could be a custom function on the pa standard EqualTo (that works
+                //different than any other standard function)
+                if (keepOrder) {
+                    for (i = 0; i < l; i++) {
+                        item = this[i];
+                        if (whereConditions(item))
+                            result.push(item);
+                    }
+                } else {
+                    while (l--) {
+                        item = this[l];
+                        if (whereConditions(item))
+                            result.push(item);
+                    }
                 }
             }
         }
