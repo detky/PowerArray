@@ -209,10 +209,10 @@ if (!Array.prototype.getByProperty) {
  }*/
 
 if (!Array.prototype.RunEach) {
-    Array.prototype.RunEach = function (task, context, callback) {// jshint ignore:line
+    Array.prototype.RunEach = function (task, callback) {// jshint ignore:line
         var l = this.length;
         while (l--) {
-            task.call((context) ? context : this[l], task);
+            task(this[l]);
         }
         if (callback) {
             callback();
