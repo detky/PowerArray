@@ -33,7 +33,7 @@ describe('PowerArrayTests', function () {
             var counter = 0;
             createDummies(10).RunEach(function () {
                 counter++;
-            }, undefined, func);
+            }, func);
             expect(func).toHaveBeenCalled();
             expect(counter).toBe(10);
         });
@@ -54,24 +54,6 @@ describe('PowerArrayTests', function () {
 
             expect(counter).toBe(70);
         });
-
-        it('should call the right "this"', function () {
-
-            var quantity = 100, objThis = {
-                counter: 0,
-                doIt: function () {
-                    this.counter++;
-                }
-            };
-
-            createDummies(quantity)
-                .RunEach(function () {
-                    this.doIt();
-                }, objThis);
-
-            expect(objThis.counter).toBe(quantity);
-        });
-
     });
 
     describe('Where', function () {
