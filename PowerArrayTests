@@ -73,35 +73,37 @@ describe('PowerArrayTests', function () {
         });
 
     });
-    /* describe('RunEachParalell', function () {
-     it('Should execute for each object', function () {
-     var quantity = 500;
-     var elements3 = createDummies(quantity);
-     var counter = 0;
-     elements3.RunEachParalell(function () {
-     counter++;
-     }, 4, function () {
-     expect(counter).toBe(quantity);
-     });
-     });
-     });*/
 
     describe('Where', function () {
-
-        describe('Process multiple conditionsobject at once (whereConditions is an array)', function() {
-            it('should search by 2 condition-objects', function() {
+        describe('Process multiple conditionsobject at once (whereConditions is an array)', function () {
+            it('should search by 2 condition-objects', function () {
                 //arrange
                 var elements = createDummies(10);
 
                 //act
-                var result = elements.Where([{ id: 3 }, { id: pa.In([7, 9]) }], true);
+                var result = elements.Where([{ id: 3 }, { id: pa.In([7, 9]) }], false);
                 var result2 = elements.Where([{ id: 3 }, { id: pa.In([7, 9]) }], true);
+                var result3 = elements.Where([{ id: 13 }, { id: pa.In([27, 19]) }], true);
 
                 //assert
                 expect(result).toBeDefined();
-                expect(result.length).toBe(3);
                 expect(result2).toBeDefined();
+                expect(result3).toBeDefined();
+
+                expect(result.length).toBe(3);
                 expect(result2.length).toBe(3);
+                expect(result3.length).toBe(0);
+            });
+            it('should search by 2 condition-objects and return an empty array', function () {
+                //arrange
+                var elements = createDummies(10);
+
+                //act
+                var result3 = elements.Where([{ id: 13 }, { id: pa.In([27, 19]) }], true);
+
+                //assert
+                expect(result3).toBeDefined();
+                expect(result3.length).toBe(0);
             });
             it('should return only one matching object when multiple conditions matches', function () {
                 //arrange
@@ -118,7 +120,6 @@ describe('PowerArrayTests', function () {
                 expect(result2.length).toBe(3);
             });
         });
-
         describe('passing a single primitive argument to where', function () {
             it('should find an exact object, comparing using === ', function () {
                 var elements = [{ id: 1, name: 'peter', lastname: 'pan' }, { id: 2, name: 'paul', lastname: 'newman' }];
@@ -142,163 +143,290 @@ describe('PowerArrayTests', function () {
                 expect(result4.length).toBe(1);
             });
         });
+        describe('Auxiliary functions / Standard pa functions', function () {
+            describe('BiggerThan', function () {
+                it('Should find bigger items (integer)', function () {
+                    var quantity = 10;
+                    var elements3 = createDummies(quantity);
+                    var result = elements3.Where({ id: pa.BiggerThan(5) }, true);
+                    var result2 = elements3.Where({ id: pa.BiggerThan(5) }, false);
+                    expect(result.length).toBe(4);
+                    expect(result2.length).toBe(4);
+                });
+                it('Should find bigger items (decimal + floats)', function () {
+                    var elements = [{ id: 0.24 }, { id: 10.5 }];
+                    var result = elements.Where({ id: pa.BiggerThan(0.2) }, true);
+                    var result2 = elements.Where({ id: pa.BiggerThan(10.2) }, true);
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(1);
+                });
+                it('Should find bigger items (dates)', function () {
+                    //arrange
+                    var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
+                    //act
+                    var result = elements.Where({ date: pa.BiggerThan(new Date(2014, 1, 6, 0, 0, 0, 0)) }, true);
+                    var result2 = elements.Where({ date: pa.BiggerThan(new Date(2016, 1, 6, 0, 0, 0, 0)) }, true);
+                    //assert
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(0);
+                });
+            });
+            describe('lessThan', function () {
+                it('Should find smaller items (integer)', function () {
+                    var quantity = 10;
+                    var elements3 = createDummies(quantity);
+                    var result = elements3.Where({ id: pa.SmallerThan(5) }, true);
+                    expect(result.length).toBe(5);
+                });
+                it('Should find smaller items (decimal + floats)', function () {
+                    var elements = [{ id: 0.24 }, { id: 10.5 }];
+                    var result = elements.Where({ id: pa.SmallerThan(0.26) }, true);
+                    var result2 = elements.Where({ id: pa.SmallerThan(30.87) }, true);
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(2);
+                });
+                it('Should find smaller items (dates)', function () {
+                    //arrange
+                    var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
+                    //act
+                    var result = elements.Where({ date: pa.SmallerThan(new Date(2015, 11, 31, 0, 0, 0, 2)) }, true);
+                    var result2 = elements.Where({ date: pa.SmallerThan(new Date(2014, 11, 31, 0, 0, 2, 0)) }, true);
+                    //assert
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(1);
+                });
+            });
+            describe('EqualTo3', function () {
 
-        describe('BiggerThan', function () {
-            it('Should find bigger items (integer)', function () {
-                var quantity = 10;
-                var elements3 = createDummies(quantity);
-                var result = elements3.Where({ id: pa.BiggerThan(5) }, true);
-                var result2 = elements3.Where({ id: pa.BiggerThan(5) }, false);
-                expect(result.length).toBe(4);
-                expect(result2.length).toBe(4);
+                it('should compare values using === and find exact results', function () {
+                    //arrange
+                    var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
+                        id: 2,
+                        otherThings: 'abcdefghijklm'
+                    }];
+
+                    //act
+                    var result = items.Where({ id: pa.EqualTo3(1) });
+
+                    expect(result.length).toBe(1);
+                    expect(result[0].id).toBe(1);
+
+                });
+
             });
-            it('Should find bigger items (decimal + floats)', function () {
-                var elements = [{ id: 0.24 }, { id: 10.5 }];
-                var result = elements.Where({ id: pa.BiggerThan(0.2) }, true);
-                var result2 = elements.Where({ id: pa.BiggerThan(10.2) }, true);
-                expect(result.length).toBe(2);
-                expect(result2.length).toBe(1);
+            describe('EqualTo2', function () {
+
+                it('should compare values using == and find results', function () {
+                    //arrange
+                    var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
+                        id: 2,
+                        otherThings: 'abcdefghijklm'
+                    }];
+
+                    //act
+                    var result = items.Where({ id: pa.EqualTo2(1) });
+                    var result2 = items.Where({ id: pa.EqualTo2("1") });
+
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+
+                });
+
             });
-            it('Should find bigger items (dates)', function () {
-                //arrange
-                var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
-                //act
-                var result = elements.Where({ date: pa.BiggerThan(new Date(2014, 1, 6, 0, 0, 0, 0)) }, true);
-                var result2 = elements.Where({ date: pa.BiggerThan(new Date(2016, 1, 6, 0, 0, 0, 0)) }, true);
-                //assert
-                expect(result.length).toBe(2);
-                expect(result2.length).toBe(0);
+            describe('Like', function () {
+
+                it('should return only the items containing (by indexof) an specific string in a property', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.Like("a") });
+                    var result2 = items.Where({ name: pa.Like("aBc") });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(0);
+
+                });
+
+                it('should return only the items containing (by indexof) different values', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.Like(["a", "b"]) });
+                    var result2 = items.Where({ name: pa.Like(["d", "m"]) });
+                    var result3 = items.Where({ name: pa.Like(["a", "z"]) });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(1);
+                    expect(result3.length).toBe(0);
+
+                });
+
+                
+            });
+            describe('LikeIgnoreCase', function () {
+
+                it('should return only the items containing (by indexof) an specific string in a property', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.LikeIgnoreCase("a") });
+                    var result2 = items.Where({ name: pa.LikeIgnoreCase("aBc") });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(1);
+
+                });
+
+                it('should return only the items containing (by indexof) different values', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.LikeIgnoreCase(["a", "A"]) });
+                    var result2 = items.Where({ name: pa.LikeIgnoreCase(["d", "M"]) });
+                    var result3 = items.Where({ name: pa.LikeIgnoreCase(["a", "z"]) });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(1);
+                    expect(result3.length).toBe(0);
+
+                });
+
+            });
+            describe('NotLike', function () {
+                it('should return only the items not containing the passed string in a property value (by indexof)', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLike("a") });
+                    var result2 = items.Where({ name: pa.NotLike("abc") });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result2).toBeDefined();
+
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+
+                });
+                it('should return only the items not containing any string of the passed array in a property value (by indexof)', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'abcdefgh' },
+                        { id: "1", name: 'defghijklmn' },
+                        { id: 2, name: 'jklmnopqrst' }
+                    ];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLike(["f", "n"]) });
+                    var result2 = items.Where({ name: pa.NotLike(["d", "e"]) });
+                    var result3 = items.Where({ name: pa.NotLike(["a", "z"]) });
+
+                    expect(result.length).toBe(0);
+                    expect(result2.length).toBe(1);
+                    expect(result3.length).toBe(2);
+
+                });
+            });
+            describe('NotLikeIgnoreCase', function () {
+                it('should return only the items not containing the passed string in a property value (by indexof)', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'DEFGHIJKLMN' }, { id: 2, name: 'JKLMNOPQRST' }];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLikeIgnoreCase("A") });
+                    var result2 = items.Where({ name: pa.NotLikeIgnoreCase("abc") });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result2).toBeDefined();
+
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+
+                });
+                it('should return only the items not containing any string of the passed array in a property value (by indexof)', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'abcdefgh' },
+                        { id: "1", name: 'defghijklmn' },
+                        { id: 2, name: 'jklmnopqrst' }
+                    ];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLikeIgnoreCase(["f", "n"]) });
+                    var result2 = items.Where({ name: pa.NotLikeIgnoreCase(["d", "e"]) });
+                    var result3 = items.Where({ name: pa.NotLikeIgnoreCase(["a", "z"]) });
+
+                    //assert
+                    expect(result.length).toBe(0);
+                    expect(result2.length).toBe(1);
+                    expect(result3.length).toBe(2);
+
+                });
+            });
+            describe('In', function () {
+                it('should compare property with an array of primitives of elements', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
+                    ];
+                    var items2 = createDummies(500);
+                    //act
+                    var result = items.Where({ id: pa.In([1, 2]) });
+                    var result2 = items2.Where({ id: pa.In([134, 251, 525, 943]) });
+                    //assert
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+                });
+            });
+            describe('NotIn', function () {
+                it('should compare property with an array of primitives of elements', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
+                    ];
+                    //act
+                    var result = items.Where({ id: pa.NotIn([2, 4]) });
+                    var result2 = items.Where({ id: pa.NotIn([1,3]) });
+                    //assert
+                    expect(result.length).toBe(2);
+                    //The comparison for this case is made by ===, because of that
+                    //it's not expected that the second item (id: "1") matches
+                    expect(result2.length).toBe(2);
+                });
+            });
+            describe('EqualTo', function () {
+                it('should compare values by using a custom function that returns true or false', function () {
+                    //arrange
+                    var objectToCompareTo = { id: 2, name: 'dd' };
+                    var items = [
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }];
+
+                    var func = function (a, b) {
+                        //return true if a.id === b.id OR the length of the name properties are similar
+                        return a.id === b.id || a.name.length === b.name.length;
+                    };
+
+                    //act
+                    var result = items.Where(pa.EqualTo(objectToCompareTo, func));
+                    expect(result.length).toBe(2);
+
+                });
+
             });
         });
-        describe('lessThan', function () {
-            it('Should find smaller items (integer)', function () {
-                var quantity = 10;
-                var elements3 = createDummies(quantity);
-                var result = elements3.Where({ id: pa.SmallerThan(5) }, true);
-                expect(result.length).toBe(5);
-            });
-            it('Should find smaller items (decimal + floats)', function () {
-                var elements = [{ id: 0.24 }, { id: 10.5 }];
-                var result = elements.Where({ id: pa.SmallerThan(0.26) }, true);
-                var result2 = elements.Where({ id: pa.SmallerThan(30.87) }, true);
-                expect(result.length).toBe(1);
-                expect(result2.length).toBe(2);
-            });
-            it('Should find smaller items (dates)', function () {
-                //arrange
-                var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
-                //act
-                var result = elements.Where({ date: pa.SmallerThan(new Date(2015, 11, 31, 0, 0, 0, 2)) }, true);
-                var result2 = elements.Where({ date: pa.SmallerThan(new Date(2014, 11, 31, 0, 0, 2, 0)) }, true);
-                //assert
-                expect(result.length).toBe(2);
-                expect(result2.length).toBe(1);
-            });
-        });
-        describe('EqualTo3', function () {
-
-            it('should compare values using === and find exact results', function () {
-                //arrange
-                var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
-                    id: 2,
-                    otherThings: 'abcdefghijklm'
-                }];
-
-                //act
-                var result = items.Where({ id: pa.EqualTo3(1) });
-
-                expect(result.length).toBe(1);
-                expect(result[0].id).toBe(1);
-
-            });
-
-        });
-        describe('EqualTo2', function () {
-
-            it('should compare values using == and find results', function () {
-                //arrange
-                var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
-                    id: 2,
-                    otherThings: 'abcdefghijklm'
-                }];
-
-                //act
-                var result = items.Where({ id: pa.EqualTo2(1) });
-                var result2 = items.Where({ id: pa.EqualTo2("1") });
-
-                expect(result.length).toBe(2);
-                expect(result2.length).toBe(2);
-
-            });
-
-        });
-
-        describe('Like', function () {
-
-            it('should return only the items containing (by indexof) an specific string in a property', function () {
-                //arrange
-                var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
-
-                //act
-                var result = items.Where({ name: pa.Like("a") });
-                var result2 = items.Where({ name: pa.Like("aBc") });
-
-                expect(result.length).toBe(1);
-                expect(result2.length).toBe(0);
-
-            });
-
-            it('should return only the items containing (by indexof) different values', function () {
-                //arrange
-                var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
-
-                //act
-                var result = items.Where({ name: pa.Like(["a", "b"]) });
-                var result2 = items.Where({ name: pa.Like(["d", "m"]) });
-                var result3 = items.Where({ name: pa.Like(["a", "z"]) });
-
-                expect(result.length).toBe(1);
-                expect(result2.length).toBe(1);
-                expect(result3.length).toBe(0);
-
-            });
-
-        });
-
-        describe('LikeIgnoreCase', function () {
-
-            it('should return only the items containing (by indexof) an specific string in a property', function () {
-                //arrange
-                var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
-
-                //act
-                var result = items.Where({ name: pa.LikeIgnoreCase("a") });
-                var result2 = items.Where({ name: pa.LikeIgnoreCase("aBc") });
-
-                expect(result.length).toBe(1);
-                expect(result2.length).toBe(1);
-
-            });
-
-            it('should return only the items containing (by indexof) different values', function () {
-                //arrange
-                var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
-
-                //act
-                var result = items.Where({ name: pa.LikeIgnoreCase(["a", "A"]) });
-                var result2 = items.Where({ name: pa.LikeIgnoreCase(["d", "M"]) });
-                var result3 = items.Where({ name: pa.LikeIgnoreCase(["a", "z"]) });
-
-                expect(result.length).toBe(1);
-                expect(result2.length).toBe(1);
-                expect(result3.length).toBe(0);
-
-            });
-
-        });
-
-
-        describe('Custom function to evaluate single field', function () {
+        describe('Custom function evaluating single field, inside whereConditionsObject', function () {
 
             it('should compare values by using a custom function that returns true or false', function () {
                 //arrange
@@ -315,49 +443,6 @@ describe('PowerArrayTests', function () {
                 var result = items.Where({ name: func });
                 expect(result.length).toBe(1);
                 expect(result[0].name).toBe('aa');
-
-            });
-
-        });
-
-        describe('EqualTo', function () {
-
-            it('should compare values by using a custom function that returns true or false', function () {
-                //arrange
-                var objectToCompareTo = { id: 2, name: 'dd' };
-                var items = [
-                    { id: 1, name: 'aa' },
-                    { id: "1", name: 'bbb' },
-                    { id: 2, name: 'ccc' }];
-
-                var func = function (a, b) {
-                    //return true if a.id === b.id OR the length of the name properties are similar
-                    return a.id === b.id || a.name.length === b.name.length;
-                };
-
-                //act
-                var result = items.Where(pa.EqualTo(objectToCompareTo, func));
-                expect(result.length).toBe(2);
-
-            });
-
-        });
-        describe('In', function () {
-
-            it('should compare property with an array of primitives of elements', function () {
-                //arrange
-                var items = [
-                    { id: 1, name: 'aa' },
-                    { id: "1", name: 'bbb' },
-                    { id: 2, name: 'ccc' }
-                ];
-                var items2 = createDummies(500);
-                //act
-                var result = items.Where({ id: pa.In([1, 2]) });
-                var result2 = items2.Where({ id: pa.In([134, 251, 525, 943]) });
-                //assert
-                expect(result.length).toBe(2);
-                expect(result2.length).toBe(2);
 
             });
 
@@ -382,7 +467,6 @@ describe('PowerArrayTests', function () {
             });
 
         });
-
         describe('Where combinations', function () {
             describe('Like => EqualTo3 combined, Like => EqualTo3 combined', function () {
 
@@ -425,36 +509,5 @@ describe('PowerArrayTests', function () {
         });
     });
 
-    //describe("RunEachParalell Timing", function () {
-    //    it('Should not take longer as a normal loop 500 cyclesx', function () {
-    //        var quantity = 500, i;
-    //        var elements = createDummies(quantity);
-    //        var normalLoopTime, normalLoopStart;
-    //        var paralellLoopTime, paralellLoopStart;
-    //        var counterNormal, counterParalell;
-    //        normalLoopStart = performance.now();
-    //        var func = function () {
-    //            counterNormal++;
-    //        }
-    //        var func2 = function () {
-    //            counterParalell++;
-    //        }
-    //        for (i = 0; i < quantity; i++) {
-    //            func(elements[i]);
-    //        }
 
-    //        normalLoopTime = performance.now() - normalLoopStart;
-    //        paralellLoopStart = performance.now();
-    //        expect(1).toBe(2);
-    //        var c = console;
-    //        elements.RunEachParalell(func2, 20, function () {
-    //            expect(1).toBe(2);
-    //            paralellLoopTime = performance.now() - paralellLoopStart;
-    //            console.log('paralellLoopTime: ' + paralellLoopTime.toString() + ', normalLoopTime : ' + normalLoopTime.toString());
-    //            expect(paralellLoopTime).toBeLessThan(normalLoopTime);
-    //            expect(counterNormal).toBe(quantity);
-    //            expect(counterParalell).toBe(quantity);
-    //        });
-    //    });
-    //});
 });
