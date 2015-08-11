@@ -24,8 +24,8 @@ if (!Array.prototype.getPropertyFlat) {
     };
 }
 
-if (!Array.prototype.getByProperty) {
-    Array.prototype.getByProperty = function (valueToSearchFor) {// jshint ignore:line
+if (!Array.prototype.GetByProperty) {
+    Array.prototype.GetByProperty = function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
@@ -113,8 +113,8 @@ if (!Array.prototype.getIndexByProperty) {
     };
 }
 
-if (!Array.prototype.getByProperty) {
-    Array.prototype.getByProperty = function (valueToSearchFor) {// jshint ignore:line
+if (!Array.prototype.GetByProperty) {
+    Array.prototype.GetByProperty = function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
@@ -285,10 +285,6 @@ window.pa = window.pa || {
             if (keepOrder) {
                 for (i = 0; i < l; i++) {
                     item = this[i];
-                    //aca iterar por los objetos con condiciones, 
-                    //y si uno se cumple, ya dar como positivo el item
-                    //y no evaluar las demas. Las condiciones funcionan como OR
-                    //Si una se cumple ya alcanza
                     for (w = 0, lw = whereConditions.length; w < lw; w++) {
                         assert = fc(item, whereConditions[w].realConditions);
                         if (assert) {
@@ -314,122 +310,121 @@ window.pa = window.pa || {
             return result;
         }
 
-    },
+    }, auxiliaryFunctions: {
+        BiggerThan: function (value) {
+            return function (val) {
+                return val > value;
+            };
+        },
+        SmallerThan: function (value) {
+            return function (val) {
+                return val < value;
+            };
+        },
+        EqualTo3: function (value) {
+            return function (val) {
+                return val === value;
+            };
+        },
+        EqualTo2: function (value) {
+            return function (val) {
+                return val == value; // jshint ignore:line
+            };
+        },
+        In: function (list) {
+            return function (val) {
+                return list.indexOf(val) !== -1; // jshint ignore:line
+            };
+        },
+        NotIn: function (list) {
+            return function (val) {
+                return list.indexOf(val) === -1; // jshint ignore:line
+            };
+        }, EqualTo: function (object, func) {
+            return function (val) {
+                return func(val, object);
+            };
+        }, Like: function (value) {
+            if (!value.paIsArray) {
+                //normal search, single string parameter
+                return function (val) {
+                    return val.indexOf(value) > -1;
+                };
+            } else {
+                //multiple search, parameters array
 
-    BiggerThan: function (value) {
-        return function (val) {
-            return val > value;
-        };
-    },
-    SmallerThan: function (value) {
-        return function (val) {
-            return val < value;
-        };
-    },
-    EqualTo3: function (value) {
-        return function (val) {
-            return val === value;
-        };
-    },
-    EqualTo2: function (value) {
-        return function (val) {
-            return val == value; // jshint ignore:line
-        };
-    },
-    In: function (list) {
-        return function (val) {
-            return list.indexOf(val) !== -1; // jshint ignore:line
-        };
-    },
-    NotIn: function (list) {
-        return function (val) {
-            return list.indexOf(val) === -1; // jshint ignore:line
-        };
-    }
-    , EqualTo: function (object, func) {
-        return function (val) {
-            return func(val, object);
-        };
-    }, Like: function (value) {
-        if (!value.paIsArray) {
-            //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) > -1;
-            };
-        } else {
-            //multiple search, parameters array
+                return function (val) {
+                    var l = value.length;
+                    while (l--) {
+                        if (val.indexOf(value[l]) === -1) {
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+            }
+        }, NotLike: function (value) {
+            if (!value.paIsArray) {
+                //normal search, single string parameter
+                return function (val) {
+                    return val.indexOf(value) === -1;
+                };
+            } else {
+                //multiple search, parameters array
 
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) === -1) {
-                        return false;
+                return function (val) {
+                    var l = value.length;
+                    while (l--) {
+                        if (val.indexOf(value[l]) > -1) {
+                            return false;
+                        }
                     }
-                }
-                return true;
-            };
-        }
-    }, NotLike: function (value) {
-        if (!value.paIsArray) {
-            //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) === -1;
-            };
-        } else {
-            //multiple search, parameters array
+                    return true;
+                };
+            }
+        }, LikeIgnoreCase: function (value) {
+            var valueCaseInsensitive = '';
+            if (!value.paIsArray) {
+                //normal search, single string parameter
+                valueCaseInsensitive = value.toUpperCase();
+                return function (val) {
+                    return val.toUpperCase().indexOf(valueCaseInsensitive) > -1;
+                };
+            } else {
+                //multiple search, parameters array
 
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) > -1) {
-                        return false;
+                return function (val) {
+                    var l = value.length;
+                    while (l--) {
+                        valueCaseInsensitive = value[l].toUpperCase();
+                        if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                            return false;
+                        }
                     }
-                }
-                return true;
-            };
-        }
-    }, LikeIgnoreCase: function (value) {
-        var valueCaseInsensitive = '';
-        if (!value.paIsArray) {
-            //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) > -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
-                        return false;
+                    return true;
+                };
+            }
+        }, NotLikeIgnoreCase: function (value) {
+            var valueCaseInsensitive = '';
+            if (!value.paIsArray) {
+                //normal search, single string parameter
+                valueCaseInsensitive = value.toUpperCase();
+                return function (val) {
+                    return val.toUpperCase().indexOf(valueCaseInsensitive) === -1;
+                };
+            } else {
+                //multiple search, parameters array
+                return function (val) {
+                    var l = value.length;
+                    while (l--) {
+                        valueCaseInsensitive = value[l].toUpperCase();
+                        if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
+                            return false;
+                        }
                     }
-                }
-                return true;
-            };
-        }
-    }, NotLikeIgnoreCase: function (value) {
-        var valueCaseInsensitive = '';
-        if (!value.paIsArray) {
-            //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) === -1;
-            };
-        } else {
-            //multiple search, parameters array
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+                    return true;
+                };
+            }
         }
     }
 };
@@ -487,14 +482,16 @@ if (!Array.prototype.Where) {
                 if (keepOrder) {
                     for (i = 0; i < l; i++) {
                         item = this[i];
-                        if (whereConditions(item))
+                        if (whereConditions(item)) {
                             result.push(item);
+                        }
                     }
                 } else {
                     while (l--) {
                         item = this[l];
-                        if (whereConditions(item))
+                        if (whereConditions(item)) {
                             result.push(item);
+                        }
                     }
                 }
             }
@@ -502,3 +499,19 @@ if (!Array.prototype.Where) {
         return result;
     };
 }
+
+(function () {
+    //Register all Pa auxiliary functions to make them accessible through the window object and window.pa object
+    //If a window accessor is already taken and cannot be set, warn the user.
+    var obj = window.pa.auxiliaryFunctions;
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            window.pa[p] = obj[p];
+            if (!window[p]) {
+                window[p] = obj[p];
+            } else {
+                console.warn('property window.' + p + ' already exists. PowerArrayFunction pa.' + p + ' cannot register this function on window scope. However, you can still using it by calling "pa.' + p + '"');
+            }
+        }
+    }
+})();
