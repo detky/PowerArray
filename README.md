@@ -171,6 +171,11 @@ When the power array library loads, it stores all standard functions under the p
 		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. 
 	</td>
 </tr>
+<tr>
+	<td>
+		Example</td><td><code>var subset = someArray.Where({age : EqualTo3(20)})</code><br>Variable subset becomes an array of all items having 20 on the property age. If an array item have "20" (as string) on the age property, it will not be included on the results (use EqualTo2 for that).</td>
+	</td>
+</tr>
 </table>
 <table>
 <tr>
@@ -187,10 +192,15 @@ When the power array library loads, it stores all standard functions under the p
 		Return</td><td><b>Boolean</b> - true if the evaluated value is equal to the passed value, else false. The evaluation is made by equality (==) operator
 	</td>
 </tr>
+<tr>
+	<td>
+		Example</td><td><code>var subset = someArray.Where({age : EqualTo2(20)})</code><br>Variable subset becomes an array of all items having 20 on the property age. If an array item have "20" (as string) on the age property, it will be also included.</td>
+	</td>
+</tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>Like</b>(value)<br></td>
+	<td colspan=2><a name="LikeFunction"><b>Like</b>(value)</a><br></td>
 </tr>
 <tr>
 	<td>
@@ -203,21 +213,16 @@ When the power array library loads, it stores all standard functions under the p
 		Return</td><td><b>Boolean</b> - true if the passed value is present on the affected element. If value is an array, true is only returned when all array positions are found. 
 	</td>
 </tr>
+<tr>
+	<td>
+		Example</td><td><code>var subset = someArray.Where({name: pa.Like("a")});</code><br>Variable subset becomes an array of all items having the character "a" on the on the property name.<br><br>
+		<code>var subset = someArray.Where({name: pa.Like(["a","b"])});</code><br>Variable subset becomes an array of all items having the character "a" and "b" on the on the property name.
+	</td>
+</tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>LikeIgnoreCase</b>(value)<br></td>
-</tr>
-<tr>
-	<td>
-		Param</td><td><b>value</b> - Type: String or Array of Strings<br>
-		Searches the passed value(s) to be present in the corresponding property of the affected element. 
-	</td>
-</tr>
-<tr>
-	<td>
-		Return</td><td><b>Boolean</b> - Similar to Like, with the only difference that the strings are compared ignoring case. 
-	</td>
+	<td colspan=2><b>LikeIgnoreCase</b>(value)<br>Identical to function <a href="#LikeFunction">Like</a>, but ignoring characters case.</td>
 </tr>
 </table>
 <table>
