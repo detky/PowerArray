@@ -102,14 +102,14 @@ consider the order of the filter conditions you provide
 
 ###Auxiliar functions / Standard PA Functions
 PowerArray adds also some auxiliary functions (i call them Standard PA Functions) that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to reduce the syntax complexity of the Where function, and to standarize many small tasks that normally are x times repeated in practically any JS project.
-When the power array library loads, it stores all standard functions under the pa object (window.pa) and they can be accessed from everywhere with the prefix "pa".
+When the power array library loads, it stores all standard functions under the pa object ("window.pa.FUNCTION_NAME" or simply "pa.FUNCTION_NAME") and if its possible, it creates a pointer for each function under the window object (allowing you for example to code <code>BiggerThan(something)</code> instead of <code>pa.BiggerThan(something)</code> or <code>window.pa.BiggerThan(something)</code>).<br>You'll get a warning on the console if a function could not be published directly in the window object, and if that happens, you HAVE to use the pa prefix.  
 
 #####Standard PA Functions list:
 
 <ul style="list-style:none">
 <table>
 <tr>
-	<td colspan=2><b>pa.BiggerThan</b>(value)<br>
+	<td colspan=2><b>BiggerThan</b>(value)<br>
 	Evaluate if the value of the property to be evaluated is bigger than the passed value.
 	</td>
 </tr>
@@ -126,13 +126,13 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td>
-		Example</td><td><code>var subset = someArray.Where({age : pa.BiggerThan(18)})</code><br>Variable subset becomes an array of all people older than 18 years.</td>
+		Example</td><td><code>var subset = someArray.Where({age : BiggerThan(18)})</code><br>Variable subset becomes an array of all people older than 18 years.</td>
 	</td>
 </tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.SmallerThan</b>(value)<br>
+	<td colspan=2><b>SmallerThan</b>(value)<br>
 	Evaluate if the value of the property to be evaluated is smaller than the passed value.
 </td>
 </tr>
@@ -149,13 +149,13 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td>
-		Example</td><td><code>var subset = someArray.Where({age : pa.SmallerThan(50)})</code><br>Variable subset becomes an array of all people younger than 50 years.</td>
+		Example</td><td><code>var subset = someArray.Where({age : SmallerThan(50)})</code><br>Variable subset becomes an array of all people younger than 50 years.</td>
 	</td>
 </tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.EqualTo3</b>(value)<br>
+	<td colspan=2><b>EqualTo3</b>(value)<br>
 	Checks if the property to be evaluated is equal to the value passed on parameter "value". 
 	The evaluation is made by identity (===) operator (no type conversion is done)
 </td>
@@ -174,7 +174,7 @@ When the power array library loads, it stores all standard functions under the p
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.EqualTo2</b>(value)<br></td>
+	<td colspan=2><b>EqualTo2</b>(value)<br></td>
 </tr>
 <tr>
 	<td>
@@ -190,7 +190,7 @@ When the power array library loads, it stores all standard functions under the p
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.Like</b>(value)<br></td>
+	<td colspan=2><b>Like</b>(value)<br></td>
 </tr>
 <tr>
 	<td>
@@ -206,7 +206,7 @@ When the power array library loads, it stores all standard functions under the p
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.LikeIgnoreCase</b>(value)<br></td>
+	<td colspan=2><b>LikeIgnoreCase</b>(value)<br></td>
 </tr>
 <tr>
 	<td>
@@ -216,13 +216,13 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td>
-		Return</td><td><b>Boolean</b> - Similar to pa.Like, with the only difference that the strings are compared ignoring case. 
+		Return</td><td><b>Boolean</b> - Similar to Like, with the only difference that the strings are compared ignoring case. 
 	</td>
 </tr>
 </table>
 <table>
 <tr>
-	<td colspan=2><b>pa.EqualTo</b>(referenceObject, func)<br>Used to compare all array elements with a single object(referenceObject), throug a custom function(func)</td>
+	<td colspan=2><b>EqualTo</b>(referenceObject, func)<br>Used to compare all array elements with a single object(referenceObject), throug a custom function(func)</td>
 </tr>
 <tr>
 	<td>
@@ -238,7 +238,7 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td>
-		Return</td><td><b>Boolean</b> - Similar to pa.Like, with the only difference that the strings are compared ignoring case. 
+		Return</td><td><b>Boolean</b> - Similar to Like, with the only difference that the strings are compared ignoring case. 
 	</td>
 </tr>
 </table>
