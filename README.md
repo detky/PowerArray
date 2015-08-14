@@ -239,15 +239,14 @@ When the power array library loads, it stores all standard functions under the p
 	<td valign=top >
 		Example</td><td valign=top >
 		<b>Using custom comparison function:</b><br>		
-		<code>
-		var func = function(a,b) { return a.something === b.shomething };<br>
-		var originalElement = { something : 'bla' };<br>
-		var subset = someArray.Where(EqualTo(originalElement,func));</code><br><br>Variable subset becomes an array of all items having 'bla' on the property something.<br><br>
+		<code>var func = function(a,b) { return a.something === b.shomething };</code><br>
+		<code>var originalElement = { something : 'bla' };</code><br>
+		<code>var subset = someArray.Where(EqualTo(originalElement,func));</code><br><br>Variable subset becomes an array of all items having 'bla' on the property something.<br><br>
 
 		<b>Using default comparison function:</b><br>		
-		<code>
-		var originalElement = { something : 'bla' };<br> 
-		var subset = someArray.Where(EqualTo(originalElement, undefined, true, false));</code><br><br>Variable subset becomes an array of all items that are equal to originalElement. A different order in the object properties is not considered as difference (because param "enforce_properties_order" is false). Cyclic references are not evaluated (because param "cyclic" is false).<br><br>	</td>
+		<code>var originalElement = { something : 'bla' };</code><br> 
+		<code>var subset = someArray.Where(EqualTo(originalElement, undefined, true, false));</ode><br>
+		Variable subset becomes an array of all items that are equal to originalElement. A different order in the object properties is not considered as difference (because param "enforce_properties_order" is false). Cyclic references are not evaluated (because param "cyclic" is false).<br><br></td>
 </tr>
 
 </table>
