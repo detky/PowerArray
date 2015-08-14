@@ -466,6 +466,56 @@ fdescribe('PowerArrayTests', function () {
                 });
             });
             describe('EqualTo', function () {
+                it('should compare objects by using default equalto implementation (equals function from toubkal project)', function() {
+                    //arrange
+                    var originalElement = {
+                        id: 1,
+                        name: 'asdf',
+                        fTest : function() {
+                            return 'ppp';
+                        },
+                        anArray : [1,2,3,4,5],
+                        anObjectsArray : [{a : 1, b: 2}]
+                    };
+
+                    var elements = [
+                        originalElement,
+                        {
+                            id: 1,
+                            name: 'asdf',
+                            fTest : function() {
+                                return 'ppp';
+                            },
+                            anArray : [1,2,3,4,5],
+                            anObjectsArray : [{a : 1, b: 2222222222222222}]
+                        },
+                        {
+                            id: 1,
+                            name: 'asdf',
+                            fTest : function() {
+                                return 'pppppppppppppppppppp';
+                            },
+                            anArray : [1,2,3,4,5],
+                            anObjectsArray : [{a : 1, b: 2}]
+                        }
+                    ];
+
+                    //act
+                    var result = elements.Where(pa.EqualTo(originalElement));
+
+                    //assert
+                    expect(result.length).toBe(1);
+                    var resultObj = result[0];
+                    for(var prop in resultObj) {
+                        if(resultObj.hasOwnProperty(prop)) {
+                            //assert each object property
+                            expect(resultObj[prop]).toBe(originalElement[prop]);
+                        }
+                    }
+
+
+
+                });
                 it('should compare values by using a custom function that returns true or false', function () {
                     //arrange
                     var objectToCompareTo = {id: 2, name: 'dd'};
