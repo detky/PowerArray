@@ -310,53 +310,53 @@ window.pa = window.pa || {
             return result;
         },
         // The following function is a copy of the of the value_equals utiliy of
-        // the toubkal project. 
+        // the toubkal project.
         // https://github.com/detky/toubkal/blob/master/lib/util/value_equals.js
         //
         /* -----------------------------------------------------------------------------------------
-           equals( a, b [, enforce_properties_order, cyclic] )
-   
-           Returns true if a and b are deeply equal, false otherwise.
-   
-           Parameters:
-             - a (Any type): value to compare to b
-             - b (Any type): value compared to a
-   
-           Optional Parameters:
-             - enforce_properties_order (Boolean): true to check if Object properties are provided
-               in the same order between a and b
-     
-             - cyclic (Boolean): true to check for cycles in cyclic objects
-   
-           Implementation:
-             'a' is considered equal to 'b' if all scalar values in a and b are strictly equal as
-             compared with operator '===' except for these two special cases:
-               - 0 === -0 but are not equal.
-               - NaN is not === to itself but is equal.
-     
-             RegExp objects are considered equal if they have the same lastIndex, i.e. both regular
-             expressions have matched the same number of times.
-     
-             Functions must be identical, so that they have the same closure context.
-     
-             "undefined" is a valid value, including in Objects
-     
-             106 automated tests.
-     
-             Provide options for slower, less-common use cases:
-     
-               - Unless enforce_properties_order is true, if 'a' and 'b' are non-Array Objects, the
-                 order of occurence of their attributes is considered irrelevant:
-                   { a: 1, b: 2 } is considered equal to { b: 2, a: 1 }
-       
-               - Unless cyclic is true, Cyclic objects will throw:
-                   RangeError: Maximum call stack size exceeded
-        */
+         equals( a, b [, enforce_properties_order, cyclic] )
+
+         Returns true if a and b are deeply equal, false otherwise.
+
+         Parameters:
+         - a (Any type): value to compare to b
+         - b (Any type): value compared to a
+
+         Optional Parameters:
+         - enforce_properties_order (Boolean): true to check if Object properties are provided
+         in the same order between a and b
+
+         - cyclic (Boolean): true to check for cycles in cyclic objects
+
+         Implementation:
+         'a' is considered equal to 'b' if all scalar values in a and b are strictly equal as
+         compared with operator '===' except for these two special cases:
+         - 0 === -0 but are not equal.
+         - NaN is not === to itself but is equal.
+
+         RegExp objects are considered equal if they have the same lastIndex, i.e. both regular
+         expressions have matched the same number of times.
+
+         Functions must be identical, so that they have the same closure context.
+
+         "undefined" is a valid value, including in Objects
+
+         106 automated tests.
+
+         Provide options for slower, less-common use cases:
+
+         - Unless enforce_properties_order is true, if 'a' and 'b' are non-Array Objects, the
+         order of occurence of their attributes is considered irrelevant:
+         { a: 1, b: 2 } is considered equal to { b: 2, a: 1 }
+
+         - Unless cyclic is true, Cyclic objects will throw:
+         RangeError: Maximum call stack size exceeded
+         */
         equals: function (a, b, enforce_properties_order, cyclic) {
             return a === b       // strick equality should be enough unless zero
-              && a !== 0         // because 0 === -0, requires test by _equals()
-              || _equals(a, b) // handles not strictly equal or zero values
-            ;
+                && a !== 0         // because 0 === -0, requires test by _equals()
+                || _equals(a, b) // handles not strictly equal or zero values
+                ;
             function _equals(a, b) {
                 // a and b have already failed test for strict equality or are zero
 
@@ -376,26 +376,26 @@ window.pa = window.pa || {
                         b = +b;
 
                         return a ?         // a is Non-zero and Non-NaN
-                            a === b
-                          :                // a is 0, -0 or NaN
+                        a === b
+                            :                // a is 0, -0 or NaN
                             a === a ?      // a is 0 or -O
                             1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
-                          : b !== b        // NaN, the only Number not equal to itself!
-                        ;
-                        // [object Number]
+                                : b !== b        // NaN, the only Number not equal to itself!
+                            ;
+                    // [object Number]
 
                     case '[object RegExp]':
                         return a.source == b.source
-                          && a.global == b.global
-                          && a.ignoreCase == b.ignoreCase
-                          && a.multiline == b.multiline
-                          && a.lastIndex == b.lastIndex
-                        ;
-                        // [object RegExp]
+                            && a.global == b.global
+                            && a.ignoreCase == b.ignoreCase
+                            && a.multiline == b.multiline
+                            && a.lastIndex == b.lastIndex
+                            ;
+                    // [object RegExp]
 
                     case '[object Function]':
                         return false; // functions should be strictly equal because of closure context
-                        // [object Function]
+                    // [object Function]
 
                     case '[object Array]':
                         if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated bellow for [object Object]
@@ -410,7 +410,7 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                        // [object Array]
+                    // [object Array]
 
                     case '[object Object]':
                         if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated from above for [object Array]
@@ -452,26 +452,26 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                        // [object Object]
+                    // [object Object]
                 } // switch toString.call( a )
             } // _equals()
 
             /* -----------------------------------------------------------------------------------------
-               reference_equals( a, b )
-               
-               Helper function to compare object references on cyclic objects or arrays.
-               
-               Returns:
-                 - null if a or b is not part of a cycle, adding them to object_references array
-                 - true: same cycle found for a and b
-                 - false: different cycle found for a and b
-               
-               On the first call of a specific invocation of equal(), replaces self with inner function
-               holding object_references array object in closure context.
-               
-               This allows to create a context only if and when an invocation of equal() compares
-               objects or arrays.
-            */
+             reference_equals( a, b )
+
+             Helper function to compare object references on cyclic objects or arrays.
+
+             Returns:
+             - null if a or b is not part of a cycle, adding them to object_references array
+             - true: same cycle found for a and b
+             - false: different cycle found for a and b
+
+             On the first call of a specific invocation of equal(), replaces self with inner function
+             holding object_references array object in closure context.
+
+             This allows to create a context only if and when an invocation of equal() compares
+             objects or arrays.
+             */
             function reference_equals(a, b) {
                 var object_references = [];
 
@@ -525,7 +525,7 @@ window.pa = window.pa || {
                 if (func) {
                     return func(val, object);
                 } else {
-                    return pa.paWhereHelper.value_equals(object, val);
+                    return pa.paWhereHelper.equals(object, val);
                 }
             };
         }, Like: function (value) {
