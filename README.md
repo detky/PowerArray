@@ -200,6 +200,43 @@ When the power array library loads, it stores all standard functions under the p
 </table>
 <table>
 <tr>
+	<td colspan=2><b>EqualTo</b>(referenceObject, func, enforce_properties_order, cyclic)<br>Used to compare all array elements with a single object(referenceObject).</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>referenceObject</b> - Type: Object<br>
+		The object that will be compared with all array elements. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>func - Optional</b> - Type: Function(a,b)<br>
+		A custom function that will be called for each element on the array. It should return a boolean value, and accept two parameters that will be automatically passed: the first one, will be always the originally passed referenceObject, the second will be the current array item. <br><br>
+		If no func parameter is provided, the comparison will be made by using a default function (the equals function of the utility class value_equals from the <a href='https://github.com/detky/toubkal/blob/master/lib/util/value_equals.js' target=_blank>the toubkal project</a>)
+	</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>enforce_properties_order - Optional</b> - Type: Boolean<br>
+		This parameter takes effect, ONLY when the parameter func is falsy.<br>
+		Pass true to check if Object properties are provided in the same order between referenceObject and each array item
+	</td>
+</tr>
+<tr>
+	<td>
+		Param</td><td><b>cyclic - Optional</b> - Type: Boolean<br>
+		This parameter takes effect, ONLY when the parameter func is falsy.<br>
+		Pass true to check for cycles in cyclic objects. 
+	</td>
+</tr>
+<tr>
+	<td>
+		Return</td><td><b>Boolean</b> - true if the evaluated array item is equal to the passed object, else false.
+	</td>
+</tr>
+</table>
+<table>
+<tr>
 	<td colspan=2><a name="LikeFunction"><b>Like</b>(value)</a><br></td>
 </tr>
 <tr>
@@ -223,28 +260,6 @@ When the power array library loads, it stores all standard functions under the p
 <table>
 <tr>
 	<td colspan=2><b>LikeIgnoreCase</b>(value)<br>Identical to function <a href="#LikeFunction">Like</a>, but ignoring characters case.</td>
-</tr>
-</table>
-<table>
-<tr>
-	<td colspan=2><b>EqualTo</b>(referenceObject, func)<br>Used to compare all array elements with a single object(referenceObject), throug a custom function(func)</td>
-</tr>
-<tr>
-	<td>
-		Param</td><td><b>referenceObject</b> - Type: Object<br>
-		Searches the passed value(s) to be present in the corresponding property of the affected element. 
-	</td>
-</tr>
-<tr>
-	<td>
-		Param</td><td><b>func</b> - Type: Function(a,b)<br>
-		A custom function that will be called for each element on the array. It should return a boolean value, and accept two parameters that will be automatically passed: the first one, will be always the originally passed referenceObject, the second will be the current array item. 
-	</td>
-</tr>
-<tr>
-	<td>
-		Return</td><td><b>Boolean</b> - Similar to Like, with the only difference that the strings are compared ignoring case. 
-	</td>
 </tr>
 </table>
 
