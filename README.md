@@ -82,7 +82,8 @@ There are many different ways to specify conditions, but the best way to underst
       </li>
 </ul>
 
-PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction). For example:
+PowerArray adds also some auxiliar functions to avoid writing the same snippets over and over again. All they are accesible after loading the library, [click here for a complete list](#WherePAStandardFunction).
+
 <ul>
       <li><b>To search for people called 'Sherlock' and also older than 33 years, use:</b><br>
             <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33)});</code></br></br>
@@ -281,9 +282,8 @@ When the power array library loads, it stores all standard functions under the p
 <br>//TODO: document missing functions: NotLIke, NotLikeIgnoreCase, NotIn, NotInIgnoreCase
 </ul>
 
-Each auxiliar to avoid writing the same snippets over and over again. All they are accesible under the "pa" (window.pa) object, [click here for a complete list](#WherePAStandardFunction).
 
->I'll continue writing, sorry :)
+
 
 ## License
 The MIT License (MIT)
