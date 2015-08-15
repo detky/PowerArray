@@ -37,7 +37,7 @@ if (!Array.prototype.GetByProperty) {
          *
          *  To get an array of cars having a passenger called Paul, use as following:
          *
-         *  var namedPaulPassengers = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
+         *  var passengersNamedPaul = carsArray.getByProperty('Paul', 'getPassengers()','name');
          *
          * @param objectsArray
          * @param valueToSearchFor
@@ -45,12 +45,8 @@ if (!Array.prototype.GetByProperty) {
          */
         var objectsArray = this;
         var results = [];
-        //if (!objectsArray) {
-        //    return results;
-        //}
         var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
         var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
-
         for (io = 0; io < lo; io++) { //iterate objects array
             var tmpObj = objectsArray[io];
 
@@ -81,7 +77,7 @@ if (!Array.prototype.getIndexByProperty) {
          *
          *  To get an array of cars having a passenger called Paul, use as following:
          *
-         *  var namedPaulPassengers = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
+         *  var namedPaul = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
          *
          * @param objectsArray
          * @param valueToSearchFor
@@ -118,8 +114,8 @@ if (!Array.prototype.GetByProperty) {
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
          * array of the found elements that matches the specified condition. The condition is given by the parameters
-         * provided after position 2. The only fixed parameters are the objects array and the value to search for.
-         * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
+         * provided after position 2. The only fixed parameter is the value to search for.
+         * You can provide so many parameters as you want. Each added parameter means one level deeper to search for. For example:
          *
          *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
          *      which answers with a collection of "people" objects, and each people have a property called "name".
@@ -356,7 +352,7 @@ window.pa = window.pa || {
             return a === b       // strick equality should be enough unless zero
                 && a !== 0         // because 0 === -0, requires test by _equals()
                 || _equals(a, b) // handles not strictly equal or zero values
-                ;
+            ;
             function _equals(a, b) {
                 // a and b have already failed test for strict equality or are zero
 
@@ -381,8 +377,8 @@ window.pa = window.pa || {
                             a === a ?      // a is 0 or -O
                             1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
                                 : b !== b        // NaN, the only Number not equal to itself!
-                            ;
-                    // [object Number]
+                        ;
+                        // [object Number]
 
                     case '[object RegExp]':
                         return a.source == b.source
@@ -390,12 +386,12 @@ window.pa = window.pa || {
                             && a.ignoreCase == b.ignoreCase
                             && a.multiline == b.multiline
                             && a.lastIndex == b.lastIndex
-                            ;
-                    // [object RegExp]
+                        ;
+                        // [object RegExp]
 
                     case '[object Function]':
                         return false; // functions should be strictly equal because of closure context
-                    // [object Function]
+                        // [object Function]
 
                     case '[object Array]':
                         if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated bellow for [object Object]
@@ -410,7 +406,7 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                    // [object Array]
+                        // [object Array]
 
                     case '[object Object]':
                         if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated from above for [object Array]
@@ -452,7 +448,7 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                    // [object Object]
+                        // [object Object]
                 } // switch toString.call( a )
             } // _equals()
 
@@ -647,6 +643,64 @@ if (!Array.prototype.RunEachParalell) {
 
 if (!Array.prototype.paIsArray) {
     Array.prototype.paIsArray = true;// jshint ignore:line
+}
+
+if (!Array.prototype.Where) {
+    Array.prototype.Sort = function (sortConditions) { // jshint ignore:line
+        var realConditions = [];
+
+        if (!sortConditions) {
+            if (sortConditions.hasOwnProperty('length')) {
+                throw new Error("Invalid sortConditions object");
+            }
+        }
+
+        for (var property in sortConditions) {
+            if (sortConditions.hasOwnProperty(property)) {
+
+                //transform the keys into a better object with properties Column and SortOrder
+                var value = sortConditions[property].toUpperCase();
+
+                switch (value) {
+                    case "ASC":
+                    case "DESC":
+                        break;
+                    default:
+                        throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
+                }
+
+                realConditions.push({
+                    column: property,
+                    sortDirection: value
+                });
+            }
+        }
+
+        return this.sort(function (a, b) {
+            var result = 0, currentColumn, cycleValue;
+            for (var i = 0, l = realConditions.length; i < l; i++) {
+                cycleValue = 10 - i;
+                currentColumn = realConditions[i].column;
+                switch (realConditions[i].sortDirection) {
+                    case "ASC":
+                        if (a[currentColumn] < b[currentColumn]) {
+                            result -= cycleValue;
+                        } else if (a[currentColumn] > b[currentColumn]) {
+                            result += cycleValue;
+                        }
+                        break;
+                    case "DESC":
+                        if (a[currentColumn] < b[currentColumn]) {
+                            result += cycleValue;
+                        } else if (a[currentColumn] > b[currentColumn]) {
+                            result -= cycleValue;
+                        }
+                        break;
+                }
+            }
+            return result;
+        });
+    }
 }
 
 if (!Array.prototype.Where) {
