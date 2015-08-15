@@ -46,8 +46,13 @@ When parameter whereConditions is a <b>JSON object</b>:<br>
 		</ul><br>
 	
 	</li>
-	<li><b>Array of JSON objects</b><br>
+	<li><a name="WhereFunctionWhereConditionsIsArrayOfJson"></a><b>Array of JSON objects</b><br>
 		   parameter "whereConditions" is an array of condition-objects with the following format:<br><br><code>[<br>{property: criterion, property: criterion},<br>{property: criterion, property: criterion}<br>]</b></code><br><br>
+		</li>
+<li><a name="WhereFunctionWhereConditionsIsFunction"></a><b>xxxx</b><br>
+		</li>
+<li><a name="WhereFunctionWhereConditionsIsPaEqualTo"></a><b>ddddddddd</b><br>
+		 
 		</li>
 </ul>
 			
