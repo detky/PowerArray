@@ -14,41 +14,48 @@ There is no. Just include the library and that's all.
 ###What are the benefits of using this library?
 You're going to write much less code. No more incomprehensible loops.
 
-----------
-###Filtering basics <a name="filtering"></a>
-Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
-At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. The PowerArray functions [Where](#WhereFunction) and "getByProperty", allows you to write complex operations into a single, readable, and intuitive statement.
+<hr>
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function allows you to get a subset of an existing array, by passing a Conditions-Object. What is a conditions-object? It can be different things:
-<ul>
-	<li>
-		A Json object (that describes how the array should be filtered), having the following format:<br><code><b>{propertyToEvaluate: criterion, propertyToEvaluate: criterion, etc.}</b></code><br>
-		Each "<b>propertyToEvaluate</b>" indicates which field of the array elements should be evaluated with the corresponding Criterion.<br>
-		A "<b>criterion</b>" can be also different things: 
-		<ul>
-			<li>A fix <b>primitive value</b> (a string, a date, etc. for situations in which you search something specific.<br> For example <b>someArray.Where({id : 31})</b><br><br></li>
-			<li>A <b>Standard pa Function</b> (see Auxiliar functions / Standard PA Functions. <br> For example: <code><b>someArray.Where({id : pa.BiggerThan(10), id: pa.SmallerThan(20)})</b></code>, to get a new array of elements having values between 10 and 20 on his field 'id')<br><br></li>
-			<li>A <b>custom function</b>, which will get the "propertyToEvaluate" value as first parameter.<br>For example: <code><b>someArray.Where(function(item){return item.id > 10 && item.id < 20})</b></code></li>
-		</ul><br>
-	</li>
-	<li>
-		A custom function (that will receive as first parameter a complete array item) that should return true or false, indicating if the current item should be included on the resultant array or not <br><br>
-	</li>
-	<li>
-		An instance of the standard pa-function EqualTo. This is a very special case, in which the "pa.EqualTo" function receives an object that will be compared through a custom function (that you have to provide) with each array item.
-	</li>
-</ul>
+This function returns a subset of an existing array by filtering it with a Conditions-Object. A Conditions-Object is a JSON object that describes which conditions must satisfy an array item to be included on the results. <br>
+<b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.
 
-####Where Function signature
+
+####Signature
 <table>
 <tr>
 	<td valign=top  colspan=2><b>.Where</b>(whereConditions [,keepOrder])<br></td>
 </tr>
 <tr>
-	<td valign=top >Param</td><td valign=top ><b>whereConditions</b> - Type: Object, Function, or pa.EqualTo<br>
+	<td valign=top >Param</td><td valign=top ><b>whereConditions</b> - Type: <a href="#WhereFunctionWhereConditionsIsJson">Object</a>,  <a href="#WhereFunctionWhereConditionsIsArrayOfJson">Array of objects</a>,  <a href="#WhereFunctionWhereConditionsIsFunction">Function</a>, or  <a href="#WhereFunctionWhereConditionsIsPaEqualTo">pa.EqualTo</a><br>
 	One or more search criterions to be evaluated on each array element
+
+<hr>
+
+When parameter whereConditions is a <b>JSON object</b>:<br>
+<ul>
+	<li><a name="WhereFunctionWhereConditionsIsJson"></a><b>JSON object</b><br>
+			parameter "whereConditions" is a A JSON object with the following format:<br><br><code>{property: criterion, property: criterion, etc.}</b></code><br><br>
+			Each "<b>property</b>" indicates which field of the array elements should be evaluated. The corresponding "<b>criterion</b>", indicates the condition that the  "<b>property</b>" should satisfy.<br>
+			A "<b>criterion</b>" can be also different things: 
+		<ul>
+			<li>A fix <b>primitive value</b> (a string, a date, etc. for situations in which you search something specific.<br> For example <b>someArray.Where({id : 31})</b><br><br></li>
+			<li>A <b>Standard pa Function</b> (see Auxiliar functions / Standard PA Functions. <br> For example: <code><b>someArray.Where({id : BiggerThan(10), id: SmallerThan(20)})</b></code>, to get a new array of elements having values between 10 and 20 on his field 'id')<br><br></li>
+			<li>A <b>custom function</b>, which will get the "propertyToEvaluate" value as first parameter.<br>For example: <code><b>someArray.Where(function(item){return item.id > 10 && item.id < 20})</b></code></li>
+		</ul><br>
+	
+	</li>
+	<li><b>Array of JSON objects</b><br>
+		   parameter "whereConditions" is an array of condition-objects with the following format:<br><br><code>[<br>{property: criterion, property: criterion},<br>{property: criterion, property: criterion}<br>]</b></code><br><br>
+		</li>
+</ul>
+			
+
+		A custom function (that will receive as first parameter a complete array item) that should return true or false, indicating if the current item should be included on the resultant array or not <br><br>
+
+		An instance of the standard pa-function EqualTo. This is a very special case, in which the "pa.EqualTo" function receives an object that will be compared through a custom function (that you have to provide) with each array item.
+
 </td>
 </tr>
 <tr>
@@ -57,6 +64,13 @@ This function allows you to get a subset of an existing array, by passing a Cond
 </td>
 </tr>
 </table>
+###Filtering basics <a name="filtering"></a>
+Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
+At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. 
+
+By coding, it can be different things:
+
+
  
 To graphically explain how the function works, and how it could be used, i recommend you to take a look to the following basic examples
 
@@ -282,7 +296,7 @@ When the power array library loads, it stores all standard functions under the p
 </ul>
 
 
-
+//TODO:getByProperties as auxiliar pa function
 
 ## License
 The MIT License (MIT)
