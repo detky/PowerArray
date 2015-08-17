@@ -6,7 +6,7 @@ Power Array extends the native Array prototype by adding many additional feature
 PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
 By loading the library, all arrays become many extra functions that are designed to simplify and drastically reduce the amount of code that must be written to operate with arrays in javascript.<br>
 Current File Size: <7KB. <br>
-Dependencies : None.
+Dependencies : None. 
 
 ####What does this script changes on the Array prototype?
 Nothing, it just adds new functions and properties, and only if they not already exists. 
@@ -22,7 +22,8 @@ The functionalities, are organized into different categories:
 	<li><a href="#filtering"><b>Filtering</b></a></li>
 	<li><a href="#sorting"><b>Sorting</a></b></li>
 	<li><a href="#manipulation"><b>Manipulation</a></b></li>
-</ul>   
+</ul>  
+
 
 <a name="filtering"></a>
 ##Filtering Data 
@@ -30,7 +31,7 @@ Normally, to obtain a subset from any array, you have to loop, evaluate fields, 
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. <br>
 To simplify filtering tasks, Power Array relies mainly on the <b><a name="#WhereFunction">Where</a></b> function, which offers an intuitive and and easy to learn way to formulate conditions. The principle behind, is to formulate the conditions nearly as you would do it in English language. The following picture, shows (a very basic) PowerArray formulation, by using the functions "Where" and "Sort":
 
-<img src="/detky/PowerArray/blob/master/images/BasicStatementTransformation.jpg"/>
+<img src="https://raw.githubusercontent.com/detky/PowerArray/master/images/BasicStatementTransformation.jpg" width="100%"/> 
   
 
 
