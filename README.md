@@ -27,13 +27,17 @@ The functionalities, are organized into different categories:
 
 <a name="filtering"></a>
 ##Filtering Data 
-Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. To sort the filtered data, you have to write your specific sort function.  
+Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches. To sort the filtered data, you have to write your specific sort function.  
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. <br><br>
 To simplify filtering tasks, Power Array relies mainly on the <b><a name="#WhereFunction">Where</a></b> function, which offers an intuitive and and easy to learn way to formulate conditions. The principle behind, is to formulate the conditions nearly as you would do it in English language. <br><br>
 The following picture shows a simple task, and the transformation process that has to be made to solve it by using   
-PowerArray. It combines a (veeeery) basic usage of the functions <a href="#WhereFunction">Where</a> and a <a href="#SortFunction">Sort</a>: <br><br>
+PowerArray. It combines a (veeeery) basic usage of the functions <a href="#WhereFunction">Where</a> and a <a href="#SortFunction">Sort</a>: <br>
 
 <img src="https://raw.githubusercontent.com/detky/PowerArray/master/images/BasicStatementTransformation.jpg" width="100%"/> 
+
+The following graphic, shows an example that is closer to a real world task, and uses a few [PowerArray standard functions](#StandardPaFunctions):<br><br>
+
+<img src="https://raw.githubusercontent.com/detky/PowerArray/master/images/BasicStatementTransformation2.jpg" width="100%"/>
 
 <a name="WhereFunction"></a>
 ###The Where function
@@ -165,7 +169,6 @@ PowerArray adds also some auxiliary functions (i call them Standard PA Functions
 When the power array library loads, it stores all standard functions under the pa object ("window.pa.FUNCTION_NAME" or simply "pa.FUNCTION_NAME") and if its possible, it creates a pointer for each function under the window object (allowing you for example to code <code>BiggerThan(something)</code> instead of <code>pa.BiggerThan(something)</code> or <code>window.pa.BiggerThan(something)</code>).<br>You'll get a warning on the console if a function could not be published directly in the window object, and if that happens, you HAVE to use the pa prefix.  
 
 #####Standard PA Functions list:
-
 <ul style="list-style:none">
 <table>
 <tr>
