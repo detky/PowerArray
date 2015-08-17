@@ -19,7 +19,7 @@ You're going to write much less code. No more incomprehensible loops.
 <a name="WhereFunction"></a>
 ###The Where function
 This function returns a subset of an existing array by filtering it with a Conditions-Object. A Conditions-Object is a JSON object that describes which conditions must satisfy an array item to be included on the results. <br>
-<b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.
+<b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.</b>
 
 
 ####Signature
@@ -29,68 +29,64 @@ This function returns a subset of an existing array by filtering it with a Condi
 </tr>
 <tr>
 	<td valign=top >Param</td><td valign=top ><b>whereConditions</b> - Type: <a href="#WhereFunctionWhereConditionsIsJson">Object</a>,  <a href="#WhereFunctionWhereConditionsIsArrayOfJson">Array of objects</a>,  <a href="#WhereFunctionWhereConditionsIsFunction">Function</a>, instance of <a href="#WhereFunctionWhereConditionsIsPaEqualTo">EqualTo </a> function.<br>
-	One or more search criterions to be evaluated on each array element
-
-<hr>
-
-When parameter whereConditions is:<br>
-<ul>
-	<li><a name="WhereFunctionWhereConditionsIsJson"></a>A <b>JSON Conditions-object</b><br>
-			parameter "whereConditions" is a A JSON object with the following format:<br><br><code>{property: criterion, property: criterion, etc.}</b></code><br><br>
-			Each "<b>property</b>" indicates (with his name) which field of the array items should be evaluated. The corresponding "<b>criterion</b>", indicates the condition that the "<b>property</b>" should satisfy. A "<b>criterion</b>" can be different things: <br><br>
-		<ul>
-			<li>A fix <b>primitive value</b> (a string, a number, a date, etc.). For example:<br><br>
-				 <code><b>var result = someArray.Where({id : 31, dd});<br>or<br>var result = someArray.Where({state : 'open',  category: 1})</b></code><br><br>
-			</li>
-			<li>
-				Any <b>standard pa Function</b> (<a href="#StandardPaFunctions">complete list here</a>)
-				Power Array have a set of out of the box functions that can be used to simplify widely used conditions. For example:<br><br>
-				<code>
-					<b>var result = someArray.Where({state : In(['open','pending']), amount: SmallerThan(1000)})</b><br></code><h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "state" the values "open" or "pending", and a value bigger than 1000 on the property "amount"</h6>or<br><br> 
-					<code><b>var result = someArray.Where({lastname : EqualTo3('Müller'), citi : Like('B'), city : NotIn(['Bogota', 'Barcelona'])})</b>
-				</code> <h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "lastname" the value "Müller" (comparison made with 3 === symbols), on the property "city" a value containing the character "B", and also on the "city" property a, value different than "Bogota" and "Barcelona"</h6><br>
-			</li>
-			<li>
-				A <b>custom function</b>, which will get the value of the property to evaluate as first parameter.<br>For example: <br><br><code><b>someArray.Where(function(val){return val > 10 && val < 20})</b></code>
-			</li>
-		</ul><br>
-	
-	</li>
-	<li><a name="WhereFunctionWhereConditionsIsArrayOfJson"></a>An <b>Array of JSON Conditions-object</b> <br>
-		   parameter "whereConditions" is an array of <a hre="#WhereFunctionWhereConditionsIsJson">JSON condition-objects</a>, as defined above.<br><br>
-		   When multiple condition-objects are provided, the array items must satisfy just one condition-object to be included on the result, allowing you to construct conditions that will work as OR conditions. For example:<br><br>
-			
-		   Let's say you have an array of Orders, each one having a properties "city" and "amount". You have to filter all orders from "Sydney" having an amount smaller than "1000" OR any order with an amount bigger than 50000 ("city" does not care). Then you could do:<br><br>
-		  <code>
-					<b>var result = ordersArray.Where([<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{city: "Sydney", amount: SmallerThan(1001)},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{amount : biggerThan(49999)}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]);</b><br></code>
-				</code><br>
-		 There is no limitation about the quantity of condition-objects you can pass.<br><br>
-
-		   
-		</li>
-			<li><a name="WhereFunctionWhereConditionsIsFunction"></a>A <b>Custom function</b><br>
-			parameter "whereConditions" is a custom function.<br><br> The provided function will receive as first parameter a complete array item, and it should return true or false, indicating if the current item should be included on the resultant array or not. For example: <br><br>
-			<code>
-				<b>someArray.Where(function(item){return item.id > 10 && item.id < 20;})</b>
-			</code> <br><br>
-		</li>
-		<li>
-			<a name="WhereFunctionWhereConditionsIsPaEqualTo"></a>An <b>EqualTo</b> (pa standard function)<br>
-		 	parameter "whereConditions" is an instance of the standard pa-function EqualTo. <br><br>This special case allows you to filter by comparing each array item with an specific Json object. For example: <br><br>
-			<code>
-				<b>
-					var originalElement = {...};
-					var result = manyElementsArray.Where(EqualTo(originalElement));
-				</b>
-			</code> <br><br>
-			The EqualTo function, provides a default way to compare objects. 
-			//TODO: document cyclic, properties order, etc.
-		</li>
-</ul>
-			
-
+			One or more search criterions to be evaluated on each array element
 		
-
+		<hr>
+		
+		When parameter whereConditions is:<br>
+		<ul>
+			<li><a name="WhereFunctionWhereConditionsIsJson"></a>A <b>JSON Conditions-object</b><br>
+					parameter "whereConditions" is a A JSON object with the following format:<br><br><code>{property: criterion, property: criterion, etc.}</b></code><br><br>
+					Each "<b>property</b>" indicates (with his name) which field of the array items should be evaluated. The corresponding "<b>criterion</b>", indicates the condition that the "<b>property</b>" should satisfy. A "<b>criterion</b>" can be different things: <br><br>
+				<ul>
+					<li>A fix <b>primitive value</b> (a string, a number, a date, etc.). For example:<br><br>
+						 <code><b>var result = someArray.Where({id : 31});<br>or<br>var result = someArray.Where({state : 'open',  category: 1})</b></code><br><br>
+					</li>
+					<li>
+						Any <b>standard pa Function</b> (<a href="#StandardPaFunctions">complete list here</a>)
+						Power Array have a set of out of the box functions that can be used to simplify widely used conditions. For example:<br><br>
+						<code>
+							<b>var result = someArray.Where({state : In(['open','pending']), amount: SmallerThan(1000)})</b><br></code><h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "state" the values "open" or "pending", and a value bigger than 1000 on the property "amount"</h6>or<br><br> 
+							<code><b>var result = someArray.Where({lastname : EqualTo3('Müller'), citi : Like('B'), city : NotIn(['Bogota', 'Barcelona'])})</b>
+						</code> <h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "lastname" the value "Müller" (comparison made with 3 === symbols), on the property "city" a value containing the character "B", and also on the "city" property a, value different than "Bogota" and "Barcelona"</h6><br>
+					</li>
+					<li>
+						A <b>custom function</b>, which will get the value of the property to evaluate as first parameter.<br>For example: <br><br><code><b>someArray.Where(function(val){return val > 10 && val < 20})</b></code>
+					</li>
+				</ul><br>
+			
+			</li>
+			<li><a name="WhereFunctionWhereConditionsIsArrayOfJson"></a>An <b>Array of JSON Conditions-object</b> <br>
+				   parameter "whereConditions" is an array of <a hre="#WhereFunctionWhereConditionsIsJson">JSON condition-objects</a>, as defined above.<br><br>
+				   When multiple condition-objects are provided, the array items must satisfy just one condition-object to be included on the result, allowing you to construct conditions that will work as OR conditions. For example:<br><br>
+					
+				   Let's say you have an array of Orders, each one having a properties "city" and "amount". You have to filter all orders from "Sydney" having an amount smaller than "1000" OR any order with an amount bigger than 50000 ("city" does not care). Then you could do:<br><br>
+				  <code>
+							<b>var result = ordersArray.Where([<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{city: "Sydney", amount: SmallerThan(1001)},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{amount : biggerThan(49999)}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]);</b><br></code>
+						</code><br>
+				 There is no limitation about the quantity of condition-objects you can pass.<br><br>
+		
+				   
+				</li>
+					<li><a name="WhereFunctionWhereConditionsIsFunction"></a>A <b>Custom function</b><br>
+					parameter "whereConditions" is a custom function.<br><br> The provided function will receive as first parameter a complete array item, and it should return true or false, indicating if the current item should be included on the resultant array or not. For example: <br><br>
+					<code>
+						<b>someArray.Where(function(item){return item.id > 10 && item.id < 20;})</b>
+					</code> <br><br>
+				</li>
+				<li>
+					<a name="WhereFunctionWhereConditionsIsPaEqualTo"></a>An <b>EqualTo</b> function (pa standard function)<br>
+				 	parameter "whereConditions" is an instance of the standard pa-function EqualTo. <br><br>This special case allows you to filter by comparing each array item with an specific Json object. For example: <br><br>
+					<code>
+						<b>
+							var originalElement = {...};
+							var result = manyElementsArray.Where(EqualTo(originalElement));
+						</b>
+					</code> <br><br>
+					The EqualTo function, provides a default way to compare objects. 
+					//TODO: document cyclic, properties order, etc.
+				</li>
+		</ul>
 		
 </td>
 </tr>
@@ -100,7 +96,7 @@ When parameter whereConditions is:<br>
 </td>
 </tr>
 </table>
-###Filtering basics <a name="filtering"></a>
+###Filtering Data <a name="filtering"></a>
 Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
 At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. 
 
@@ -288,15 +284,18 @@ When the power array library loads, it stores all standard functions under the p
 <tr>
 	<td valign=top >
 		Example</td><td valign=top >
-		<b>Using custom comparison function:</b><br>		
-		<code>var func = function(a,b) { return a.something === b.shomething };</code><br>
-		<code>var originalElement = { something : 'bla' };</code><br>
-		<code>var subset = someArray.Where(EqualTo(originalElement,func));</code><br><br>Variable subset becomes an array of all items having 'bla' on the property something.<br><br>
+		
+		Using default comparison function:<br><br>		
+		<code>var originalElement = { something : 'bla' }; <br> <br>	
+		 var subset = someArray.Where(EqualTo(originalElement, undefined, true, false));
+		<br></code><br>
+		Variable subset becomes an array of all items that are equal to originalElement. A different order in the object properties is not considered as difference (because param "enforce_properties_order" is false). Cyclic references are not evaluated (because param "cyclic" is false).<br><br>
 
-		<b>Using default comparison function:</b><br>		
-		<code>var originalElement = { something : 'bla' };</code><br> 
-		<code>var subset = someArray.Where(EqualTo(originalElement, undefined, true, false));</ode><br>
-		Variable subset becomes an array of all items that are equal to originalElement. A different order in the object properties is not considered as difference (because param "enforce_properties_order" is false). Cyclic references are not evaluated (because param "cyclic" is false).<br><br></td>
+		<b>Using custom comparison function:</b><br><br>		
+		<code>var func = function(a,b) { return a.something === b.shomething };<br><br>
+		var originalElement = { something : 'bla' };</code><br><br>
+		var subset = someArray.Where(EqualTo(originalElement,func));</code><br><br>Variable subset becomes an array of all items having 'bla' on the property something.<br><br>
+</td>
 </tr>
 
 </table>
