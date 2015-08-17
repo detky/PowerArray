@@ -27,19 +27,18 @@ The functionalities, are organized into different categories:
 
 <a name="filtering"></a>
 ##Filtering Data 
-Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
-At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. <br>
-To simplify filtering tasks, Power Array relies mainly on the <b><a name="#WhereFunction">Where</a></b> function, which offers an intuitive and and easy to learn way to formulate conditions. The principle behind, is to formulate the conditions nearly as you would do it in English language. The following picture, shows (a very basic) PowerArray formulation, by using the functions "Where" and "Sort":
+Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. To sort the filtered data, you have to write your specific sort function.  
+At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. <br><br>
+To simplify filtering tasks, Power Array relies mainly on the <b><a name="#WhereFunction">Where</a></b> function, which offers an intuitive and and easy to learn way to formulate conditions. The principle behind, is to formulate the conditions nearly as you would do it in English language. <br><br>
+The following picture shows a simple task, and the transformation process that has to be made to solve it by using   
+PowerArray. It combines a (veeeery) basic usage of the functions <a href="#WhereFunction">Where</a> and a <a href="#SortFunction">Sort</a>: <br><br>
 
 <img src="https://raw.githubusercontent.com/detky/PowerArray/master/images/BasicStatementTransformation.jpg" width="100%"/> 
-  
-
 
 <a name="WhereFunction"></a>
 ###The Where function
 This function returns a subset of an existing array by filtering it with a Conditions-Object. A Conditions-Object is a JSON object that describes which conditions must satisfy an array item to be included on the results. <br>
 <b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.</b>
-
 
 ####Signature
 <table>
