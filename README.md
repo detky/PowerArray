@@ -1,20 +1,38 @@
 # PowerArray
-Power Array extends the native Array prototype by adding many additional features to  [filter](#filtering), manipulate, sort and extract subsets from complex arrays. 
+Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> complex arrays (specially objects-array, as those that normally are exposed from a rest service). 
 
 <b>This document is under construction!</b>
 ###How is implemented?
-By loading the library, all arrays become many extra functions that are designed to simplify and reduce the code you have to write to interact with arrays in javascript. 
+PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
+By loading the library, all arrays become many extra functions that are designed to simplify and drastically reduce the amount of code that must be written to operate with arrays in javascript.<br>
+Current File Size: <7KB. <br>
+Dependencies : None.
 
 ####What does this script changes on the Array prototype?
 Nothing, it just adds new functions and properties, and only if they not already exists. 
 
-####Dependencies / Requirements
-There is no. Just include the library and that's all.
-
 ###What are the benefits of using this library?
-You're going to write much less code. No more incomprehensible loops.
+You're going to write much less code. No more incomprehensible loops. <a href='TheDifference'>See the difference with an example</a>
 
 <hr>
+##Introduction
+All features offered by Power Array, are specified in form of javascript functions that you can call in your own arrays.<br> 
+The functionalities, are organized into different categories:
+<ul>
+	<li><a href="#filtering"><b>Filtering</b></a></li>
+	<li><a href="#sorting"><b>Sorting</a></b></li>
+	<li><a href="#manipulation"><b>Manipulation</a></b></li>
+</ul>   
+
+<a name="filtering"></a>
+##Filtering Data 
+Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
+At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. <br>
+To simplify filtering tasks, Power Array relies mainly on the <b><a name="#WhereFunction">Where</a></b> function, which offers an intuitive and and easy to learn way to formulate conditions. The principle behind, is to formulate the conditions nearly as you would do it in English language. The following picture, shows (a very basic) PowerArray formulation, by using the functions "Where" and "Sort":
+
+<img src="/detky/PowerArray/blob/master/images/BasicStatementTransformation.jpg"/>
+  
+
 
 <a name="WhereFunction"></a>
 ###The Where function
@@ -47,8 +65,8 @@ This function returns a subset of an existing array by filtering it with a Condi
 						Power Array have a set of out of the box functions that can be used to simplify widely used conditions. For example:<br><br>
 						<code>
 							<b>var result = someArray.Where({state : In(['open','pending']), amount: SmallerThan(1000)})</b><br></code><h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "state" the values "open" or "pending", and a value bigger than 1000 on the property "amount"</h6>or<br><br> 
-							<code><b>var result = someArray.Where({lastname : EqualTo3('Müller'), citi : Like('B'), city : NotIn(['Bogota', 'Barcelona'])})</b>
-						</code> <h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "lastname" the value "Müller" (comparison made with 3 === symbols), on the property "city" a value containing the character "B", and also on the "city" property a, value different than "Bogota" and "Barcelona"</h6><br>
+							<code><b>var result = someArray.Where({lastname : EqualTo3('MÃ¼ller'), citi : Like('B'), city : NotIn(['Bogota', 'Barcelona'])})</b>
+						</code> <h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "lastname" the value "MÃ¼ller" (comparison made with 3 === symbols), on the property "city" a value containing the character "B", and also on the "city" property a, value different than "Bogota" and "Barcelona"</h6><br>
 					</li>
 					<li>
 						A <b>custom function</b>, which will get the value of the property to evaluate as first parameter.<br>For example: <br><br><code><b>someArray.Where(function(val){return val > 10 && val < 20})</b></code>
@@ -96,11 +114,6 @@ This function returns a subset of an existing array by filtering it with a Condi
 </td>
 </tr>
 </table>
-###Filtering Data <a name="filtering"></a>
-Normally, to obtain a subset from any array, you have to loop, evaluate fields, collect possitive matches, etc. 
-At the end you always have to write at least 10 or 20 lines, deppending on the complexity of the evaluations you have to do to find the items you're searching for. 
-
-By coding, it can be different things:
 
 
  
@@ -331,8 +344,8 @@ When the power array library loads, it stores all standard functions under the p
 </ul>
 
 
-//TODO:getByProperties as auxiliar pa function
-
+//TODO: getByProperties as auxiliar pa function
+//TODO: write an example to for #TheDifference
 ## License
 The MIT License (MIT)
 
