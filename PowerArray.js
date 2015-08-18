@@ -510,11 +510,17 @@ window.pa = window.pa || {
             };
         },
         In: function (list) {
+            if (!list.paIsArray) {
+                throw new Error("PowerArray error => parameter list passed to NotIn function should be an array");
+            }
             return function (val) {
                 return list.indexOf(val) !== -1; // jshint ignore:line
             };
         },
         NotIn: function (list) {
+            if (!list.paIsArray) {
+                throw new Error("PowerArray error => parameter list passed to NotIn function should be an array");
+            }
             return function (val) {
                 return list.indexOf(val) === -1; // jshint ignore:line
             };
