@@ -333,9 +333,9 @@ When the power array library loads, it stores all standard functions under the p
 		<ul>
 			<li>A <b>String</b><br>
 				The specified value must be contained in the affected String property. For example:<br><br>
-				<code>
-				var someArray = [{key: "abc"}, {key: "bcd"}, {key: "cde"}];<br><br>
-				var result = someArray.Where({key : Like("b")});</code><br>
+				<code>var someArray = [{key: "abc"}, {key: "bcd"}, {key: "cde"}];</code>
+				<br><br>
+				<code>var result = someArray.Where({key : Like("b")});</code><br>
 				<h6>Variable result will be [{key: "abc"}, {key: "bcd"}]</h6>
 			</li>
 			<li>An <b>Array of Strings</b><br>
