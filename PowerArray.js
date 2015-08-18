@@ -349,17 +349,17 @@ window.pa = window.pa || {
          RangeError: Maximum call stack size exceeded
          */
         equals: function (a, b, enforce_properties_order, cyclic) {
-            return a === b       // strick equality should be enough unless zero
-                && a !== 0         // because 0 === -0, requires test by _equals()
-                || _equals(a, b) // handles not strictly equal or zero values
-            ;
+            return a === b       /* strick equality should be enough unless zero*/ // jshint ignore:line
+                && a !== 0         /* because 0 === -0, requires test by _equals()*/   // jshint ignore:line
+                || _equals(a, b) /* handles not strictly equal or zero values*/   // jshint ignore:line
+                ;
             function _equals(a, b) {
                 // a and b have already failed test for strict equality or are zero
 
                 var s, l, p, x, y;
 
                 // They should have the same toString() signature
-                if ((s = toString.call(a)) !== toString.call(b)) return false;
+                if ((s = toString.call(a)) !== toString.call(b)) return false; // jshint ignore:line
 
                 switch (s) {
                     default: // Boolean, Date, String
@@ -377,39 +377,41 @@ window.pa = window.pa || {
                             a === a ?      // a is 0 or -O
                             1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
                                 : b !== b        // NaN, the only Number not equal to itself!
-                        ;
-                        // [object Number]
+                            ;
+                    // [object Number]
 
                     case '[object RegExp]':
-                        return a.source == b.source
-                            && a.global == b.global
-                            && a.ignoreCase == b.ignoreCase
-                            && a.multiline == b.multiline
-                            && a.lastIndex == b.lastIndex
-                        ;
-                        // [object RegExp]
+                        return a.source == b.source // jshint ignore:line
+                            && a.global == b.global // jshint ignore:line
+                            && a.ignoreCase == b.ignoreCase // jshint ignore:line
+                            && a.multiline == b.multiline // jshint ignore:line
+                            && a.lastIndex == b.lastIndex // jshint ignore:line
+                            ;
+                    // [object RegExp]
 
                     case '[object Function]':
                         return false; // functions should be strictly equal because of closure context
-                        // [object Function]
+                    // [object Function]
 
                     case '[object Array]':
-                        if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated bellow for [object Object]
+                        // intentionally duplicated bellow for [object Object]
+                        if (cyclic && (x = reference_equals(a, b)) !== null) return x;  // jshint ignore:line
 
-                        if ((l = a.length) != b.length) return false;
+                        if ((l = a.length) != b.length) return false; // jshint ignore:line
                         // Both have as many elements
 
                         while (l--) {
-                            if ((x = a[l]) === (y = b[l]) && x !== 0 || _equals(x, y)) continue;
+                            if ((x = a[l]) === (y = b[l]) && x !== 0 || _equals(x, y)) continue; // jshint ignore:line
 
                             return false;
                         }
 
                         return true;
-                        // [object Array]
+                    // [object Array]
 
                     case '[object Object]':
-                        if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated from above for [object Array]
+                        // intentionally duplicated from above for [object Array]
+                        if (cyclic && (x = reference_equals(a, b)) !== null) return x; // jshint ignore:line
 
                         l = 0; // counter of own properties
 
@@ -420,7 +422,7 @@ window.pa = window.pa || {
                                 if (a.hasOwnProperty(p)) {
                                     properties.push(p);
 
-                                    if ((x = a[p]) === (y = b[p]) && x !== 0 || _equals(x, y)) continue;
+                                    if ((x = a[p]) === (y = b[p]) && x !== 0 || _equals(x, y)) continue; // jshint ignore:line
 
                                     return false;
                                 }
@@ -428,14 +430,14 @@ window.pa = window.pa || {
 
                             // Check if 'b' has as the same properties as 'a' in the same order
                             for (p in b)
-                                if (b.hasOwnProperty(p) && properties[l++] != p)
-                                    return false;
+                                if (b.hasOwnProperty(p) && properties[l++] != p) // jshint ignore:line
+                                    return false; // jshint ignore:line
                         } else {
                             for (p in a) {
                                 if (a.hasOwnProperty(p)) {
                                     ++l;
 
-                                    if ((x = a[p]) === (y = b[p]) && x !== 0 || _equals(x, y)) continue;
+                                    if ((x = a[p]) === (y = b[p]) && x !== 0 || _equals(x, y)) continue; // jshint ignore:line
 
                                     return false;
                                 }
@@ -443,12 +445,12 @@ window.pa = window.pa || {
 
                             // Check if 'b' has as not more own properties than 'a'
                             for (p in b)
-                                if (b.hasOwnProperty(p) && --l < 0)
-                                    return false;
+                                if (b.hasOwnProperty(p) && --l < 0) // jshint ignore:line
+                                    return false; // jshint ignore:line
                         }
 
                         return true;
-                        // [object Object]
+                    // [object Object]
                 } // switch toString.call( a )
             } // _equals()
 
@@ -471,14 +473,14 @@ window.pa = window.pa || {
             function reference_equals(a, b) {
                 var object_references = [];
 
-                return (reference_equals = _reference_equals)(a, b);
+                return (reference_equals = _reference_equals)(a, b); // jshint ignore:line
 
                 function _reference_equals(a, b) {
                     var l = object_references.length;
 
                     while (l--)
-                        if (object_references[l--] === b)
-                            return object_references[l] === a;
+                        if (object_references[l--] === b) // jshint ignore:line
+                            return object_references[l] === a; // jshint ignore:line
 
                     object_references.push(a, b);
 
@@ -645,62 +647,102 @@ if (!Array.prototype.paIsArray) {
     Array.prototype.paIsArray = true;// jshint ignore:line
 }
 
-if (!Array.prototype.Where) {
+if (!Array.prototype.Sort) {
     Array.prototype.Sort = function (sortConditions) { // jshint ignore:line
         var realConditions = [];
+        var conditionType = typeof sortConditions;
 
-        if (!sortConditions) {
-            if (sortConditions.hasOwnProperty('length')) {
-                throw new Error("Invalid sortConditions object");
-            }
-        }
-
-        for (var property in sortConditions) {
-            if (sortConditions.hasOwnProperty(property)) {
-
-                //transform the keys into a better object with properties Column and SortOrder
-                var value = sortConditions[property].toUpperCase();
-
-                switch (value) {
+        switch (conditionType) {
+            case "string":
+                //This call, with a first parameter of type string, should be "ASC" or "DESC"
+                var condition = sortConditions.toUpperCase();
+                switch (condition) {
                     case "ASC":
+                        return this.sort(function (a, b) {
+                            if (a < b) { return -1; } else if (a > b) { return 1; }
+                            return 0;
+                        });
                     case "DESC":
-                        break;
+                        return this.sort(function (a, b) {
+                            if (a > b) { return -1; } else if (a < b) { return 1; }
+                            return 0;
+                        });
+                    case "DESCIGNORECASE":
+                        return this.sort(function (a, b) {
+                            return (a.toLowerCase().localeCompare(b.toLowerCase())) * -1;
+                        });
+                    case "ASCIGNORECASE":
+                        return this.sort(function (a, b) {
+                            return a.toLowerCase().localeCompare(b.toLowerCase());
+                        });
                     default:
-                        throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
+                        throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function, we assume you have , Power for simple array. It can be Asc or Desc");
+                }
+                break;
+            case "object":
+
+                if(sortConditions instanceof RegExp) {
+                    throw new Error("PowerArray Error: Invalid sortConditions object. A RegExp is not allowed as Sort Criterion!");
                 }
 
-                realConditions.push({
-                    column: property,
-                    sortDirection: value
+                if (!sortConditions) {
+                    if (sortConditions.hasOwnProperty('length')) {
+                        throw new Error("PowerArray Error: Invalid sortConditions object");
+                    }
+                }
+
+                for (var property in sortConditions) {
+                    if (sortConditions.hasOwnProperty(property)) {
+
+                        //transform the keys into a better object with properties Column and SortOrder
+                        var value = sortConditions[property].toUpperCase();
+
+                        switch (value) {
+                            case "ASC":
+                            case "DESC":
+                                break;
+                            default:
+                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
+                        }
+
+                        realConditions.push({
+                            column: property,
+                            sortDirection: value
+                        });
+                    }
+                }
+
+                return this.sort(function (a, b) {
+                    var result = 0, currentColumn, cycleValue;
+                    for (var i = 0, l = realConditions.length; i < l; i++) {
+                        cycleValue = 10 - i;
+                        currentColumn = realConditions[i].column;
+                        switch (realConditions[i].sortDirection) {
+                            case "ASC":
+                                if (a[currentColumn] < b[currentColumn]) {
+                                    result -= cycleValue;
+                                } else if (a[currentColumn] > b[currentColumn]) {
+                                    result += cycleValue;
+                                }
+                                break;
+                            case "DESC":
+                                if (a[currentColumn] < b[currentColumn]) {
+                                    result += cycleValue;
+                                } else if (a[currentColumn] > b[currentColumn]) {
+                                    result -= cycleValue;
+                                }
+                                break;
+                        }
+                    }
+                    return result;
                 });
-            }
-        }
 
-        return this.sort(function (a, b) {
-            var result = 0, currentColumn, cycleValue;
-            for (var i = 0, l = realConditions.length; i < l; i++) {
-                cycleValue = 10 - i;
-                currentColumn = realConditions[i].column;
-                switch (realConditions[i].sortDirection) {
-                    case "ASC":
-                        if (a[currentColumn] < b[currentColumn]) {
-                            result -= cycleValue;
-                        } else if (a[currentColumn] > b[currentColumn]) {
-                            result += cycleValue;
-                        }
-                        break;
-                    case "DESC":
-                        if (a[currentColumn] < b[currentColumn]) {
-                            result += cycleValue;
-                        } else if (a[currentColumn] > b[currentColumn]) {
-                            result -= cycleValue;
-                        }
-                        break;
-                }
-            }
-            return result;
-        });
-    }
+            case "function":
+                return this.sort(sortConditions); //simple forward to array.sort
+            default:
+                throw new Error("Unknown sortConditions object type (" + conditionType + ")");
+        }
+    };
 }
 
 if (!Array.prototype.Where) {
