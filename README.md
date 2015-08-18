@@ -40,8 +40,9 @@ The following graphic, shows an example that is closer to a real world task, and
 
 <a name="WhereFunction"></a>
 ###The Where function
-This function returns a subset of an existing array by filtering it with a Conditions-Object. A Conditions-Object is a JSON object that describes which conditions must satisfy an array item to be included on the results. <br>
-<b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.</b>
+This function returns a subset of an existing array by filtering it based on conditions that the array items must satisfy. There are multiple ways to describe the data you are searching for, but the usage of Conditions-Object is by far the most comfortable. A Conditions-Object is a JSON object that describes which conditions must satisfy an array item to be included on the results. <br>
+<b>Using Where() you can reduce complex operations into a single, readable, and intuitive statement.<br><br>
+By filtering object-arrays, there is practically no condition that can't be formulated in one statement.</b>
 
 ####Signature
 <table>
@@ -67,7 +68,7 @@ This function returns a subset of an existing array by filtering it with a Condi
 						Any <b>standard pa Function</b> (<a href="#StandardPaFunctions">complete list here</a>)
 						Power Array have a set of out of the box functions that can be used to simplify widely used conditions. For example:<br><br>
 						<code>
-							<b>var result = someArray.Where({state : In(['open','pending']), amount: SmallerThan(1000)})</b><br></code><h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "state" the values "open" or "pending", and a value bigger than 1000 on the property "amount"</h6>or<br><br> 
+							<b>var result = someArray.Where({state : In(['open','pending']), amount: SmallerThan(1000)})</b><br></code><h6>The variable result will get all items of the array "someArray" that have on the property "state" the values "open" or "pending", and a value smaller  than 1000 on the property "amount". Auxiliary functions <a href="#InFunction">In</a>  and <a href="SmallerThanFunction">SmallerThan</a> are used.</h6>or<br><br> 
 							<code><b>var result = someArray.Where({lastname : EqualTo3('MÃ¼ller'), citi : Like('B'), city : NotIn(['Bogota', 'Barcelona'])})</b>
 						</code> <h6>Explanation: by using the previous statement, the variable result will get all items of the array "someArray" that have on the property "lastname" the value "MÃ¼ller" (comparison made with 3 === symbols), on the property "city" a value containing the character "B", and also on the "city" property a, value different than "Bogota" and "Barcelona"</h6><br>
 					</li>
@@ -169,7 +170,7 @@ When the power array library loads, it stores all standard functions under the p
 
 #####Standard PA Functions list:
 <ul style="list-style:none">
-<table>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>BiggerThan</b>(value)<br>
 	Evaluate if the value of the property to be evaluated is bigger than the passed value.
@@ -192,7 +193,8 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<table>
+<a name="SmallerThanFunction"></a>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>SmallerThan</b>(value)<br>
 	Evaluate if the value of the property to be evaluated is smaller than the passed value.
@@ -215,7 +217,7 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<table>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>EqualTo3</b>(value)<br>
 	Checks if the property to be evaluated is equal to the value passed on parameter "value". 
@@ -239,7 +241,7 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<table>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>EqualTo2</b>(value)<br></td>
 </tr>
@@ -260,7 +262,7 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<table>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>EqualTo</b>(referenceObject, func, enforce_properties_order, cyclic)<br>Used to compare all array elements with a single object(referenceObject).</td>
 </tr>
@@ -314,14 +316,36 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 
 </table>
-<table>
+<a name="LikeFunction">
+<table width="100%">
 <tr>
-	<td valign=top  colspan=2><a name="LikeFunction"><b>Like</b>(value)</a><br></td>
+	<td valign=top  colspan=2></a>
+		<b>Like</b>(value)<br>
+		 Returns true if there is at least an occurrence of all specified values in the affected property.
+		<br>This function can be used only to filter String properties
+	</td>
 </tr>
 <tr>
 	<td valign=top >
-		Param</td><td valign=top ><b>value</b> - Type: String or Array of Strings<br>
-		Searches the passed value(s) to be present in the corresponding property of the affected element. 
+		Param</td><td valign=top ><b>value</b> - Type: String or Array of Strings<br>One or more Strings that should be contained (by indexOf) on the affected property.
+		<hr>
+		When parameter value is:<br>
+		<ul>
+			<li>A <b>String</b><br>
+				The specified value must be contained in the affected String property. For example:<br><br>
+				<code>
+				var someArray = [{key: "abc"}, {key: "bcd"}, {key: "cde"}];<br><br>
+				var result = someArray.Where({key : Like("b")});</code><br>
+				<h6>Variable result will be [{key: "abc"}, {key: "bcd"}]</h6>
+			</li>
+			<li>An <b>Array of Strings</b><br>
+				All specified values on passed array must be contained in the affected String property. For example:<br><br>
+				<code>
+				var someArray = [{key: "42835"}, {key: "712968"}, {key: "49381"}];<br><br>
+				var result = someArray.Where({key : Like(["2","8"])});</code><br>
+				<h6>Variable result will be [{key: "42835"}, {key: "712968"}]</h6>
+			</li>
+		</ul>
 	</td>
 </tr>
 <tr>
@@ -336,12 +360,56 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<table>
+<table width="100%">
 <tr>
 	<td valign=top  colspan=2><b>LikeIgnoreCase</b>(value)<br>Identical to function <a href="#LikeFunction">Like</a>, but ignoring characters case.</td>
 </tr>
+</table><a name="InFunction"></a>
+<table width="100%">
+<tr>
+	<td valign=top  colspan=2><b>In</b>(list)<br></td>
+</tr>
+<tr>
+	<td valign=top >
+		Param</td><td valign=top ><b>list</b> - Type: Array<br>
+		Array of primitive values (strings, numbers, etc). If passed value is not an array, an error will be raised.
+	</td>
+</tr>
+<tr>
+	<td valign=top >
+		Return</td><td valign=top ><b>Boolean</b> - Returns true if the affected value is present on the passed list. 
+	</td>
+</tr>
+<tr>
+	<td valign=top >
+		Example</td><td valign=top ><code>var subset = someArray.Where({state:  <font color=red><b>In("Open","Pending","Archived")</b></font>});</code><br><br>Variable subset becomes an array of all items having on field "state" the value "Open", "Pending" or "Archived".<br><br>
+		<code>var subset = someArray.Where({id: <font color=red><b>In(31,58,293)});</b></font></code><br><br>Variable subset becomes an array of all items having on field "id" the value 31, 58 or 293.
+	</td>
+</tr>
 </table>
-
+</table><a name="NotInFunction"></a>
+<table width="100%">
+<tr>
+	<td valign=top  colspan=2><b>NotIn</b>(list)<br></td>
+</tr>
+<tr>
+	<td valign=top >
+		Param</td><td valign=top ><b>list</b> - Type: Array<br>
+		Array of primitive values (strings, numbers, etc). If passed value is not an array, an error will be raised.
+	</td>
+</tr>
+<tr>
+	<td valign=top >
+		Return</td><td valign=top ><b>Boolean</b> - Returns true if the affected value is present on the passed list. 
+	</td>
+</tr>
+<tr>
+	<td valign=top >
+		Example</td><td valign=top ><code>var subset = someArray.Where({state:  <font color=red><b>In("Open","Pending","Archived")</b></font>});</code><br><br>Variable subset becomes an array of all items having on field "state" the value "Open", "Pending" or "Archived".<br><br>
+		<code>var subset = someArray.Where({id: <font color=red><b>In(31,58,293)});</b></font></code><br><br>Variable subset becomes an array of all items having on field "id" the value 31, 58 or 293.
+	</td>
+</tr>
+</table>
 <br>//TODO: document missing functions: NotLIke, NotLikeIgnoreCase, NotIn, NotInIgnoreCase
 </ul>
 
