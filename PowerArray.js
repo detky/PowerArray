@@ -133,7 +133,7 @@ window.pa = window.pa || {
             return a === b       /* strick equality should be enough unless zero*/ // jshint ignore:line
                 && a !== 0         /* because 0 === -0, requires test by _equals()*/   // jshint ignore:line
                 || _equals(a, b) /* handles not strictly equal or zero values*/   // jshint ignore:line
-                ;
+            ;
             function _equals(a, b) {
                 // a and b have already failed test for strict equality or are zero
 
@@ -158,8 +158,8 @@ window.pa = window.pa || {
                             a === a ?      // a is 0 or -O
                             1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
                                 : b !== b        // NaN, the only Number not equal to itself!
-                            ;
-                    // [object Number]
+                        ;
+                        // [object Number]
 
                     case '[object RegExp]':
                         return a.source == b.source // jshint ignore:line
@@ -167,12 +167,12 @@ window.pa = window.pa || {
                             && a.ignoreCase == b.ignoreCase // jshint ignore:line
                             && a.multiline == b.multiline // jshint ignore:line
                             && a.lastIndex == b.lastIndex // jshint ignore:line
-                            ;
-                    // [object RegExp]
+                        ;
+                        // [object RegExp]
 
                     case '[object Function]':
                         return false; // functions should be strictly equal because of closure context
-                    // [object Function]
+                        // [object Function]
 
                     case '[object Array]':
                         // intentionally duplicated bellow for [object Object]
@@ -188,7 +188,7 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                    // [object Array]
+                        // [object Array]
 
                     case '[object Object]':
                         // intentionally duplicated from above for [object Array]
@@ -231,7 +231,7 @@ window.pa = window.pa || {
                         }
 
                         return true;
-                    // [object Object]
+                        // [object Object]
                 } // switch toString.call( a )
             } // _equals()
 
@@ -315,7 +315,7 @@ window.pa = window.pa || {
                 return val >= from && val <= to;
             };
         },
-        BiggerThan: function (value) {
+        GreaterThan: function (value) {
             return function (val) {
                 return val > value;
             };
@@ -336,16 +336,16 @@ window.pa = window.pa || {
             };
         },
         In: function (list) {
-            if (!list.paIsArray) {
-                throw new Error("PowerArray error => parameter list passed to NotIn function should be an array");
-            }
+            if (arguments.length > 1) {
+                list = Array.prototype.slice.call(arguments);
+            } 
             return function (val) {
                 return list.indexOf(val) !== -1; // jshint ignore:line
             };
         },
         NotIn: function (list) {
-            if (!list.paIsArray) {
-                throw new Error("PowerArray error => parameter list passed to NotIn function should be an array");
+            if (arguments.length > 1) {
+                list = Array.prototype.slice.call(arguments);
             }
             return function (val) {
                 return list.indexOf(val) === -1; // jshint ignore:line
@@ -611,7 +611,7 @@ window.pa = window.pa || {
                     };
                 }.toString(),
                 ')()'
-            ], {type: 'application/javascript'}));
+            ], { type: 'application/javascript' }));
             var w = new Worker(blobURL);
             w.postMessage({
                 array: this,
