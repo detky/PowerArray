@@ -15,7 +15,7 @@ The only consequence will be a change on the syntax when using that specific Pow
 
 <ul>
 	<li>
-		For global functions (as all auxiliary functions BiggerThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
+		For global functions (as all auxiliary functions GreaterThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
 		<table>
 			<tr>
 				<td>use</td>
@@ -119,7 +119,7 @@ By filtering object-arrays, there is practically no condition that can't be form
 					
 				   Let's say you have an array of Orders, each one having a properties "city" and "amount". You have to filter all orders from "Sydney" having an amount smaller than "1000" OR any order with an amount bigger than 50000 ("city" does not care). Then you could do:<br><br>
 				  <code>
-							<b>var result = ordersArray.Where([<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{city: "Sydney", amount: SmallerThan(1001)},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{amount : biggerThan(49999)}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]);</b><br></code>
+							<b>var result = ordersArray.Where([<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{city: "Sydney", amount: SmallerThan(1001)},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{amount : GreaterThan(49999)}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]);</b><br></code>
 						</code><br>
 				 There is no limitation about the quantity of condition-objects you can pass.<br><br>
 		
@@ -184,13 +184,13 @@ PowerArray adds also some auxiliary functions to avoid writing the same snippets
 
 <ul>
       <li><b>To search for people called 'Sherlock' and also older than 33 years, use:</b><br>
-            <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33)});</code></br></br>
+            <code>var newArray = people.Where({name: 'Sherlock', age : pa.GreaterThan(33)});</code></br></br>
       </li>
       <li><b>To search for peoplecalled 'Sherlock', older than 33 years, and containing the characters 'H', 'l' in his lastname:</b><br>
-	  <code>var newArray = people.Where({name: 'Sherlock', age : pa.biggerThan(33), lastname : pa.Like
+	  <code>var newArray = people.Where({name: 'Sherlock', age : pa.GreaterThan(33), lastname : pa.Like
 		(['H','l'])});</code></br><br>
       </li>
-        <li><b>To repeat the last example, but searching for name and lastname case insensitive, use:</b><br>            <code>var newArray = people.Where({name: pa.LikeIgnoreCase('Sherlock'), age : pa.biggerThan(33), lastname : pa.LikeIgnoreCase(['H','l'])});</code></br></br>
+        <li><b>To repeat the last example, but searching for name and lastname case insensitive, use:</b><br>            <code>var newArray = people.Where({name: pa.LikeIgnoreCase('Sherlock'), age : pa.GreaterThan(33), lastname : pa.LikeIgnoreCase(['H','l'])});</code></br></br>
       </li>
 </ul>
 
@@ -201,14 +201,14 @@ consider the order of the filter conditions you provide
 <a name="StandardPaFunctions"></a>
 ###Auxiliar functions / Standard PA Functions
 PowerArray adds also some auxiliary functions (i call them Standard PA Functions) that can be used together with the [Where](#WhereFunction) function. The idea behind the auxiliar functions is to reduce the syntax complexity of the Where function, and to standarize many small tasks that normally are x times repeated in practically any JS project.
-When the power array library loads, it stores all standard functions under the pa object ("window.pa.FUNCTION_NAME" or simply "pa.FUNCTION_NAME") and if its possible, it creates a pointer for each function under the window object (allowing you for example to code <code>BiggerThan(something)</code> instead of <code>pa.BiggerThan(something)</code> or <code>window.pa.BiggerThan(something)</code>).<br>You'll get a warning on the console if a function could not be published directly in the window object, and if that happens, you HAVE to use the pa prefix.  
+When the power array library loads, it stores all standard functions under the pa object ("window.pa.FUNCTION_NAME" or simply "pa.FUNCTION_NAME") and if its possible, it creates a pointer for each function under the window object (allowing you for example to code <code>GreaterThan(something)</code> instead of <code>pa.GreaterThan(something)</code> or <code>window.pa.GreaterThan(something)</code>).<br>You'll get a warning on the console if a function could not be published directly in the window object, and if that happens, you HAVE to use the pa prefix.  
 
 #####Standard PA Functions list:
 <ul style="list-style:none">
 <table width="100%">
 <tr>
-	<td valign=top  colspan=2><b>BiggerThan</b>(value)<br>
-	Evaluate if the value of the property to be evaluated is bigger than the passed value.
+	<td valign=top  colspan=2><b>GreaterThan</b>(value)<br>
+	Evaluate if the value of the property to be evaluated is greater than the passed value.
 	</td>
 </tr>
 <tr>
@@ -224,7 +224,7 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 <tr>
 	<td valign=top >
-		Example</td><td valign=top ><code>var subset = someArray.Where({age : BiggerThan(18)})</code><br>Variable subset becomes an array of all people older than 18 years.</td>
+		Example</td><td valign=top ><code>var subset = someArray.Where({age : GreaterThan(18)})</code><br>Variable subset becomes an array of all people older than 18 years.</td>
 	</td>
 </tr>
 </table>
@@ -402,7 +402,9 @@ When the power array library loads, it stores all standard functions under the p
 </table><a name="InFunction"></a>
 <table width="100%">
 <tr>
-	<td valign=top  colspan=2><b>In</b>(list)<br></td>
+	<td valign=top colspan=2><b>In</b>(list)&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<b>In</b>(value1[,value2][,value3][,value4]......)<br>
+	Returns true if the affected value is present on the passed list or dynamic parameters.
+</td>
 </tr>
 <tr>
 	<td valign=top >
