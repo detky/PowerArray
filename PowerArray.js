@@ -1,222 +1,3 @@
-// JavaScript source code
-if (!Array.prototype.getPropertyFlat) {
-    Array.prototype.getPropertyFlat = function (property, keepOrder, includeDuplicates, includeUndefineds) { // jshint ignore:line
-        var array = this;
-        var result = [], t = array.length;
-        if (keepOrder === true) {
-            for (var i = 0; i < t; i++) {
-                if (includeDuplicates || result.indexOf(array[i][property]) === -1) {
-                    if (includeUndefineds === true || array[i][property] !== undefined) {
-                        result.push(array[i][property]);
-                    }
-                }
-            }
-        } else {
-            while (t--) {
-                if (includeDuplicates || result.indexOf(array[t][property]) === -1) {
-                    if (includeUndefineds === true || array[t][property] !== undefined) {
-                        result.push(array[t][property]);
-                    }
-                }
-            }
-        }
-        return result;
-    };
-}
-
-if (!Array.prototype.GetByProperty) {
-    Array.prototype.GetByProperty = function (valueToSearchFor) {// jshint ignore:line
-        /**
-         * This function, evaluates properties (or function results) over each object on an array, and answers with an
-         * array of the found elements that matches the specified condition. The condition is given by the parameters
-         * provided after position 2. The only fixed parameters are the objects array and the value to search for.
-         * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
-         *
-         *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
-         *      which answers with a collection of "people" objects, and each people have a property called "name".
-         *
-         *  To get an array of cars having a passenger called Paul, use as following:
-         *
-         *  var passengersNamedPaul = carsArray.getByProperty('Paul', 'getPassengers()','name');
-         *
-         * @param objectsArray
-         * @param valueToSearchFor
-         * @returns {Array}
-         */
-        var objectsArray = this;
-        var results = [];
-        var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
-        var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
-        for (io = 0; io < lo; io++) { //iterate objects array
-            var tmpObj = objectsArray[io];
-
-            for (ia = 1; ia < la; ia++) { //iterate throw arguments to get the right property. Start from 1, to exclude the objectsArray self
-                var arg = arguments[ia];
-                var isFunc = arg.substring(arg.length - 2) === "()";
-                var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
-                tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
-                if (ia + 1 === la && tmpObj === valueToSearchFor) {
-                    results.push(objectsArray[io]);
-                }
-            }
-        }
-        return results;
-    };
-}
-
-if (!Array.prototype.getIndexByProperty) {
-    Array.prototype.getIndexByProperty = function (valueToSearchFor) {// jshint ignore:line
-        /**
-         * This function, evaluates properties (or function results) over each object on an array, and answers with an
-         * array of the found elements that matches the specified condition. The condition is given by the parameters
-         * provided after position 2. The only fixed parameters are the objects array and the value to search for.
-         * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
-         *
-         *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
-         *      which answers with a collection of "people" objects, and each people have a property called "name".
-         *
-         *  To get an array of cars having a passenger called Paul, use as following:
-         *
-         *  var namedPaul = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
-         *
-         * @param objectsArray
-         * @param valueToSearchFor
-         * @returns {number}
-         */
-        var objectsArray = this;
-        //if (!objectsArray) {
-        //    return -1;
-        //}
-        var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
-        var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
-
-        for (io = 0; io < lo; io++) { //iterate objects array
-            var tmpObj = objectsArray[io];
-
-            for (ia = 1; ia < la; ia++) { //iterate throw arguments to get the right property. Start from 1, to exclude the objectsArray self
-                var arg = arguments[ia];
-                var isFunc = arg.substring(arg.length - 2) === "()";
-                var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
-                tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
-                // Converting comparison needed (e.g. string id vs integer id)
-                // ReSharper disable once CoercedEqualsUsing
-                if (ia + 1 === la && tmpObj == valueToSearchFor) { // jshint ignore:line
-                    return io;
-                }
-            }
-        }
-        return -1;
-    };
-}
-
-if (!Array.prototype.GetByProperty) {
-    Array.prototype.GetByProperty = function (valueToSearchFor) {// jshint ignore:line
-        /**
-         * This function, evaluates properties (or function results) over each object on an array, and answers with an
-         * array of the found elements that matches the specified condition. The condition is given by the parameters
-         * provided after position 2. The only fixed parameter is the value to search for.
-         * You can provide so many parameters as you want. Each added parameter means one level deeper to search for. For example:
-         *
-         *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
-         *      which answers with a collection of "people" objects, and each people have a property called "name".
-         *
-         *  To get an array of cars having a passenger called Paul, use as following:
-         *
-         *  var namedPaulPassengers = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
-         *
-         * @param objectsArray
-         * @param valueToSearchFor
-         * @returns {Array}
-         */
-        var objectsArray = this;
-        var results = [];
-        //if (!objectsArray) {
-        //    return results;
-        //}
-        var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
-        var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
-
-        for (io = 0; io < lo; io++) { //iterate objects array
-            var tmpObj = objectsArray[io];
-
-            for (ia = 1; ia < la; ia++) { //iterate throw arguments to get the right property. Start from 1, to exclude the objectsArray self
-                var arg = arguments[ia];
-                var isFunc = arg.substring(arg.length - 2) === "()";
-                var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
-                tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
-                if (ia + 1 === la && tmpObj === valueToSearchFor) {
-                    results.push(objectsArray[io]);
-                }
-            }
-        }
-        return results;
-    };
-}
-
-/*if (!Array.prototype.RunInWorker) {
- Array.prototype.RunInWorker = function (task, callback, keepOrder) {
- //var blobURL = URL.createObjectURL(new Blob([
- //    '(',
- //    function() {
- //        //Long-running work here
- //        var _array, _func, _len, l;
- //        //choto....puede q self en la siguiente linea este mal
- //        self.onmessage = function(paMessage) {
- //            switch (paMessage.action) {
- //            case pa.paEachParalellsHelper.actionKeys.Runeach:
- //                _array = paMessage.array;
- //                _func = paMessage.func;
- //                _len = _array.length;
- //                l = _len;
- //                while (l--) {
- //                    _func(this._array[l]);
- //                }
- //                self.postMessage({
- //                    event: pa.paEachParalellsHelper.eventKeys.RuneachDone
- //                });
- //                break;
- //            case pa.paEachParalellsHelper.actionKeys.TaskState:
- //                self.postMessage({
- //                    event: pa.paEachParalellsHelper.eventKeys.TaskState,
- //                    value: l * _len / 100
- //                });
- //                break;
- //            }
- //        };
- //    }.toString(),
- //    ')()'
- //], { type: 'application/javascript' }));
- //var w = new Worker(blobURL);
- var l = this.length;
- while (l--) {
- var w = new Worker("PowerArrayWorker.js");
- w.postMessage({
- //action: pa.paEachParalellsHelper.actionKeys.Runeach,
- array: this,
- func: task
- });
- //task.call(this[l], task);
- }
- if (callback) {
- callback();
- }
- return this;
- };
- }*/
-
-if (!Array.prototype.RunEach) {
-    Array.prototype.RunEach = function (task, callback) {// jshint ignore:line
-        var l = this.length;
-        while (l--) {
-            task(this[l]);
-        }
-        if (callback) {
-            callback();
-        }
-        return this;
-    };
-}
-
 window.pa = window.pa || {
     paEachParalellsHelper: {
         CheckParalellTaskStates: function (paralellId) {
@@ -488,16 +269,17 @@ window.pa = window.pa || {
                 } // _reference_equals()
             } // reference_equals()
         } // equals()
-    }, auxiliaryFunctions: {
-        Contains : function (value, enforce_properties_order, cyclic) {
+    },
+    auxiliaryFunctions: {
+        Contains: function (value, enforce_properties_order, cyclic) {
             return function (val) {
-                if(!val.paIsArray) {
+                if (!val.paIsArray) {
                     throw new Error("PowerArray error => parameter val passed to Contains function should be an array, only they can 'contain' something.");
                 }
                 var l = val.length, isIndexable = false;
                 var typeToEvaluate = typeof value;
 
-                switch(typeToEvaluate) {
+                switch (typeToEvaluate) {
                     case "number":
                     case "string":
                     case "boolean":
@@ -505,19 +287,19 @@ window.pa = window.pa || {
                         break;
                     default: //anything else
                         //duck type to exclude dates
-                        if(typeof value.getMonth === 'function') {
+                        if (typeof value.getMonth === 'function') {
                             isIndexable = true;
                             break;
                         }
                         isIndexable = false;
                         break;
                 }
-                if(isIndexable) {
+                if (isIndexable) {
                     return val.indexOf(value) > -1;
                 }
 
-                while(l--) {
-                    if(pa.paWhereHelper.equals(val[l],value,enforce_properties_order, cyclic)) {
+                while (l--) {
+                    if (pa.paWhereHelper.equals(val[l], value, enforce_properties_order, cyclic)) {
                         return true;
                     }
                 }
@@ -525,12 +307,12 @@ window.pa = window.pa || {
 
             };
         },
-        Between: function(from, to) {
-            if(to < from) {
+        Between: function (from, to) {
+            if (to < from) {
                 throw new Error("PowerArray error => parameters 'from' and 'to' passed to function Between are not valid. Parameter 'to' should be greater than from!");
             }
             return function (val) {
-                return val >= from && val <=to;
+                return val >= from && val <= to;
             };
         },
         BiggerThan: function (value) {
@@ -658,178 +440,332 @@ window.pa = window.pa || {
                 };
             }
         }
-    }
-};
+    },
+    prototypedFunctions_Array: {
+        getIndexByProperty: function (valueToSearchFor) {// jshint ignore:line
+            /**
+             * This function, evaluates properties (or function results) over each object on an array, and answers with an
+             * array of the found elements that matches the specified condition. The condition is given by the parameters
+             * provided after position 2. The only fixed parameters are the objects array and the value to search for.
+             * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
+             *
+             *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
+             *      which answers with a collection of "people" objects, and each people have a property called "name".
+             *
+             *  To get an array of cars having a passenger called Paul, use as following:
+             *
+             *  var namedPaul = findDistinctValuesOnObjectCollectionByProperty(theCarsCollection, 'Paul', 'getPassengers()','name');
+             *
+             * @param objectsArray
+             * @param valueToSearchFor
+             * @returns {number}
+             */
+            var objectsArray = this;
+            //if (!objectsArray) {
+            //    return -1;
+            //}
+            var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
+            var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
 
-if (!Array.prototype.RunEachParalell) {
-    Array.prototype.RunEachParalell = function (task, quantProcesses, callback) {// jshint ignore:line
-        if (!self.Worker) { //if no workers supported, switch to normal RunEach
-            return this.RunEach(task, this, callback);
-        }
-        var that = this, startFrom;
-        var paralellId = "RunEachParalell_" + Math.floor((Math.random() * 1000000000) + 1);
-        window.pa.paEachParalellsHelper.currentParalellIds[paralellId] = {
-            CompletedTasks: 0,
-            TotalProcesses: quantProcesses
-        };
+            for (io = 0; io < lo; io++) { //iterate objects array
+                var tmpObj = objectsArray[io];
 
-        var partsLength = parseInt(this.length / quantProcesses);
-        var bkpQuantProcesses = quantProcesses;
-        while (quantProcesses--) {
-            //for (i = 0; i < quantProcesses; i++) {
-            startFrom = bkpQuantProcesses - quantProcesses * partsLength;
-            //console.log("startFrom " + startFrom);
-            setTimeout(function () {
-                that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
-                    window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
-                    if (window.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
-                        if (callback) {
-                            callback();
+                for (ia = 1; ia < la; ia++) { //iterate throw arguments to get the right property. Start from 1, to exclude the objectsArray self
+                    var arg = arguments[ia];
+                    var isFunc = arg.substring(arg.length - 2) === "()";
+                    var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
+                    tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
+                    // Converting comparison needed (e.g. string id vs integer id)
+                    // ReSharper disable once CoercedEqualsUsing
+                    if (ia + 1 === la && tmpObj == valueToSearchFor) { // jshint ignore:line
+                        return io;
+                    }
+                }
+            }
+            return -1;
+        },
+        getPropertyFlat: function (property, keepOrder, includeDuplicates, includeUndefineds) { // jshint ignore:line
+            var array = this;
+            var result = [], t = array.length;
+            if (keepOrder === true) {
+                for (var i = 0; i < t; i++) {
+                    if (includeDuplicates || result.indexOf(array[i][property]) === -1) {
+                        if (includeUndefineds === true || array[i][property] !== undefined) {
+                            result.push(array[i][property]);
                         }
                     }
-                });
-            }, 0); // jshint ignore:line
-        }
-    };
-}
-
-if (!Array.prototype.paIsArray) {
-    Array.prototype.paIsArray = true;// jshint ignore:line
-}
-
-if (!Array.prototype.Sort) {
-    Array.prototype.Sort = function (sortConditions) { // jshint ignore:line
-        var realConditions = [];
-        var conditionType = typeof sortConditions;
-
-        switch (conditionType) {
-            case "string":
-                //This call, with a first parameter of type string, should be "ASC" or "DESC"
-                var condition = sortConditions.toUpperCase();
-                switch (condition) {
-                    case "ASC":
-                        return this.sort(function (a, b) {
-                            if (a < b) { return -1; } else if (a > b) { return 1; }
-                            return 0;
-                        });
-                    case "DESC":
-                        return this.sort(function (a, b) {
-                            if (a > b) { return -1; } else if (a < b) { return 1; }
-                            return 0;
-                        });
-                    case "DESCIGNORECASE":
-                        return this.sort(function (a, b) {
-                            return (a.toLowerCase().localeCompare(b.toLowerCase())) * -1;
-                        });
-                    case "ASCIGNORECASE":
-                        return this.sort(function (a, b) {
-                            return a.toLowerCase().localeCompare(b.toLowerCase());
-                        });
-                    default:
-                        throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function, we assume you have , Power for simple array. It can be Asc or Desc");
                 }
-                break;
-            case "object":
-
-                if(sortConditions instanceof RegExp) {
-                    throw new Error("PowerArray Error: Invalid sortConditions object. A RegExp is not allowed as Sort Criterion!");
-                }
-
-                if (!sortConditions) {
-                    if (sortConditions.hasOwnProperty('length')) {
-                        throw new Error("PowerArray Error: Invalid sortConditions object");
-                    }
-                }
-
-                for (var property in sortConditions) {
-                    if (sortConditions.hasOwnProperty(property)) {
-
-                        //transform the keys into a better object with properties Column and SortOrder
-                        var value = sortConditions[property].toUpperCase();
-
-                        switch (value) {
-                            case "ASC":
-                            case "DESC":
-                                break;
-                            default:
-                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
-                        }
-
-                        realConditions.push({
-                            column: property,
-                            sortDirection: value
-                        });
-                    }
-                }
-
-                return this.sort(function (a, b) {
-                    var result = 0, currentColumn, cycleValue;
-                    for (var i = 0, l = realConditions.length; i < l; i++) {
-                        cycleValue = 10 - i;
-                        currentColumn = realConditions[i].column;
-                        switch (realConditions[i].sortDirection) {
-                            case "ASC":
-                                if (a[currentColumn] < b[currentColumn]) {
-                                    result -= cycleValue;
-                                } else if (a[currentColumn] > b[currentColumn]) {
-                                    result += cycleValue;
-                                }
-                                break;
-                            case "DESC":
-                                if (a[currentColumn] < b[currentColumn]) {
-                                    result += cycleValue;
-                                } else if (a[currentColumn] > b[currentColumn]) {
-                                    result -= cycleValue;
-                                }
-                                break;
-                        }
-                    }
-                    return result;
-                });
-            case "undefined":
-                //No parameters passed, sorting by default
-                return this.sort();
-            case "function":
-                return this.sort(sortConditions); //simple forward to array.sort
-            default:
-                throw new Error("Unknown sortConditions object type (" + conditionType + ")");
-        }
-    };
-}
-
-if (!Array.prototype.Where) {
-    Array.prototype.Where = function (whereConditions, keepOrder) {// jshint ignore:line
-        var i, l = this.length, item, result = [];
-        if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
-            //If It's an object, but not an array, it's an eplicit object with N filters
-            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false);
-        } else {
-            //At this point, whereConditions could be a function (a custom function), an pa.EqualTo, OR an Array of condition-objects
-            if (whereConditions.paIsArray) {
-                //It's a conditions array
-                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true));
             } else {
-                //whereConditions it's a function. It could be a custom function on the pa standard EqualTo (that works
-                //different than any other standard function)
-                if (keepOrder) {
-                    for (i = 0; i < l; i++) {
-                        item = this[i];
-                        if (whereConditions(item)) {
-                            result.push(item);
-                        }
-                    }
-                } else {
-                    while (l--) {
-                        item = this[l];
-                        if (whereConditions(item)) {
-                            result.push(item);
+                while (t--) {
+                    if (includeDuplicates || result.indexOf(array[t][property]) === -1) {
+                        if (includeUndefineds === true || array[t][property] !== undefined) {
+                            result.push(array[t][property]);
                         }
                     }
                 }
             }
+            return result;
+        },
+        GetByProperty: function (valueToSearchFor) {// jshint ignore:line
+            /**
+             * This function, evaluates properties (or function results) over each object on an array, and answers with an
+             * array of the found elements that matches the specified condition. The condition is given by the parameters
+             * provided after position 2. The only fixed parameters are the objects array and the value to search for.
+             * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
+             *
+             *      let's say that you have a collection of "car" objects, having each car a function called "getPassengers"
+             *      which answers with a collection of "people" objects, and each people have a property called "name".
+             *
+             *  To get an array of cars having a passenger called Paul, use as following:
+             *
+             *  var passengersNamedPaul = carsArray.getByProperty('Paul', 'getPassengers()','name');
+             *
+             * @param objectsArray
+             * @param valueToSearchFor
+             * @returns {Array}
+             */
+            var objectsArray = this;
+            var results = [];
+            var ia, la = arguments.length; // ia = i for arguments; la = length for arguments
+            var io, lo = objectsArray.length; // io = i for objects; lo = length for objects
+            for (io = 0; io < lo; io++) { //iterate objects array
+                var tmpObj = objectsArray[io];
+
+                for (ia = 1; ia < la; ia++) { //iterate throw arguments to get the right property. Start from 1, to exclude the objectsArray self
+                    var arg = arguments[ia];
+                    var isFunc = arg.substring(arg.length - 2) === "()";
+                    var argName = (isFunc) ? arg.substr(0, arg.length - 2) : arg;
+                    tmpObj = (isFunc) ? tmpObj[argName]() : tmpObj[arg];
+                    if (ia + 1 === la && tmpObj === valueToSearchFor) {
+                        results.push(objectsArray[io]);
+                    }
+                }
+            }
+            return results;
+        },
+        RunEach: function (task, callback) {// jshint ignore:line
+            var l = this.length;
+            while (l--) {
+                task(this[l]);
+            }
+            if (callback) {
+                callback();
+            }
+            return this;
+        },
+        RunEachParalell: function (task, quantProcesses, callback) {// jshint ignore:line
+            if (!self.Worker) { //if no workers supported, switch to normal RunEach
+                return this.RunEach(task, this, callback);
+            }
+            var that = this, startFrom;
+            var paralellId = "RunEachParalell_" + Math.floor((Math.random() * 1000000000) + 1);
+            window.pa.paEachParalellsHelper.currentParalellIds[paralellId] = {
+                CompletedTasks: 0,
+                TotalProcesses: quantProcesses
+            };
+
+            var partsLength = parseInt(this.length / quantProcesses);
+            var bkpQuantProcesses = quantProcesses;
+            while (quantProcesses--) {
+                //for (i = 0; i < quantProcesses; i++) {
+                startFrom = bkpQuantProcesses - quantProcesses * partsLength;
+                //console.log("startFrom " + startFrom);
+                setTimeout(function () {
+                    that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
+                        window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
+                        if (window.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
+                            if (callback) {
+                                callback();
+                            }
+                        }
+                    });
+                }, 0); // jshint ignore:line
+            }
+        }, RunInWorker: function (task, callback) {
+            var blobURL = URL.createObjectURL(new Blob([
+                '(',
+                function () {
+                    var _array, _func, _len, l;
+                    //...puede q self en la siguiente linea este mal
+                    self.onmessage = function (paMessage) {
+                        switch (paMessage.action) {
+                            case pa.paEachParalellsHelper.actionKeys.Runeach:
+                                _array = paMessage.array;
+                                _func = paMessage.func;
+                                _len = _array.length;
+                                l = _len;
+                                while (l--) {
+                                    _func(this._array[l]);
+                                }
+                                self.postMessage({
+                                    event: pa.paEachParalellsHelper.eventKeys.RuneachDone
+                                });
+                                break;
+                            case pa.paEachParalellsHelper.actionKeys.TaskState:
+                                self.postMessage({
+                                    event: pa.paEachParalellsHelper.eventKeys.TaskState,
+                                    value: l * _len / 100
+                                });
+                                break;
+                        }
+                    };
+                }.toString(),
+                ')()'
+            ], {type: 'application/javascript'}));
+            var w = new Worker(blobURL);
+            w.postMessage({
+                array: this,
+                func: task
+            });
+
+
+            if (callback) {
+                callback();
+            }
+            return this;
+        },
+        Sort: function (sortConditions) { // jshint ignore:line
+            var realConditions = [];
+            var conditionType = typeof sortConditions;
+
+            switch (conditionType) {
+                case "string":
+                    //This call, with a first parameter of type string, should be "ASC" or "DESC"
+                    var condition = sortConditions.toUpperCase();
+                    switch (condition) {
+                        case "ASC":
+                            return this.sort(function (a, b) {
+                                if (a < b) {
+                                    return -1;
+                                } else if (a > b) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        case "DESC":
+                            return this.sort(function (a, b) {
+                                if (a > b) {
+                                    return -1;
+                                } else if (a < b) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        case "DESCIGNORECASE":
+                            return this.sort(function (a, b) {
+                                return (a.toLowerCase().localeCompare(b.toLowerCase())) * -1;
+                            });
+                        case "ASCIGNORECASE":
+                            return this.sort(function (a, b) {
+                                return a.toLowerCase().localeCompare(b.toLowerCase());
+                            });
+                        default:
+                            throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function, we assume you have , Power for simple array. It can be Asc or Desc");
+                    }
+                    break;
+                case "object":
+
+                    if (sortConditions instanceof RegExp) {
+                        throw new Error("PowerArray Error: Invalid sortConditions object. A RegExp is not allowed as Sort Criterion!");
+                    }
+
+                    if (!sortConditions) {
+                        if (sortConditions.hasOwnProperty('length')) {
+                            throw new Error("PowerArray Error: Invalid sortConditions object");
+                        }
+                    }
+
+                    for (var property in sortConditions) {
+                        if (sortConditions.hasOwnProperty(property)) {
+
+                            //transform the keys into a better object with properties Column and SortOrder
+                            var value = sortConditions[property].toUpperCase();
+
+                            switch (value) {
+                                case "ASC":
+                                case "DESC":
+                                    break;
+                                default:
+                                    throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
+                            }
+
+                            realConditions.push({
+                                column: property,
+                                sortDirection: value
+                            });
+                        }
+                    }
+
+                    return this.sort(function (a, b) {
+                        var result = 0, currentColumn, cycleValue;
+                        for (var i = 0, l = realConditions.length; i < l; i++) {
+                            cycleValue = 10 - i;
+                            currentColumn = realConditions[i].column;
+                            switch (realConditions[i].sortDirection) {
+                                case "ASC":
+                                    if (a[currentColumn] < b[currentColumn]) {
+                                        result -= cycleValue;
+                                    } else if (a[currentColumn] > b[currentColumn]) {
+                                        result += cycleValue;
+                                    }
+                                    break;
+                                case "DESC":
+                                    if (a[currentColumn] < b[currentColumn]) {
+                                        result += cycleValue;
+                                    } else if (a[currentColumn] > b[currentColumn]) {
+                                        result -= cycleValue;
+                                    }
+                                    break;
+                            }
+                        }
+                        return result;
+                    });
+                case "undefined":
+                    //No parameters passed, sorting by default
+                    return this.sort();
+                case "function":
+                    return this.sort(sortConditions); //simple forward to array.sort
+                default:
+                    throw new Error("Unknown sortConditions object type (" + conditionType + ")");
+            }
+        },
+        Where: function (whereConditions, keepOrder) {// jshint ignore:line
+            var i, l = this.length, item, result = [];
+            if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
+                //If It's an object, but not an array, it's an eplicit object with N filters
+                result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false);
+            } else {
+                //At this point, whereConditions could be a function (a custom function), an pa.EqualTo, OR an Array of condition-objects
+                if (whereConditions.paIsArray) {
+                    //It's a conditions array
+                    result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true));
+                } else {
+                    //whereConditions it's a function. It could be a custom function on the pa standard EqualTo (that works
+                    //different than any other standard function)
+                    if (keepOrder) {
+                        for (i = 0; i < l; i++) {
+                            item = this[i];
+                            if (whereConditions(item)) {
+                                result.push(item);
+                            }
+                        }
+                    } else {
+                        while (l--) {
+                            item = this[l];
+                            if (whereConditions(item)) {
+                                result.push(item);
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
         }
-        return result;
-    };
+    }
+};
+
+if (!Array.prototype.paIsArray) {
+    Array.prototype.paIsArray = true;// jshint ignore:line
 }
 
 (function () {
@@ -842,7 +778,22 @@ if (!Array.prototype.Where) {
             if (!window[p]) {
                 window[p] = obj[p];
             } else {
-                console.warn('property window.' + p + ' already exists. PowerArrayFunction pa.' + p + ' cannot register this function on window scope. However, you can still using it by calling "pa.' + p + '"');
+                console.warn('PowerArray warning! => property window.' + p + ' already exists. PowerArrayFunction pa.' + p + ' cannot register this function on window scope. However, you can still using it by calling "pa.' + p + '"');
+            }
+        }
+    }
+    //Register all Array prototype functions to make them accessible to each array.
+    //If function name is already is already taken, warn the user and describe alternative usage way.
+    var functionsToAttach = window.pa.prototypedFunctions_Array;
+    for (var currentFunctionName in functionsToAttach) {
+        if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
+            if (Array.prototype.hasOwnProperty(currentFunctionName)) {
+                console.warn('PowerArray warning! => Array Prototype was modified by other library, and the function name ' + currentFunctionName +
+                ' is already in use. PowerArray will NOT override the prototype method. However, you can still using the function ' + currentFunctionName +
+                ' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
+            } else {
+                //function name is free, go on:
+                Array.prototype[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
             }
         }
     }
