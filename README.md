@@ -11,8 +11,37 @@ Dependencies : None.
 ####What does this script changes on the Array prototype? Is that really dangerous?
 
 Basically, PowerArray loads everything he needs to work on an own object called pa (window.pa), as other frameworks do. Inside of this pa object there are many functions, some of them designed to work attached to objects with Array prototype, some others designed to operate globally.<br>The initialization process checks if the name of each of such functions is in use before anything else. Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. If any was already occupated by other framework, library or whathever, PowerArray do not change anything, just sends a warning to the console.
+The only consequence for you would be a change on the syntax when using that specific PowerArray function:
 
-The only consequence for you would be that to use that specific PowerArray function you have to use a bit different Syntax:<br><br><ul><li>For global functions (as BiggerThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa."</li><li>For prototype functions (Where, Sort, findByProperty, findIndexByProperty, etc.)
+<ul>
+	<li>
+		For global functions (as all auxiliary functions BiggerThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
+		<table>
+			<tr>
+				<td>use</td>
+				<td><code>var result = someArray.Where({ priority: <font color=red>pa.</font>SmallerThan(5)});</code></td>
+			</tr>
+			<tr>
+				<td>instead of</td>
+				<td><code>var result = someArray.Where({ priority: SmallerThan(5)});</code></td>
+			</tr>
+		</table>
+	</li>
+	
+	<li>
+		For prototype functions (Where, Sort, findByProperty, findIndexByProperty, etc.), you have to envolve the array in which you want to make an operation with a function call. For Example:<br>
+		<table>
+			<tr>
+				<td>use</td>
+				<td><code>var result = <font color=red>pa(</font>someArray<font color=red>)</font>.Where({ categoryId : 33});</code></td>
+			</tr>
+			<tr>
+				<td>instead of</td>
+				<td><code>var result = someArray.Where({ categoryId : 33});</code></td>
+			</tr>
+		</table>
+	</li>
+</ul>
 
 
 ###What are the benefits of using this library?

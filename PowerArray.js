@@ -489,6 +489,50 @@ window.pa = window.pa || {
             } // reference_equals()
         } // equals()
     }, auxiliaryFunctions: {
+        Contains : function (value, enforce_properties_order, cyclic) {
+            return function (val) {
+                if(!val.paIsArray) {
+                    throw new Error("PowerArray error => parameter val passed to Contains function should be an array, only they can 'contain' something.");
+                }
+                var l = val.length, isIndexable = false;
+                var typeToEvaluate = typeof value;
+
+                switch(typeToEvaluate) {
+                    case "number":
+                    case "string":
+                    case "boolean":
+                        isIndexable = true;
+                        break;
+                    default: //anything else
+                        //duck type to exclude dates
+                        if(typeof value.getMonth === 'function') {
+                            isIndexable = true;
+                            break;
+                        }
+                        isIndexable = false;
+                        break;
+                }
+                if(isIndexable) {
+                    return val.indexOf(value) > -1;
+                }
+
+                while(l--) {
+                    if(pa.paWhereHelper.equals(val[l],value,enforce_properties_order, cyclic)) {
+                        return true;
+                    }
+                }
+                return false;
+
+            };
+        },
+        Between: function(from, to) {
+            if(to < from) {
+                throw new Error("PowerArray error => parameters 'from' and 'to' passed to function Between are not valid. Parameter 'to' should be greater than from!");
+            }
+            return function (val) {
+                return val >= from && val <=to;
+            };
+        },
         BiggerThan: function (value) {
             return function (val) {
                 return val > value;
@@ -742,7 +786,9 @@ if (!Array.prototype.Sort) {
                     }
                     return result;
                 });
-
+            case "undefined":
+                //No parameters passed, sorting by default
+                return this.sort();
             case "function":
                 return this.sort(sortConditions); //simple forward to array.sort
             default:
