@@ -8,10 +8,10 @@ By loading the library, all arrays become many extra functions that are designed
 Current File Size: <7KB. <br>
 Dependencies : None. 
 
-####What does this script changes on the Array prototype? Is that really dangerous?
+####What does this script changes on the Array prototype? Is that really dangerous?</a>
 
-Basically, PowerArray loads everything he needs to work on an own object called pa (window.pa), as other frameworks do. Inside of this pa object there are many functions, some of them designed to work attached to objects with Array prototype, some others designed to operate globally.<br>The initialization process checks if the name of each of such functions is in use before anything else. Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. If any was already occupated by other framework, library or whathever, PowerArray do not change anything, just sends a warning to the console.
-The only consequence for you would be a change on the syntax when using that specific PowerArray function:
+Basically, PowerArray loads everything he needs to work on his own object called pa (window.pa), as other frameworks do. Inside of this pa object there are many functions, some of them designed to work attached to objects with Array prototype, and others designed to operate globally.<br>The initialization process, checks if the name of each of such functions is in use before modifying anything. Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. If any was already occupated by other framework, library or whatever, PowerArray do not change anything, just sends a warning to the console.
+The only consequence will be a change on the syntax when using that specific PowerArray function:
 
 <ul>
 	<li>
@@ -42,6 +42,8 @@ The only consequence for you would be a change on the syntax when using that spe
 		</table>
 	</li>
 </ul>
+
+Considering all that, if you load the PowerArray library as last in your html, the risk is strongly reduced. If there is any problem the solution will be always the same: add "pa." as prefix, or surround your array with function "pa()" before use it. 
 
 
 ###What are the benefits of using this library?
