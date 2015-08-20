@@ -447,7 +447,20 @@ When the power array library loads, it stores all standard functions under the p
 	</td>
 </tr>
 </table>
-<br>//TODO: document missing functions: NotLIke, NotLikeIgnoreCase, NotIn, NotInIgnoreCase
+
+		<br>TODO: document missing functions: <ul>
+		<li>Contains</li>
+		<li>Between</li>
+		<li>NotBetween</li>
+		<li>EndsWith</li>
+		<li>StartsWith</li>
+		<li>NotLike</li>
+		<li>NotLikeIgnoreCase</li>
+	</ul>
+	<!--TODO: Build functions:
+		--NotContains
+		--
+	-->
 </ul>
 
 
