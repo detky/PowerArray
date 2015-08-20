@@ -1,5 +1,5 @@
 /// <reference path="PowerArray.js" />
-describe('PowerArrayTests', function () {
+fdescribe('PowerArrayTests', function () {
 
     function createDummies(quantity) {
         var result = [];
@@ -166,23 +166,23 @@ describe('PowerArrayTests', function () {
             var autos = [
                 {
                     color: 'red', theFunc: function () {
-                        return this.color;
-                    }
+                    return this.color;
+                }
                 },
                 {
                     color: 'red', theFunc: function () {
-                        return this.color;
-                    }
+                    return this.color;
+                }
                 },
                 {
                     color: 'blue', theFunc: function () {
-                        return this.color;
-                    }
+                    return this.color;
+                }
                 },
                 {
                     color: 'yellow', theFunc: function () {
-                        return this.color;
-                    }
+                    return this.color;
+                }
                 }
             ];
 
@@ -192,6 +192,56 @@ describe('PowerArrayTests', function () {
             expect(result.length).toBe(1);
             result = autos.GetByProperty('purpure', 'theFunc()');
             expect(result.length).toBe(0);
+        });
+
+    });
+
+    describe('First (Wrapper from Where function)', function() {
+
+        it('It should take less time to get a First() item, than the complete results using Where()', function() {
+            var elements = createDummies(500);
+            var tmp;
+            tmp = window.performance.now();
+            elements.Where({
+                id : EndsWith("75")
+            });
+            var whereTime = window.performance.now() - tmp;
+            //console.log("WhereTime : " + whereTime);
+            tmp = window.performance.now();
+            elements.First({
+                id : EndsWith("75")
+            });
+            var firstTime = window.performance.now() - tmp;
+            //console.log("firstTime : " + firstTime);
+            expect(whereTime).toBeGreaterThan(firstTime);
+        });
+
+        it('should return the first item in the collection if no parameters passed', function(){
+            //act;
+            var elements = createDummies(500).First();
+            //assert
+            expect(elements).toBeDefined();
+            expect(elements.id).toBe(0); //createDummies set first id to 0
+        });
+
+        it('should return first string', function() {
+            //arrange
+            var items = [0,2,4,83092,"a"]
+            //act
+            var elements = items.First();
+            //assert
+            expect(elements).toBeDefined();
+            expect(elements).toBe(0); //createDummies set first id to 0
+        });
+
+        it('should return undefined', function() {
+            //arrange
+            var items = [];
+            //act
+            var elements = items.First();
+            //assert
+            expect(elements).toBeUndefined();
+
         });
 
     });
@@ -674,9 +724,9 @@ describe('PowerArrayTests', function () {
                 it('should work in the same way if receiving many parameters instead of an array', function () {
                     //arrange
                     var items = [
-                          { id: 1, name: 'aa' },
-                          { id: "1", name: 'bbb' },
-                          { id: 2, name: 'ccc' }
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
                     ];
                     var items2 = createDummies(500);
                     //act
@@ -715,20 +765,20 @@ describe('PowerArrayTests', function () {
                         { id: 1, name: 'aa' },
                         {
                             id: "1", name: 'bbb'
-                            },
+                        },
                         {
                             id: 2, name: 'ccc'
-                            }
-                        ];
+                        }
+                    ];
                     //act
                     var result = items.Where({ id: pa.NotIn(2, 4) });
                     var result2 = items.Where({ id: pa.NotIn(1, 3) });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
-                        //The comparison for this case is made by ===, because of that
-                        //it's not expected that the second item (id: "1") matches
-                        expect(result2.length).toBe(2);
+                    //The comparison for this case is made by ===, because of that
+                    //it's not expected that the second item (id: "1") matches
+                    expect(result2.length).toBe(2);
                 });
                 it('should compare property with an array of primitives of elements', function () {
                     //arrange
