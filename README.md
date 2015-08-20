@@ -448,7 +448,7 @@ When the power array library loads, it stores all standard functions under the p
 </tr>
 </table>
 
-		<br>TODO: document missing functions: <ul>
+		<br>TODO: document auxiliary functions: <ul>
 		<li>Contains</li>
 		<li>Between</li>
 		<li>NotBetween</li>
@@ -457,10 +457,16 @@ When the power array library loads, it stores all standard functions under the p
 		<li>NotLike</li>
 		<li>NotLikeIgnoreCase</li>
 	</ul>
-	<!--TODO: Build functions:
-		--NotContains
-		--
-	-->
+	<br>TODO: document prototyped functions: <ul>
+		<li>Sort</li>
+		<li>First</li>
+		<li>RunEach</li>
+		<li>RunEachParalell</li>
+		<li>GetByProperty</li>
+		<li>getPropertyFlat</li>
+		<li>getIndexByProperty</li>
+	</ul>
+	<!--TODO: Build functions: NotContains-->
 </ul>
 
 
