@@ -456,6 +456,7 @@ When the power array library loads, it stores all standard functions under the p
 		<li>StartsWith</li>
 		<li>NotLike</li>
 		<li>NotLikeIgnoreCase</li>
+		<li>IsUndefined</li>
 	</ul>
 	<br>TODO: document prototyped functions: <ul>
 		<li>Sort</li>
