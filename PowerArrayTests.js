@@ -1,5 +1,5 @@
 /// <reference path="PowerArray.js" />
-fdescribe('PowerArrayTests', function () {
+describe('PowerArrayTests', function () {
 
     function createDummies(quantity) {
         var result = [];
@@ -11,76 +11,6 @@ fdescribe('PowerArrayTests', function () {
             });
         }
         return result;
-    }
-
-    function createExtractFromFunctionsDescriptor () {
-        return  [
-            {
-                Name: 'In',
-                Targets: [
-                    {
-                        TargetTypes: [
-                            window.pa.utils.DataTypes.ArrayOfPrimitives,
-                            window.pa.utils.DataTypes.String,
-                            window.pa.utils.DataTypes.Number,
-                            window.pa.utils.DataTypes.Date
-                        ],
-                        Overloads: [
-                            {
-                                Parameters : [
-                                    {
-                                        Name: 'list',
-                                        Type: window.pa.utils.DataTypes.ArrayOfPrimitives,
-                                        Example: '.In(list)'
-                                    }
-                                ]
-                            },
-                            {
-                                Parameters : [
-                                    {
-                                        Name: 'value',
-                                        Type: 'any',
-                                        Example: '.In(value0, value1, value2, value3, etc.)'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                Name: 'NotIn',
-                Targets: [
-                    {
-                        TargetTypes: [
-                            window.pa.utils.DataTypes.ArrayOfPrimitives,
-                            window.pa.utils.DataTypes.String,
-                            window.pa.utils.DataTypes.Number,
-                            window.pa.utils.DataTypes.Date
-                        ],
-                        Overloads: [
-                            {
-                                Parameters: [
-                                    {
-                                        Name: 'list',
-                                        Type: window.pa.utils.DataTypes.ArrayOfPrimitives,
-                                        Example: '.NotIn(list)'
-                                    }
-                                ]
-                            },
-                            {
-                                Parameters: [
-                                    {
-                                        Name: 'value',
-                                        Type: 'any',
-                                        Example: '.NotIn(value0, value1, value2, value3, etc.)'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }];
     }
 
     function createComplexDummies() {
@@ -102,22 +32,22 @@ fdescribe('PowerArrayTests', function () {
                     {
                         "category": "JavaScript",
                         "tests": [
-                            {"name": "One", "score": 63},
-                            {"name": "Two", "score": 63}
+                            { "name": "One", "score": 63 },
+                            { "name": "Two", "score": 63 }
                         ]
                     },
                     {
                         "category": "C#",
                         "tests": [
-                            {"name": "One", "score": 51},
-                            {"name": "Two", "score": 93}
+                            { "name": "One", "score": 51 },
+                            { "name": "Two", "score": 93 }
                         ]
                     },
                     {
                         "category": "Node.js",
                         "tests": [
-                            {"name": "One", "score": 70},
-                            {"name": "Two", "score": 51}
+                            { "name": "One", "score": 70 },
+                            { "name": "Two", "score": 51 }
                         ]
                     }
                 ]
@@ -139,22 +69,22 @@ fdescribe('PowerArrayTests', function () {
                     {
                         "category": "JavaScript",
                         "tests": [
-                            {"name": "One", "score": 53},
-                            {"name": "Two", "score": 89}
+                            { "name": "One", "score": 53 },
+                            { "name": "Two", "score": 89 }
                         ]
                     },
                     {
                         "category": "C#",
                         "tests": [
-                            {"name": "One", "score": 55},
-                            {"name": "Two", "score": 66}
+                            { "name": "One", "score": 55 },
+                            { "name": "Two", "score": 66 }
                         ]
                     },
                     {
                         "category": "Node.js",
                         "tests": [
-                            {"name": "One", "score": 67},
-                            {"name": "Two", "score": 60}
+                            { "name": "One", "score": 67 },
+                            { "name": "Two", "score": 60 }
                         ]
                     }
                 ]
@@ -177,22 +107,22 @@ fdescribe('PowerArrayTests', function () {
                     {
                         "category": "JavaScript",
                         "tests": [
-                            {"name": "One", "score": 100},
-                            {"name": "Two", "score": 85}
+                            { "name": "One", "score": 100 },
+                            { "name": "Two", "score": 85 }
                         ]
                     },
                     {
                         "category": "C#",
                         "tests": [
-                            {"name": "One", "score": 56},
-                            {"name": "Two", "score": 97}
+                            { "name": "One", "score": 56 },
+                            { "name": "Two", "score": 97 }
                         ]
                     },
                     {
                         "category": "Node.js",
                         "tests": [
-                            {"name": "One", "score": 51},
-                            {"name": "Two", "score": 68}
+                            { "name": "One", "score": 51 },
+                            { "name": "Two", "score": 68 }
                         ]
                     }
                 ]
@@ -214,22 +144,22 @@ fdescribe('PowerArrayTests', function () {
                     {
                         "category": "JavaScript",
                         "tests": [
-                            {"name": "One", "score": 73},
-                            {"name": "Two", "score": 69}
+                            { "name": "One", "score": 73 },
+                            { "name": "Two", "score": 69 }
                         ]
                     },
                     {
                         "category": "C#",
                         "tests": [
-                            {"name": "One", "score": 77},
-                            {"name": "Two", "score": 89}
+                            { "name": "One", "score": 77 },
+                            { "name": "Two", "score": 89 }
                         ]
                     },
                     {
                         "category": "Node.js",
                         "tests": [
-                            {"name": "One", "score": 69},
-                            {"name": "Two", "score": 96}
+                            { "name": "One", "score": 69 },
+                            { "name": "Two", "score": 96 }
                         ]
                     }
                 ]
@@ -251,10 +181,10 @@ fdescribe('PowerArrayTests', function () {
 
     describe('Sort', function () {
         var elements = [
-            {id: 1, name: 'aac', group: 'b'},
-            {id: 4, name: 'aaa', group: 'c'},
-            {id: 10, name: 'baa', group: 'c'},
-            {id: 5, name: 'aac', group: 'c'}
+            { id: 1, name: 'aac', group: 'b' },
+            { id: 4, name: 'aaa', group: 'c' },
+            { id: 10, name: 'baa', group: 'c' },
+            { id: 5, name: 'aac', group: 'c' }
         ];
 
         it('Should sort by 1 property Descending', function () {
@@ -375,7 +305,7 @@ fdescribe('PowerArrayTests', function () {
     describe('GetByProperty', function () {
 
         it('should find the 3 red elements', function () {
-            var autos = [{id: 1, color: 'red'}, {id: 2, color: 'red'}, {id: 3, color: 'blue'}, {color: 'red'}];
+            var autos = [{ id: 1, color: 'red' }, { id: 2, color: 'red' }, { id: 3, color: 'blue' }, { color: 'red' }];
 
             var result = autos.GetByProperty('red', 'color');
 
@@ -389,23 +319,23 @@ fdescribe('PowerArrayTests', function () {
             var autos = [
                 {
                     color: 'red', theFunc: function () {
-                    return this.color;
-                }
+                        return this.color;
+                    }
                 },
                 {
                     color: 'red', theFunc: function () {
-                    return this.color;
-                }
+                        return this.color;
+                    }
                 },
                 {
                     color: 'blue', theFunc: function () {
-                    return this.color;
-                }
+                        return this.color;
+                    }
                 },
                 {
                     color: 'yellow', theFunc: function () {
-                    return this.color;
-                }
+                        return this.color;
+                    }
                 }
             ];
 
@@ -471,28 +401,13 @@ fdescribe('PowerArrayTests', function () {
 
     describe('Where', function () {
         describe('WhereCondition-Object with evaluation of deep nested objects', function () {
-
-            it('should find the corresponding element in a nested object condition set', function() {
-                //arrange
-                var elements = createExtractFromFunctionsDescriptor();
-
-                //act
-                var targets = elements.Where({
-                    Name: 'In',
-                    Targets : {TargetTypes : pa.Contains(window.pa.utils.DataTypes.Number)}
-                });
-
-                //assert
-                expect(targets.length).toBe(1);
-            });
-
             it('should find an item by filtering by a sub-object at level 2', function () {
                 //arrange
                 var elements = createComplexDummies();
                 //act
 
-                var result = elements.Where({favorites: {color: 'Red'}});
-                var result2 = elements.Where({favorites: {color: 'Blue'}});
+                var result = elements.Where({ favorites: { color: 'Red' } });
+                var result2 = elements.Where({ favorites: { color: 'Blue' } });
                 //assert
                 expect(result).toBeDefined();
                 expect(result.length).toBe(1);
@@ -509,7 +424,7 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createComplexDummies();
                 //act
 
-                var result = elements.Where({skills: {category: 'JavaScript'}});
+                var result = elements.Where({ skills: { category: 'JavaScript' } });
                 //assert
                 expect(result).toBeDefined();
                 expect(result.length).toBe(4);
@@ -521,13 +436,13 @@ fdescribe('PowerArrayTests', function () {
 
                 //act
                 var result = elements.Where({
-                        skills: {
-                            category: 'JavaScript',
-                            tests : {
-                                name : 'One',
-                                score : 100
-                            }
+                    skills: {
+                        category: 'JavaScript',
+                        tests: {
+                            name: 'One',
+                            score: 100
                         }
+                    }
                 });
 
                 //assert
@@ -545,13 +460,14 @@ fdescribe('PowerArrayTests', function () {
                 var result = elements.Where({
                     skills: {
                         category: 'JavaScript',
-                        tests : {
-                            name : 'One',
-                            score : pa.GreaterThan(70)
+                        tests: {
+                            name: 'One',
+                            score: pa.GreaterThan(70)
                         }
                     }
                 });
 
+                console.log(result[0].first + " " + result[0].last);
                 //assert
                 expect(result).toBeDefined();
                 expect(result.length).toBe(2);
@@ -561,8 +477,8 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createComplexDummies();
                 //act
 
-                var result = elements.Where({favorites: {color: pa.Like("e")}});
-                var result2 = elements.Where({favorites: {color: pa.Like("h")}});
+                var result = elements.Where({ favorites: { color: pa.Like("e") } });
+                var result2 = elements.Where({ favorites: { color: pa.Like("h") } });
                 //assert
                 expect(result).toBeDefined();
                 expect(result.length).toBe(4);
@@ -575,7 +491,7 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createComplexDummies();
                 //act
 
-                var result = elements.Where([{favorites: {color: 'Red'}}, {favorites: {color: 'White'}}]);
+                var result = elements.Where([{ favorites: { color: 'Red' } }, { favorites: { color: 'White' } }]);
 
                 //assert
                 expect(result).toBeDefined();
@@ -586,8 +502,8 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createComplexDummies();
                 //act
 
-                var result = elements.Where([{favorites: {color: 'Red'}}, {favorites: {color: 'White'}}]);
-                var result2 = elements.Where({favorites: {color: pa.In('Red','White')}});
+                var result = elements.Where([{ favorites: { color: 'Red' } }, { favorites: { color: 'White' } }]);
+                var result2 = elements.Where({ favorites: { color: pa.In('Red', 'White') } });
 
                 //assert
                 expect(result).toBeDefined();
@@ -606,9 +522,9 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createDummies(10);
 
                 //act
-                var result = elements.Where([{id: 3}, {id: pa.In([7, 9])}], false);
-                var result2 = elements.Where([{id: 3}, {id: pa.In([7, 9])}], true);
-                var result3 = elements.Where([{id: 13}, {id: pa.In([27, 19])}], true);
+                var result = elements.Where([{ id: 3 }, { id: pa.In([7, 9]) }], false);
+                var result2 = elements.Where([{ id: 3 }, { id: pa.In([7, 9]) }], true);
+                var result3 = elements.Where([{ id: 13 }, { id: pa.In([27, 19]) }], true);
 
                 //assert
                 expect(result).toBeDefined();
@@ -624,7 +540,7 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createDummies(10);
 
                 //act
-                var result3 = elements.Where([{id: 13}, {id: pa.In([27, 19])}], true);
+                var result3 = elements.Where([{ id: 13 }, { id: pa.In([27, 19]) }], true);
 
                 //assert
                 expect(result3).toBeDefined();
@@ -635,8 +551,8 @@ fdescribe('PowerArrayTests', function () {
                 var elements = createDummies(10);
 
                 //act
-                var result = elements.Where([{id: 3}, {id: pa.In([7, 9, 3])}], true);
-                var result2 = elements.Where([{id: 3}, {id: pa.In([7, 9, 3])}], false);
+                var result = elements.Where([{ id: 3 }, { id: pa.In([7, 9, 3]) }], true);
+                var result2 = elements.Where([{ id: 3 }, { id: pa.In([7, 9, 3]) }], false);
 
                 //assert
                 expect(result).toBeDefined();
@@ -647,20 +563,20 @@ fdescribe('PowerArrayTests', function () {
         });
         describe('passing a single primitive argument to where', function () {
             it('should find an exact object, comparing using === ', function () {
-                var elements = [{id: 1, name: 'peter', lastname: 'pan'}, {id: 2, name: 'paul', lastname: 'newman'}];
-                var result = elements.Where({name: 'peter'}, true);
-                var result2 = elements.Where({name: 'peter'}, false);
+                var elements = [{ id: 1, name: 'peter', lastname: 'pan' }, { id: 2, name: 'paul', lastname: 'newman' }];
+                var result = elements.Where({ name: 'peter' }, true);
+                var result2 = elements.Where({ name: 'peter' }, false);
                 expect(result).toBeDefined();
                 expect(result.length).toBe(1);
                 expect(result2).toBeDefined();
                 expect(result2.length).toBe(1);
             });
             it('should find an exact object, comparing using === ', function () {
-                var elements = [{id: 1, name: 'peter', lastname: 'pan'}, {id: 2, name: 'paul', lastname: 'newman'}];
-                var result = elements.Where({name: 'peter', lastname: 'newman'}, true);
-                var result2 = elements.Where({name: 'paul', lastname: 'newman'}, true);
-                var result3 = elements.Where({name: 'peter', lastname: 'newman'}, false);
-                var result4 = elements.Where({name: 'paul', lastname: 'newman'}, false);
+                var elements = [{ id: 1, name: 'peter', lastname: 'pan' }, { id: 2, name: 'paul', lastname: 'newman' }];
+                var result = elements.Where({ name: 'peter', lastname: 'newman' }, true);
+                var result2 = elements.Where({ name: 'paul', lastname: 'newman' }, true);
+                var result3 = elements.Where({ name: 'peter', lastname: 'newman' }, false);
+                var result4 = elements.Where({ name: 'paul', lastname: 'newman' }, false);
 
                 expect(result.length).toBe(0);
                 expect(result2.length).toBe(1);
@@ -673,15 +589,15 @@ fdescribe('PowerArrayTests', function () {
                 it('should filter an array of numbers', function () {
                     //arrange
                     var elements = [
-                        {name: 'a', categories: [1, 5, 83]},
-                        {name: 'b', categories: [4, 5, 74]},
-                        {name: 'c', categories: [6, 4, 9]}
+                        { name: 'a', categories: [1, 5, 83] },
+                        { name: 'b', categories: [4, 5, 74] },
+                        { name: 'c', categories: [6, 4, 9] }
                     ];
 
                     //act
-                    var result1 = elements.Where({categories: pa.Contains(1)});
-                    var result2 = elements.Where({categories: pa.Contains(5)});
-                    var result3 = elements.Where({categories: pa.Contains(95)});
+                    var result1 = elements.Where({ categories: pa.Contains(1) });
+                    var result2 = elements.Where({ categories: pa.Contains(5) });
+                    var result3 = elements.Where({ categories: pa.Contains(95) });
 
                     //assert
                     expect(result1).toBeDefined();
@@ -698,15 +614,15 @@ fdescribe('PowerArrayTests', function () {
                 it('should filter an array of strings ', function () {
                     //arrange
                     var elements = [
-                        {name: 'a', categories: ["1", "5", "83"]},
-                        {name: 'b', categories: ["4", "5", "74"]},
-                        {name: 'c', categories: ["6", "4", "9"]}
+                        { name: 'a', categories: ["1", "5", "83"] },
+                        { name: 'b', categories: ["4", "5", "74"] },
+                        { name: 'c', categories: ["6", "4", "9"] }
                     ];
 
                     //act
-                    var result1 = elements.Where({categories: pa.Contains("1")});
-                    var result2 = elements.Where({categories: pa.Contains("5")});
-                    var result3 = elements.Where({categories: pa.Contains(95)});
+                    var result1 = elements.Where({ categories: pa.Contains("1") });
+                    var result2 = elements.Where({ categories: pa.Contains("5") });
+                    var result3 = elements.Where({ categories: pa.Contains(95) });
 
                     //assert
                     expect(result1).toBeDefined();
@@ -725,19 +641,19 @@ fdescribe('PowerArrayTests', function () {
                 it('should filter an array of mixed things', function () {
                     //arrange
                     var elements = [
-                        {name: 'a', categories: ["1", {a: 'a', b: 'b'}, new Date()]},
-                        {name: 'b', categories: ["4", "5", 74]},
-                        {name: 'c', categories: ["6", "4", ["a", null]]}
+                        { name: 'a', categories: ["1", { a: 'a', b: 'b' }, new Date()] },
+                        { name: 'b', categories: ["4", "5", 74] },
+                        { name: 'c', categories: ["6", "4", ["a", null]] }
                     ];
 
                     //act
-                    var result1 = elements.Where({categories: pa.Contains("1")});
-                    var result2 = elements.Where({categories: pa.Contains("5")});
-                    var result3 = elements.Where({categories: pa.Contains(95)});
-                    var result4 = elements.Where({categories: pa.Contains(74)});
-                    var result5 = elements.Where({categories: pa.Contains({a: 'a', b: 'b'})});
-                    var result6 = elements.Where({categories: pa.Contains({b: 'b', a: 'a'})}); //other properties order as result5!!
-                    var result7 = elements.Where({categories: pa.Contains({b: 'b', a: 'a'}, true)}); //other properties order as result5 with "check properties order set to true"!!
+                    var result1 = elements.Where({ categories: pa.Contains("1") });
+                    var result2 = elements.Where({ categories: pa.Contains("5") });
+                    var result3 = elements.Where({ categories: pa.Contains(95) });
+                    var result4 = elements.Where({ categories: pa.Contains(74) });
+                    var result5 = elements.Where({ categories: pa.Contains({ a: 'a', b: 'b' }) });
+                    var result6 = elements.Where({ categories: pa.Contains({ b: 'b', a: 'a' }) }); //other properties order as result5!!
+                    var result7 = elements.Where({ categories: pa.Contains({ b: 'b', a: 'a' }, true) }); //other properties order as result5 with "check properties order set to true"!!
 
                     //assert
                     expect(result1).toBeDefined();
@@ -763,14 +679,14 @@ fdescribe('PowerArrayTests', function () {
                 it('should throw an error when used on non-array fields', function () {
                     //arrange
                     var elements = [
-                        {name: 'a', categories: [1, 5, 83]},
-                        {name: 'b', categories: [4, 5, 74]},
-                        {name: 'c', categories: [6, 4, 9]}
+                        { name: 'a', categories: [1, 5, 83] },
+                        { name: 'b', categories: [4, 5, 74] },
+                        { name: 'c', categories: [6, 4, 9] }
                     ];
 
                     //act
                     expect(function () {
-                        elements.Where({name: pa.Contains(1)});
+                        elements.Where({ name: pa.Contains(1) });
                     }).toThrow();
                 });
             });
@@ -778,24 +694,24 @@ fdescribe('PowerArrayTests', function () {
                 it('Should find bigger items (integer)', function () {
                     var quantity = 10;
                     var elements3 = createDummies(quantity);
-                    var result = elements3.Where({id: pa.GreaterThan(5)}, true);
-                    var result2 = elements3.Where({id: pa.GreaterThan(5)}, false);
+                    var result = elements3.Where({ id: pa.GreaterThan(5) }, true);
+                    var result2 = elements3.Where({ id: pa.GreaterThan(5) }, false);
                     expect(result.length).toBe(4);
                     expect(result2.length).toBe(4);
                 });
                 it('Should find bigger items (decimal + floats)', function () {
-                    var elements = [{id: 0.24}, {id: 10.5}];
-                    var result = elements.Where({id: pa.GreaterThan(0.2)}, true);
-                    var result2 = elements.Where({id: pa.GreaterThan(10.2)}, true);
+                    var elements = [{ id: 0.24 }, { id: 10.5 }];
+                    var result = elements.Where({ id: pa.GreaterThan(0.2) }, true);
+                    var result2 = elements.Where({ id: pa.GreaterThan(10.2) }, true);
                     expect(result.length).toBe(2);
                     expect(result2.length).toBe(1);
                 });
                 it('Should find bigger items (dates)', function () {
                     //arrange
-                    var elements = [{date: new Date(2015, 11, 31, 0, 0, 0, 0)}, {date: new Date(2014, 11, 31, 0, 0, 0, 0)}];
+                    var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
                     //act
-                    var result = elements.Where({date: pa.GreaterThan(new Date(2014, 1, 6, 0, 0, 0, 0))}, true);
-                    var result2 = elements.Where({date: pa.GreaterThan(new Date(2016, 1, 6, 0, 0, 0, 0))}, true);
+                    var result = elements.Where({ date: pa.GreaterThan(new Date(2014, 1, 6, 0, 0, 0, 0)) }, true);
+                    var result2 = elements.Where({ date: pa.GreaterThan(new Date(2016, 1, 6, 0, 0, 0, 0)) }, true);
                     //assert
                     expect(result.length).toBe(2);
                     expect(result2.length).toBe(0);
@@ -805,22 +721,22 @@ fdescribe('PowerArrayTests', function () {
                 it('Should find smaller items (integer)', function () {
                     var quantity = 10;
                     var elements3 = createDummies(quantity);
-                    var result = elements3.Where({id: pa.SmallerThan(5)}, true);
+                    var result = elements3.Where({ id: pa.SmallerThan(5) }, true);
                     expect(result.length).toBe(5);
                 });
                 it('Should find smaller items (decimal + floats)', function () {
-                    var elements = [{id: 0.24}, {id: 10.5}];
-                    var result = elements.Where({id: pa.SmallerThan(0.26)}, true);
-                    var result2 = elements.Where({id: pa.SmallerThan(30.87)}, true);
+                    var elements = [{ id: 0.24 }, { id: 10.5 }];
+                    var result = elements.Where({ id: pa.SmallerThan(0.26) }, true);
+                    var result2 = elements.Where({ id: pa.SmallerThan(30.87) }, true);
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(2);
                 });
                 it('Should find smaller items (dates)', function () {
                     //arrange
-                    var elements = [{date: new Date(2015, 11, 31, 0, 0, 0, 0)}, {date: new Date(2014, 11, 31, 0, 0, 0, 0)}];
+                    var elements = [{ date: new Date(2015, 11, 31, 0, 0, 0, 0) }, { date: new Date(2014, 11, 31, 0, 0, 0, 0) }];
                     //act
-                    var result = elements.Where({date: pa.SmallerThan(new Date(2015, 11, 31, 0, 0, 0, 2))}, true);
-                    var result2 = elements.Where({date: pa.SmallerThan(new Date(2014, 11, 31, 0, 0, 2, 0))}, true);
+                    var result = elements.Where({ date: pa.SmallerThan(new Date(2015, 11, 31, 0, 0, 0, 2)) }, true);
+                    var result2 = elements.Where({ date: pa.SmallerThan(new Date(2014, 11, 31, 0, 0, 2, 0)) }, true);
                     //assert
                     expect(result.length).toBe(2);
                     expect(result2.length).toBe(1);
@@ -830,26 +746,26 @@ fdescribe('PowerArrayTests', function () {
                 it('Should throw an error if param TO is smaller than param FROM ', function () {
                     //arrange
                     var elements = [
-                        {name: 'paul', age: 38}, {name: 'john', age: 67},
-                        {name: 'xavier', age: 17}, {name: 'martin', age: 47},
+                        { name: 'paul', age: 38 }, { name: 'john', age: 67 },
+                        { name: 'xavier', age: 17 }, { name: 'martin', age: 47 },
                     ];
 
                     //assert
                     expect(function () {
-                        elements.Where({age: pa.Between(40, 20)}).Sort({age: "Asc"});
+                        elements.Where({ age: pa.Between(40, 20) }).Sort({ age: "Asc" });
                     }).toThrow();
 
                 });
                 it('Should find values within a range of numbers', function () {
                     //arrange
                     var elements = [
-                        {name: 'paul', age: 38}, {name: 'john', age: 67},
-                        {name: 'xavier', age: 17}, {name: 'martin', age: 47},
+                        { name: 'paul', age: 38 }, { name: 'john', age: 67 },
+                        { name: 'xavier', age: 17 }, { name: 'martin', age: 47 },
                     ];
 
                     //act
-                    var results = elements.Where({age: pa.Between(20, 40)}).Sort({age: "Asc"});
-                    var results2 = elements.Where({age: pa.Between(30, 60)}).Sort({age: "Desc"});
+                    var results = elements.Where({ age: pa.Between(20, 40) }).Sort({ age: "Asc" });
+                    var results2 = elements.Where({ age: pa.Between(30, 60) }).Sort({ age: "Desc" });
 
                     //assert
                     expect(results).toBeDefined();
@@ -882,13 +798,13 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should compare values using === and find exact results', function () {
                     //arrange
-                    var items = [{id: 1, otherThings: 'abcdefghijklm'}, {id: "1", otherThings: 'abcdefghijklm'}, {
+                    var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
                         id: 2,
                         otherThings: 'abcdefghijklm'
                     }];
 
                     //act
-                    var result = items.Where({id: pa.EqualTo3(1)});
+                    var result = items.Where({ id: pa.EqualTo3(1) });
 
                     expect(result.length).toBe(1);
                     expect(result[0].id).toBe(1);
@@ -900,14 +816,14 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should compare values using == and find results', function () {
                     //arrange
-                    var items = [{id: 1, otherThings: 'abcdefghijklm'}, {id: "1", otherThings: 'abcdefghijklm'}, {
+                    var items = [{ id: 1, otherThings: 'abcdefghijklm' }, { id: "1", otherThings: 'abcdefghijklm' }, {
                         id: 2,
                         otherThings: 'abcdefghijklm'
                     }];
 
                     //act
-                    var result = items.Where({id: pa.EqualTo2(1)});
-                    var result2 = items.Where({id: pa.EqualTo2("1")});
+                    var result = items.Where({ id: pa.EqualTo2(1) });
+                    var result2 = items.Where({ id: pa.EqualTo2("1") });
 
                     expect(result.length).toBe(2);
                     expect(result2.length).toBe(2);
@@ -919,14 +835,14 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) an specific string in a property', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.Like("a")});
-                    var result2 = items.Where({name: pa.Like("aBc")});
+                    var result = items.Where({ name: pa.Like("a") });
+                    var result2 = items.Where({ name: pa.Like("aBc") });
 
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(0);
@@ -935,15 +851,15 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) different values', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.Like(["a", "b"])});
-                    var result2 = items.Where({name: pa.Like(["d", "m"])});
-                    var result3 = items.Where({name: pa.Like(["a", "z"])});
+                    var result = items.Where({ name: pa.Like(["a", "b"]) });
+                    var result2 = items.Where({ name: pa.Like(["d", "m"]) });
+                    var result3 = items.Where({ name: pa.Like(["a", "z"]) });
 
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(1);
@@ -957,14 +873,14 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) an specific string in a property', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.LikeIgnoreCase("a")});
-                    var result2 = items.Where({name: pa.LikeIgnoreCase("aBc")});
+                    var result = items.Where({ name: pa.LikeIgnoreCase("a") });
+                    var result2 = items.Where({ name: pa.LikeIgnoreCase("aBc") });
 
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(1);
@@ -973,15 +889,15 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) different values', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.LikeIgnoreCase(["a", "A"])});
-                    var result2 = items.Where({name: pa.LikeIgnoreCase(["d", "M"])});
-                    var result3 = items.Where({name: pa.LikeIgnoreCase(["a", "z"])});
+                    var result = items.Where({ name: pa.LikeIgnoreCase(["a", "A"]) });
+                    var result2 = items.Where({ name: pa.LikeIgnoreCase(["d", "M"]) });
+                    var result3 = items.Where({ name: pa.LikeIgnoreCase(["a", "z"]) });
 
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(1);
@@ -993,14 +909,14 @@ fdescribe('PowerArrayTests', function () {
             describe('NotLike', function () {
                 it('should return only the items not containing the passed string in a property value (by indexof)', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.NotLike("a")});
-                    var result2 = items.Where({name: pa.NotLike("abc")});
+                    var result = items.Where({ name: pa.NotLike("a") });
+                    var result2 = items.Where({ name: pa.NotLike("abc") });
 
                     //assert
                     expect(result).toBeDefined();
@@ -1013,15 +929,15 @@ fdescribe('PowerArrayTests', function () {
                 it('should return only the items not containing any string of the passed array in a property value (by indexof)', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'abcdefgh'},
-                        {id: "1", name: 'defghijklmn'},
-                        {id: 2, name: 'jklmnopqrst'}
+                        { id: 1, name: 'abcdefgh' },
+                        { id: "1", name: 'defghijklmn' },
+                        { id: 2, name: 'jklmnopqrst' }
                     ];
 
                     //act
-                    var result = items.Where({name: pa.NotLike(["f", "n"])});
-                    var result2 = items.Where({name: pa.NotLike(["d", "e"])});
-                    var result3 = items.Where({name: pa.NotLike(["a", "z"])});
+                    var result = items.Where({ name: pa.NotLike(["f", "n"]) });
+                    var result2 = items.Where({ name: pa.NotLike(["d", "e"]) });
+                    var result3 = items.Where({ name: pa.NotLike(["a", "z"]) });
 
                     expect(result.length).toBe(0);
                     expect(result2.length).toBe(1);
@@ -1032,14 +948,14 @@ fdescribe('PowerArrayTests', function () {
             describe('NotLikeIgnoreCase', function () {
                 it('should return only the items not containing the passed string in a property value (by indexof)', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'DEFGHIJKLMN'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'DEFGHIJKLMN' }, {
                         id: 2,
                         name: 'JKLMNOPQRST'
                     }];
 
                     //act
-                    var result = items.Where({name: pa.NotLikeIgnoreCase("A")});
-                    var result2 = items.Where({name: pa.NotLikeIgnoreCase("abc")});
+                    var result = items.Where({ name: pa.NotLikeIgnoreCase("A") });
+                    var result2 = items.Where({ name: pa.NotLikeIgnoreCase("abc") });
 
                     //assert
                     expect(result).toBeDefined();
@@ -1052,15 +968,15 @@ fdescribe('PowerArrayTests', function () {
                 it('should return only the items not containing any string of the passed array in a property value (by indexof)', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'abcdefgh'},
-                        {id: "1", name: 'defghijklmn'},
-                        {id: 2, name: 'jklmnopqrst'}
+                        { id: 1, name: 'abcdefgh' },
+                        { id: "1", name: 'defghijklmn' },
+                        { id: 2, name: 'jklmnopqrst' }
                     ];
 
                     //act
-                    var result = items.Where({name: pa.NotLikeIgnoreCase(["f", "n"])});
-                    var result2 = items.Where({name: pa.NotLikeIgnoreCase(["d", "e"])});
-                    var result3 = items.Where({name: pa.NotLikeIgnoreCase(["a", "z"])});
+                    var result = items.Where({ name: pa.NotLikeIgnoreCase(["f", "n"]) });
+                    var result2 = items.Where({ name: pa.NotLikeIgnoreCase(["d", "e"]) });
+                    var result3 = items.Where({ name: pa.NotLikeIgnoreCase(["a", "z"]) });
 
                     //assert
                     expect(result.length).toBe(0);
@@ -1090,9 +1006,9 @@ fdescribe('PowerArrayTests', function () {
                 });
                 it('should evaluate if an array property is undefined', function () {
                     //arrange
-                    var a = [{a: 1}, {b: 1}, {a: 2}];
+                    var a = [{ a: 1 }, { b: 1 }, { a: 2 }];
                     //act
-                    var result = a.Where({a: IsDefined()}).Sort({a: 'Desc'});
+                    var result = a.Where({ a: IsDefined() }).Sort({ a: 'Desc' });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1100,10 +1016,10 @@ fdescribe('PowerArrayTests', function () {
                 });
                 it('should return consistent results when adding the lengths IsDefined and IsUndefined', function () {
                     //arrange
-                    var a = [{a: 1}, {b: 1}, {a: 2}];
+                    var a = [{ a: 1 }, { b: 1 }, { a: 2 }];
                     //act
-                    var resultIs = a.Where({a: IsDefined()});
-                    var resultIsNot = a.Where({a: IsUndefined()});
+                    var resultIs = a.Where({ a: IsDefined() });
+                    var resultIsNot = a.Where({ a: IsUndefined() });
                     //assert
                     expect(resultIs.length + resultIsNot.length).toBe(a.length);
 
@@ -1130,9 +1046,9 @@ fdescribe('PowerArrayTests', function () {
                 });
                 it('should evaluate if an array property is undefined', function () {
                     //arrange
-                    var a = [{a: 1}, {b: 1}, {a: 2}];
+                    var a = [{ a: 1 }, { b: 1 }, { a: 2 }];
                     //act
-                    var result = a.Where({a: IsDefined()}).Sort({a: 'Desc'});
+                    var result = a.Where({ a: IsDefined() }).Sort({ a: 'Desc' });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1143,9 +1059,9 @@ fdescribe('PowerArrayTests', function () {
                 it('should work in the same way if receiving many parameters instead of an array', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'aa'},
-                        {id: "1", name: 'bbb'},
-                        {id: 2, name: 'ccc'}
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
                     ];
                     var items2 = createDummies(500);
                     //act
@@ -1163,14 +1079,14 @@ fdescribe('PowerArrayTests', function () {
                 it('should compare property with an array of primitives of elements', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'aa'},
-                        {id: "1", name: 'bbb'},
-                        {id: 2, name: 'ccc'}
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
                     ];
                     var items2 = createDummies(500);
                     //act
-                    var result = items.Where({id: pa.In([1, 2])});
-                    var result2 = items2.Where({id: pa.In([134, 251, 525, 943])});
+                    var result = items.Where({ id: pa.In([1, 2]) });
+                    var result2 = items2.Where({ id: pa.In([134, 251, 525, 943]) });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1181,7 +1097,7 @@ fdescribe('PowerArrayTests', function () {
                 it('should work in the same way if receiving many parameters instead of an array', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'aa'},
+                        { id: 1, name: 'aa' },
                         {
                             id: "1", name: 'bbb'
                         },
@@ -1190,8 +1106,8 @@ fdescribe('PowerArrayTests', function () {
                         }
                     ];
                     //act
-                    var result = items.Where({id: pa.NotIn(2, 4)});
-                    var result2 = items.Where({id: pa.NotIn(1, 3)});
+                    var result = items.Where({ id: pa.NotIn(2, 4) });
+                    var result2 = items.Where({ id: pa.NotIn(1, 3) });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1202,13 +1118,13 @@ fdescribe('PowerArrayTests', function () {
                 it('should compare property with an array of primitives of elements', function () {
                     //arrange
                     var items = [
-                        {id: 1, name: 'aa'},
-                        {id: "1", name: 'bbb'},
-                        {id: 2, name: 'ccc'}
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }
                     ];
                     //act
-                    var result = items.Where({id: pa.NotIn([2, 4])});
-                    var result2 = items.Where({id: pa.NotIn([1, 3])});
+                    var result = items.Where({ id: pa.NotIn([2, 4]) });
+                    var result2 = items.Where({ id: pa.NotIn([1, 3]) });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1227,7 +1143,7 @@ fdescribe('PowerArrayTests', function () {
                             return 'ppp';
                         },
                         anArray: [1, 2, 3, 4, 5],
-                        anObjectsArray: [{a: 1, b: 2}]
+                        anObjectsArray: [{ a: 1, b: 2 }]
                     };
 
                     var elements = [
@@ -1239,7 +1155,7 @@ fdescribe('PowerArrayTests', function () {
                                 return 'ppp';
                             },
                             anArray: [1, 2, 3, 4, 5],
-                            anObjectsArray: [{a: 1, b: 2222222222222222}]
+                            anObjectsArray: [{ a: 1, b: 2222222222222222 }]
                         },
                         {
                             id: 1,
@@ -1248,7 +1164,7 @@ fdescribe('PowerArrayTests', function () {
                                 return 'pppppppppppppppppppp';
                             },
                             anArray: [1, 2, 3, 4, 5],
-                            anObjectsArray: [{a: 1, b: 2}]
+                            anObjectsArray: [{ a: 1, b: 2 }]
                         }
                     ];
 
@@ -1269,11 +1185,11 @@ fdescribe('PowerArrayTests', function () {
                 });
                 it('should compare values by using a custom function that returns true or false', function () {
                     //arrange
-                    var objectToCompareTo = {id: 2, name: 'dd'};
+                    var objectToCompareTo = { id: 2, name: 'dd' };
                     var items = [
-                        {id: 1, name: 'aa'},
-                        {id: "1", name: 'bbb'},
-                        {id: 2, name: 'ccc'}];
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }];
 
                     var func = function (a, b) {
                         //return true if a.id === b.id OR the length of the name properties are similar
@@ -1287,22 +1203,163 @@ fdescribe('PowerArrayTests', function () {
                 });
 
             });
+            describe('IsTruthy', function () {
+                it('should return only truthy elements from array of objects', function () {
+                    //arrange
+                    var elements = [
+                          { a: false, b: true, c: 1, d: [], e: [3] },
+                          { a: "true", b: "true", c: 1, d: [], e: [false] },
+                          { a: true, b: 33, c: 1, d: [], e: "sdf" }
+                    ];
+
+                    //act
+                    var resulta = elements.Where({ a: pa.IsTruthy() });
+                    var resultb = elements.Where({ b: pa.IsTruthy() });
+                    var resultc = elements.Where({ c: pa.IsTruthy() });
+
+                    //assert
+                    expect(resulta).toBeDefined();
+                    expect(resultb).toBeDefined();
+                    expect(resultc).toBeDefined();
+
+                    expect(resulta.length).toBe(2);
+                    expect(resultb.length).toBe(3);
+                    expect(resultc.length).toBe(3);
+
+                });
+                it('should return true if a truty value is found. Also in arrays of primitives', function () {
+                    //arrange
+                    var truthyElements = [[1], "a", 2, true, "true", false, 0];
+
+                    //act
+                    var resulta = truthyElements.Where(pa.IsTruthy());
+
+                    //assert
+                    expect(resulta.length).toBe(5);
+                });
+            });
+            describe('IsFalsy', function () {
+                it('should return only falsy elements from array of objects', function () {
+                    //arrange
+                    var elements = [
+                          { a: false, b: true, c: 1, d: [], e: [3] },
+                          { a: "true", b: "false", c: 1, d: [], e: [false] },
+                          { a: true, b: 0, c: 0, d: [], e: "sdf" }
+                    ];
+
+                    //act
+                    var resulta = elements.Where({ a: pa.IsFalsy() });
+                    var resultb = elements.Where({ b: pa.IsFalsy() });
+                    var resultc = elements.Where({ c: pa.IsFalsy() });
+
+                    //assert
+                    expect(resulta).toBeDefined();
+                    expect(resultb).toBeDefined();
+                    expect(resultc).toBeDefined();
+
+                    expect(resulta.length).toBe(1);
+                    expect(resultb.length).toBe(1);
+                    expect(resultc.length).toBe(1);
+
+                });
+                it('should return true for each falsy element in arrays of primitives', function () {
+                    //arrange
+                    var truthyElements = [[1], "0", 2, true, "true", false, 0];
+
+                    //act
+                    var resulta = truthyElements.Where(pa.IsFalsy());
+
+                    //assert
+                    expect(resulta.length).toBe(2);
+                });
+            });
+            describe('IsTrue', function () {
+                it('should return only elements having true on property from an array of objects', function () {
+                    //arrange
+                    var elements = [
+                          { a: false, b: true, c: 1, d: [], e: [3] },
+                          { a: "true", b: "true", c: true, d: [], e: [false] },
+                          { a: true, b: 33, c: 1, d: [], e: "sdf" }
+                    ];
+
+                    //act
+                    var resulta = elements.Where({ a: pa.IsTrue() });
+                    var resultb = elements.Where({ b: pa.IsTrue() });
+                    var resultc = elements.Where({ c: pa.IsTrue() });
+
+                    //assert
+                    expect(resulta).toBeDefined();
+                    expect(resultb).toBeDefined();
+                    expect(resultc).toBeDefined();
+
+                    expect(resulta.length).toBe(1);
+                    expect(resultb.length).toBe(1);
+                    expect(resultc.length).toBe(1);
+
+                });
+                it('should return true values from array of primitives', function () {
+                    //arrange
+                    var truthyElements = [[1], "a", 2, true, "true", false, 0];
+
+                    //act
+                    var resulta = truthyElements.Where(pa.IsTrue());
+
+                    //assert
+                    expect(resulta).toBeDefined();
+                    expect(resulta.length).toBe(1);
+                });
+            });
+            describe('IsFalse', function () {
+                it('should return only false elements from array of objects', function () {
+                    //arrange
+                    var elements = [
+                          { a: false, b: true, c: 1, d: [], e: [3] },
+                          { a: "true", b: "false", c: 1, d: [], e: [false] },
+                          { a: true, b: 0, c: false, d: [], e: "sdf" }
+                    ];
+
+                    //act
+                    var resulta = elements.Where({ a: pa.IsFalse() });
+                    var resultb = elements.Where({ b: pa.IsFalse() });
+                    var resultc = elements.Where({ c: pa.IsFalse() });
+
+                    //assert
+                    expect(resulta).toBeDefined();
+                    expect(resultb).toBeDefined();
+                    expect(resultc).toBeDefined();
+
+                    expect(resulta.length).toBe(1);
+                    expect(resultb.length).toBe(0);
+                    expect(resultc.length).toBe(1);
+
+                });
+                it('should return true for each fale element in arrays of primitives', function () {
+                    //arrange
+                    var truthyElements = [[1], "0", 2, true, "true", false, 0];
+
+                    //act
+                    var resulta = truthyElements.Where(pa.IsFalse());
+
+                    //assert
+                    expect(resulta.length).toBe(1);
+                });
+            });
         });
         describe('Custom function evaluating single field, inside whereConditionsObject', function () {
 
             it('should compare values by using a custom function that returns true or false', function () {
                 //arrange
                 var items = [
-                    {id: 1, name: 'aa'},
-                    {id: "1", name: 'bbb'},
-                    {id: 2, name: 'ccc'}];
+                    { id: 1, name: 'aa' },
+                    { id: "1", name: 'bbb' },
+                    { id: 2, name: 'ccc' }];
 
                 var func = function (a) {
                     return a === 'aa';
                 };
 
                 //act
-                var result = items.Where({name: func});
+                var result = items.Where({ name: func });
                 expect(result.length).toBe(1);
                 expect(result[0].name).toBe('aa');
 
@@ -1314,9 +1371,9 @@ fdescribe('PowerArrayTests', function () {
             it('should evaluate each item by using a custom function', function () {
                 //arrange
                 var items = [
-                    {id: 1, name: 'aa'},
-                    {id: "1", name: 'bbb'},
-                    {id: 2, name: 'ccc'}];
+                    { id: 1, name: 'aa' },
+                    { id: "1", name: 'bbb' },
+                    { id: 2, name: 'ccc' }];
 
                 var func = function (a) {
                     return a.id === 1;
@@ -1335,8 +1392,8 @@ fdescribe('PowerArrayTests', function () {
                 it('should return only one object', function () {
 
                     var elements = [
-                        {a: 'aaaa', b: {b1: 'b1', c: {xxx: 33}}},
-                        {a: 'aaa2', b: {b1: 'b1', c: {xxx: 99}}}
+                        { a: 'aaaa', b: { b1: 'b1', c: { xxx: 33 } } },
+                        { a: 'aaa2', b: { b1: 'b1', c: { xxx: 99 } } }
                     ];
 
                     var result = elements.Where({
@@ -1355,14 +1412,14 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) an specific string in a property', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result3 = items.Where({name: pa.Like("a"), id: pa.EqualTo3(2)}); //pa.EqualTo3(2)});
-                    var result4 = items.Where({name: pa.Like("t"), id: pa.EqualTo3(2)});
+                    var result3 = items.Where({ name: pa.Like("a"), id: pa.EqualTo3(2) }); //pa.EqualTo3(2)});
+                    var result4 = items.Where({ name: pa.Like("t"), id: pa.EqualTo3(2) });
 
                     expect(result3.length).toBe(0);
                     expect(result4.length).toBe(1);
@@ -1372,14 +1429,14 @@ fdescribe('PowerArrayTests', function () {
 
                 it('should return only the items containing (by indexof) an specific string in a property', function () {
                     //arrange
-                    var items = [{id: 1, name: 'abcdefgh'}, {id: "1", name: 'defghijklmn'}, {
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
                         id: 2,
                         name: 'jklmnopqrst'
                     }];
 
                     //act
-                    var result3 = items.Where({name: pa.LikeIgnoreCase("A"), id: pa.EqualTo3(2)});
-                    var result4 = items.Where({name: pa.LikeIgnoreCase("T"), id: pa.EqualTo3(2)});
+                    var result3 = items.Where({ name: pa.LikeIgnoreCase("A"), id: pa.EqualTo3(2) });
+                    var result4 = items.Where({ name: pa.LikeIgnoreCase("T"), id: pa.EqualTo3(2) });
 
                     expect(result3.length).toBe(0);
                     expect(result4.length).toBe(1);
@@ -1387,6 +1444,130 @@ fdescribe('PowerArrayTests', function () {
                 });
 
             });
+        });
+    });
+
+    describe('pa.utils', function () {
+        describe('isNullEmptyOrUndefined', function () {
+
+            it('should return true for null', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(null)).toBe(true);
+            });
+
+            it('should return false for true', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(true)).toBe(false);
+            });
+
+            it('should return false for false', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(false)).toBe(false);
+            });
+
+            it('should return true for undefined', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(undefined)).toBe(true);
+            });
+
+            it('should return true for nothing', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined()).toBe(true);
+            });
+
+            it('should return false for non-empty string', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined("moo")).toBe(false);
+            });
+
+            it('should return false for non-empty number', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(12345)).toBe(false);
+            });
+
+            it('should return false for 0 number', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined(0)).toBe(false);
+            });
+
+            it('should return false for 0 string', function () {
+                // assert
+                expect(pa.utils.isNullEmptyOrUndefined('0')).toBe(false);
+            });
+
+            //it('should throw error for non-number and non-string', function () {
+            //    // assert
+            //    expect(function () {
+            //        pa.utils.isNullEmptyOrUndefined({});
+            //    }).toThrow(new Error());
+            //});
+
+
+        });
+        describe('parseBoolean', function () {
+
+            it('should return true for true', function () {
+                // assert
+                expect(pa.utils.parseBoolean("true", false)).toBe(true);
+            });
+
+            it('should return true for TRUE', function () {
+                // assert
+                expect(pa.utils.parseBoolean("TRUE", false)).toBe(true);
+            });
+
+            it('should return true for True', function () {
+                // assert
+                expect(pa.utils.parseBoolean("True", false)).toBe(true);
+            });
+
+            it('should return true for trUE', function () {
+                // assert
+                expect(pa.utils.parseBoolean("trUE", false)).toBe(true);
+            });
+
+            it('should return false for true', function () {
+                // assert
+                expect(pa.utils.parseBoolean("false", false)).toBe(false);
+            });
+
+            it('should return false for FALSE', function () {
+                // assert
+                expect(pa.utils.parseBoolean("FALSE", false)).toBe(false);
+            });
+
+            it('should return false for True', function () {
+                // assert
+                expect(pa.utils.parseBoolean("False", false)).toBe(false);
+            });
+
+            it('should return false for trUE', function () {
+                // assert
+                expect(pa.utils.parseBoolean("faLSE", false)).toBe(false);
+            });
+
+            it('should return null for invalid bool', function () {
+                // assert
+                expect(pa.utils.parseBoolean("moo", false)).toBe(null);
+            });
+
+            it('should return null for null', function () {
+                // assert
+                expect(pa.utils.parseBoolean(null, false)).toBe(null);
+            });
+
+            it('should return null for undefined', function () {
+                // assert
+                expect(pa.utils.parseBoolean(undefined, false)).toBe(null);
+            });
+
+            it('should throw error for invalid bool if error enabled', function () {
+                // assert
+                expect(function () {
+                    pa.utils.parseBoolean("moo", true);
+                }).toThrow(new Error("The string passed to function parseBoolean (moo) doesn't match with any valid string"));
+            });
+
         });
     });
 });
