@@ -15,9 +15,8 @@ window.pa.utils = {
         RegExp: 'RegExp'
     }, IsArrayOfObjects: function (val) {
         var l;
-        if (!val.paIsArray || val.length === undefined) return false;
-        if (!val.length) {
-            console.warn('PowerArray => function IsArrayOfObjects got an object to analize, that looks to be an empty array. Because of that, the content could not be analyzed. True will be now returned, but later the array can be filled with primitives!');
+        if (!val.paIsArray || val.length === undefined)  {
+            return false;
         }
         l = val.length;
         while (l--) {
@@ -26,6 +25,58 @@ window.pa.utils = {
             }
         }
         return true;
+    },
+    /**
+     * Parses a string to boolean value. This function searches strictly for the strings "true", "True", "trUE", "falsE", etc.
+     * @param str the string to be evaluated
+     * @param throwIfNotMatch Boolean, if true, an exception will be raised if the string does not match. If false, null will be returned
+     * @returns {*} boolean value if string matches, null if not
+     * @constructor ??
+     */
+    parseBoolean: function (str, throwIfNotMatch) {
+        if (!pa.utils.isNullEmptyOrUndefined(str)) {
+            var strU = str.toUpperCase();
+            if (strU === "TRUE") {
+                return true;
+            }
+            if (strU === "FALSE") {
+                return false;
+            }
+        }
+
+        if (throwIfNotMatch) {
+            throw new Error("The string passed to function parseBoolean (" + str + ") doesn't match with any valid string");
+        }
+
+        return null;
+    }, /**
+     * evaluate if a number or a string is undefined "" or null and return true or false
+     * @param what the element to evaluate
+     * @returns {boolean}
+     * @constructor
+     */
+    isNullEmptyOrUndefined: function (what) {
+        // null has to be evaluated before checking typeof
+        if (what === null) {
+            return true;
+        }
+        var t = typeof what;
+        if (t === "boolean") {
+            return false;
+        }
+
+        if (t !== "number" && t !== "string" && t !== "undefined") {
+            throw new Error("PowerArray => The function IsNullOrEmpty is designed to evaluate strings and numbers, but something different was provided (" + t + ")");
+        }
+
+        if (t === "number" && what === 0) {
+            return false;
+        }
+
+        if (!what) {
+            return true;
+        }
+        return (what + "").length === 0;
     },
     GetTypeOf: function (element, analyzeData) {
         var to = typeof element;
@@ -66,6 +117,9 @@ window.pa.utils = {
                 //any others
                 throw new Error("PowerArray Error : Unknown Datatype!");
         }
+    },
+    IsNumeric: function (num) {
+        return !isNaN(parseFloat(num)) && isFinite(num);
     }
 };
 
@@ -91,7 +145,7 @@ window.pa.paEachParalellsHelper = {
 
 window.pa.paWhereHelper = {
     FillConditions: function (item, conditions) {
-        var l = conditions.length,l2 = l, condition, result, subArray;
+        var l = conditions.length, l2 = l, condition, result, subArray;
         while (l--) {
             condition = conditions[l];
             //conditions can be functions or single values, if there are single values, they have to ve evaluated by
@@ -119,10 +173,10 @@ window.pa.paWhereHelper = {
                             break;
                         case window.pa.utils.DataTypes.Object:
                             subArray = pa([item[condition.column]]);
-                            result = subArray.Where.call(subArray,condition.condition, false, true);
+                            result = subArray.Where.call(subArray, condition.condition, false, true);
                             if (result !== undefined) {//See previous comment about justFirst param
                                 continue;
-                            }else {
+                            } else {
                                 return false;
                             }
                             break;
@@ -247,7 +301,7 @@ window.pa.paWhereHelper = {
         return a === b       /* strick equality should be enough unless zero*/ // jshint ignore:line
             && a !== 0         /* because 0 === -0, requires test by _equals()*/   // jshint ignore:line
             || _equals(a, b) /* handles not strictly equal or zero values*/   // jshint ignore:line
-            ;
+        ;
         function _equals(a, b) {
             // a and b have already failed test for strict equality or are zero
 
@@ -272,8 +326,8 @@ window.pa.paWhereHelper = {
                         a === a ?      // a is 0 or -O
                         1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
                             : b !== b        // NaN, the only Number not equal to itself!
-                        ;
-                // [object Number]
+                    ;
+                    // [object Number]
 
                 case '[object RegExp]':
                     return a.source == b.source // jshint ignore:line
@@ -281,12 +335,12 @@ window.pa.paWhereHelper = {
                         && a.ignoreCase == b.ignoreCase // jshint ignore:line
                         && a.multiline == b.multiline // jshint ignore:line
                         && a.lastIndex == b.lastIndex // jshint ignore:line
-                        ;
-                // [object RegExp]
+                    ;
+                    // [object RegExp]
 
                 case '[object Function]':
                     return false; // functions should be strictly equal because of closure context
-                // [object Function]
+                    // [object Function]
 
                 case '[object Array]':
                     // intentionally duplicated bellow for [object Object]
@@ -302,7 +356,7 @@ window.pa.paWhereHelper = {
                     }
 
                     return true;
-                // [object Array]
+                    // [object Array]
 
                 case '[object Object]':
                     // intentionally duplicated from above for [object Array]
@@ -345,7 +399,7 @@ window.pa.paWhereHelper = {
                     }
 
                     return true;
-                // [object Object]
+                    // [object Object]
             } // switch toString.call( a )
         } // _equals()
 
@@ -586,6 +640,26 @@ window.pa.auxiliaryFunctions = {
                 return true;
             };
         }
+    },
+    IsTruthy: function() {
+        return function (val) {
+            return (val) ? true : false;
+        };
+    },
+    IsFalsy : function() {
+        return function(val) {
+            return (val) ? false : true;
+        }
+    },
+    IsTrue: function () {
+        return function (val) {
+            return val === true;
+        };
+    },
+    IsFalse: function () {
+        return function (val) {
+            return val === false;
+        }
     }
 };
 
@@ -759,7 +833,7 @@ window.pa.prototypedFunctions_Array = {
                 };
             }.toString(),
             ')()'
-        ], {type: 'application/javascript'}));
+        ], { type: 'application/javascript' }));
         var w = new Worker(blobURL);
         w.postMessage({
             array: this,
