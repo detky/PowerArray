@@ -1,5 +1,5 @@
 /// <reference path="PowerArray.js" />
-describe('PowerArrayTests', function () {
+fdescribe('PowerArrayTests', function () {
 
     function createDummies(quantity) {
         var result = [];
@@ -359,13 +359,11 @@ describe('PowerArrayTests', function () {
                 id: EndsWith("75")
             });
             var whereTime = window.performance.now() - tmp;
-            //console.log("WhereTime : " + whereTime);
             tmp = window.performance.now();
             elements.First({
                 id: EndsWith("75")
             });
             var firstTime = window.performance.now() - tmp;
-            //console.log("firstTime : " + firstTime);
             expect(whereTime).toBeGreaterThan(firstTime);
         });
 
@@ -466,8 +464,6 @@ describe('PowerArrayTests', function () {
                         }
                     }
                 });
-
-                console.log(result[0].first + " " + result[0].last);
                 //assert
                 expect(result).toBeDefined();
                 expect(result.length).toBe(2);
@@ -849,6 +845,22 @@ describe('PowerArrayTests', function () {
 
                 });
 
+                it('should return only the items containing (by indexof) an specific string in a property, also when N arguments were passed', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
+                        id: 2,
+                        name: 'jklmnopqrst'
+                    }];
+
+                    //act
+                    var result = items.Where({ name: pa.Like("a", "b") });
+                    var result2 = items.Where({ name: pa.Like("aBc", "b") });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(0);
+
+                });
+
                 it('should return only the items containing (by indexof) different values', function () {
                     //arrange
                     var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
@@ -881,6 +893,21 @@ describe('PowerArrayTests', function () {
                     //act
                     var result = items.Where({ name: pa.LikeIgnoreCase("a") });
                     var result2 = items.Where({ name: pa.LikeIgnoreCase("aBc") });
+
+                    expect(result.length).toBe(1);
+                    expect(result2.length).toBe(1);
+
+                });
+                it('should return only the items containing (by indexof) an specific string in a property, also when N arguments were passed', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
+                        id: 2,
+                        name: 'jklmnopqrst'
+                    }];
+
+                    //act
+                    var result = items.Where({ name: pa.LikeIgnoreCase("a", "f") });
+                    var result2 = items.Where({ name: pa.LikeIgnoreCase("aBc", "b", "c") });
 
                     expect(result.length).toBe(1);
                     expect(result2.length).toBe(1);
@@ -926,6 +953,22 @@ describe('PowerArrayTests', function () {
                     expect(result2.length).toBe(2);
 
                 });
+                it('should return only the items not containing the passed string in a property value (by indexof), also when N parameters were passed', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLike("a", "b") });
+                    var result2 = items.Where({ name: pa.NotLike("abc") });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result2).toBeDefined();
+
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+
+                });
                 it('should return only the items not containing any string of the passed array in a property value (by indexof)', function () {
                     //arrange
                     var items = [
@@ -956,6 +999,25 @@ describe('PowerArrayTests', function () {
                     //act
                     var result = items.Where({ name: pa.NotLikeIgnoreCase("A") });
                     var result2 = items.Where({ name: pa.NotLikeIgnoreCase("abc") });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result2).toBeDefined();
+
+                    expect(result.length).toBe(2);
+                    expect(result2.length).toBe(2);
+
+                });
+                it('should return only the items not containing the passed string in a property value (by indexof), also when N parameters were passed', function () {
+                    //arrange
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'DEFGHIJKLMN' }, {
+                        id: 2,
+                        name: 'JKLMNOPQRST'
+                    }];
+
+                    //act
+                    var result = items.Where({ name: pa.NotLikeIgnoreCase("A", "B", "c") });
+                    var result2 = items.Where({ name: pa.NotLikeIgnoreCase("abc", "lsk") });
 
                     //assert
                     expect(result).toBeDefined();
@@ -1207,9 +1269,9 @@ describe('PowerArrayTests', function () {
                 it('should return only truthy elements from array of objects', function () {
                     //arrange
                     var elements = [
-                          { a: false, b: true, c: 1, d: [], e: [3] },
-                          { a: "true", b: "true", c: 1, d: [], e: [false] },
-                          { a: true, b: 33, c: 1, d: [], e: "sdf" }
+                        { a: false, b: true, c: 1, d: [], e: [3] },
+                        { a: "true", b: "true", c: 1, d: [], e: [false] },
+                        { a: true, b: 33, c: 1, d: [], e: "sdf" }
                     ];
 
                     //act
@@ -1242,9 +1304,9 @@ describe('PowerArrayTests', function () {
                 it('should return only falsy elements from array of objects', function () {
                     //arrange
                     var elements = [
-                          { a: false, b: true, c: 1, d: [], e: [3] },
-                          { a: "true", b: "false", c: 1, d: [], e: [false] },
-                          { a: true, b: 0, c: 0, d: [], e: "sdf" }
+                        { a: false, b: true, c: 1, d: [], e: [3] },
+                        { a: "true", b: "false", c: 1, d: [], e: [false] },
+                        { a: true, b: 0, c: 0, d: [], e: "sdf" }
                     ];
 
                     //act
@@ -1277,9 +1339,9 @@ describe('PowerArrayTests', function () {
                 it('should return only elements having true on property from an array of objects', function () {
                     //arrange
                     var elements = [
-                          { a: false, b: true, c: 1, d: [], e: [3] },
-                          { a: "true", b: "true", c: true, d: [], e: [false] },
-                          { a: true, b: 33, c: 1, d: [], e: "sdf" }
+                        { a: false, b: true, c: 1, d: [], e: [3] },
+                        { a: "true", b: "true", c: true, d: [], e: [false] },
+                        { a: true, b: 33, c: 1, d: [], e: "sdf" }
                     ];
 
                     //act
@@ -1313,9 +1375,9 @@ describe('PowerArrayTests', function () {
                 it('should return only false elements from array of objects', function () {
                     //arrange
                     var elements = [
-                          { a: false, b: true, c: 1, d: [], e: [3] },
-                          { a: "true", b: "false", c: 1, d: [], e: [false] },
-                          { a: true, b: 0, c: false, d: [], e: "sdf" }
+                        { a: false, b: true, c: 1, d: [], e: [3] },
+                        { a: "true", b: "false", c: 1, d: [], e: [false] },
+                        { a: true, b: 0, c: false, d: [], e: "sdf" }
                     ];
 
                     //act
