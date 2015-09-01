@@ -12,10 +12,13 @@ window.pa.utils = {
         Object: 'Object',
         ArrayOfObjects: 'ArrayOfObjects',
         ArrayOfPrimitives: 'ArrayOfPrimitives',
-        RegExp: 'RegExp'
+        RegExp: 'RegExp',
+        Function: 'Function',
+        Null: 'Null',
+        Undefined : 'Undefined'
     }, IsArrayOfObjects: function (val) {
         var l;
-        if (!val.paIsArray || val.length === undefined)  {
+        if (!val.paIsArray || val.length === undefined) {
             return false;
         }
         l = val.length;
@@ -79,6 +82,14 @@ window.pa.utils = {
         return (what + "").length === 0;
     },
     GetTypeOf: function (element, analyzeData) {
+
+        if (element === null) {
+            return pa.utils.DataTypes.Null;
+        } 
+
+        if (element === undefined) {
+            return pa.utils.DataTypes.Undefined;
+        }
         var to = typeof element;
         switch (to) {
             case 'string':
@@ -548,106 +559,103 @@ window.pa.auxiliaryFunctions = {
         return function (val) {
             return list.indexOf(val) === -1; // jshint ignore:line
         };
-    }, EqualTo: function (object, func) {
+    },
+    EqualTo: function (object, func, enforce_properties_order, cyclic) {
         return function (val) {
             if (func) {
                 return func(val, object);
             } else {
-                return pa.paWhereHelper.equals(object, val);
+                return pa.paWhereHelper.equals(object, val, enforce_properties_order, cyclic);
             }
         };
-    }, Like: function (value) {
+    },
+    Like: function (value) {
         if (!value.paIsArray) {
             //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) > -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) === -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                if (val.indexOf(value[l]) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
     },
     NotLike: function (value) {
         if (!value.paIsArray) {
             //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) === -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) > -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                if (val.indexOf(value[l]) > -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
     },
     LikeIgnoreCase: function (value) {
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
             //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) > -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                valueCaseInsensitive = value[l].toUpperCase();
+                if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
     },
     NotLikeIgnoreCase: function (value) {
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
             //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) === -1;
-            };
-        } else {
-            //multiple search, parameters array
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                valueCaseInsensitive = value[l].toUpperCase();
+                if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
     },
-    IsTruthy: function() {
+    IsTruthy: function () {
         return function (val) {
             return (val) ? true : false;
         };
     },
-    IsFalsy : function() {
-        return function(val) {
+    IsFalsy: function () {
+        return function (val) {
             return (val) ? false : true;
         }
     },
@@ -789,9 +797,7 @@ window.pa.prototypedFunctions_Array = {
         var partsLength = parseInt(this.length / quantProcesses);
         var bkpQuantProcesses = quantProcesses;
         while (quantProcesses--) {
-            //for (i = 0; i < quantProcesses; i++) {
             startFrom = bkpQuantProcesses - quantProcesses * partsLength;
-            //console.log("startFrom " + startFrom);
             setTimeout(function () {
                 that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
                     window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
