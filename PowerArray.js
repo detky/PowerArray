@@ -15,7 +15,7 @@ window.pa.utils = {
         RegExp: 'RegExp',
         Function: 'Function',
         Null: 'Null',
-        Undefined : 'Undefined'
+        Undefined: 'Undefined'
     }, IsArrayOfObjects: function (val) {
         var l;
         if (!val.paIsArray || val.length === undefined) {
@@ -85,7 +85,7 @@ window.pa.utils = {
 
         if (element === null) {
             return pa.utils.DataTypes.Null;
-        } 
+        }
 
         if (element === undefined) {
             return pa.utils.DataTypes.Undefined;
@@ -1004,7 +1004,7 @@ window.pa.prototypedFunctions_Array = {
         if (arguments.length === 0) {
             return (this.length > 0) ? this[0] : undefined;
         }
-        return pa.prototypedFunctions_Array.Where(whereConditions, true, true);
+        return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true);
     }
 };
 
