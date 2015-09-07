@@ -452,7 +452,7 @@ window.pa.paWhereHelper = {
 
 
 window.pa.auxiliaryFunctions = {
-    Contains: function (value, enforce_properties_order, cyclic) {
+    Contains: function (value, enforcePropsOrder, cyclic) {
         return function (val) {
             if (!val.paIsArray) {
                 throw new Error("PowerArray error => parameter val passed to Contains function should be an array, only they can 'contain' something.");
@@ -480,7 +480,7 @@ window.pa.auxiliaryFunctions = {
             }
 
             while (l--) {
-                if (pa.paWhereHelper.equals(val[l], value, enforce_properties_order, cyclic)) {
+                if (pa.paWhereHelper.equals(val[l], value, enforcePropsOrder, cyclic)) {
                     return true;
                 }
             }
@@ -560,12 +560,12 @@ window.pa.auxiliaryFunctions = {
             return list.indexOf(val) === -1; // jshint ignore:line
         };
     },
-    EqualTo: function (object, func, enforce_properties_order, cyclic) {
+    EqualTo: function (object, func, enforcePropsOrder, cyclic) {
         return function (val) {
             if (func) {
                 return func(val, object);
             } else {
-                return pa.paWhereHelper.equals(object, val, enforce_properties_order, cyclic);
+                return pa.paWhereHelper.equals(object, val, enforcePropsOrder, cyclic);
             }
         };
     },
@@ -667,6 +667,19 @@ window.pa.auxiliaryFunctions = {
     IsFalse: function () {
         return function (val) {
             return val === false;
+        }
+    },
+    IsEmpty : function() {
+        return function(val) {
+            return  val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
+        }
+    },
+    IsNotEmpty: function () {
+        return function (val) {
+            if (val === undefined || val === null) {
+                return false;
+            }
+            return (val + "").length > 0;
         }
     }
 };
