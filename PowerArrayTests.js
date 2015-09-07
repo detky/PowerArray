@@ -1,5 +1,5 @@
 /// <reference path="PowerArray.js" />
-fdescribe('PowerArrayTests', function () {
+describe('PowerArrayTests', function () {
 
     function createDummies(quantity) {
         var result = [];
@@ -1406,230 +1406,295 @@ fdescribe('PowerArrayTests', function () {
                     expect(resulta.length).toBe(1);
                 });
             });
-        });
-        describe('Custom function evaluating single field, inside whereConditionsObject', function () {
+            describe('IsEmpty', function() {
+                it('should identify empty arrays on object properties', function () {
+                    //arrange
+                    var elements = [{ a: [], b: 'aaa' }, { a: 'asdf', b: 3 },
+                                    { a: 32, b: 23 }, { a: undefined, b: 'bbb' }];
+                    //act
+                    var result = elements.Where({ a: IsEmpty() }).Sort({ b: 'Asc' });
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                    expect(result[0].b).toBe('aaa');
+                    expect(result[1].b).toBe('bbb');
+                });
+                it('should identify empty string items', function () {
+                    //arrange
+                    var elements = [{ a: '', b: 33 }, { a: 'asdf', b: 3 }, { a: 32, b: 23 }];
+                    //act
+                    var result = elements.Where({ a: IsEmpty() });
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(1);
+                    expect(result[0].b).toBe(33);
+                });
+                it('should identify empty string items also in arrays of primitives', function () {
+                    //arrange
+                    var elements = ["","s",32];
+                    //act
+                    var result = elements.Where(IsEmpty());
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(1);
+                });
+            });
+            describe('IsNotEmpty', function () {
+                it('should identify not-empty arrays on object properties', function () {
+                    //arrange
+                    var elements = [{ a: [], b: 33}, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a: undefined, b: 'sldkf' }];
+                    //act
+                    var result = elements.Where({ a: IsNotEmpty() }).Sort({ b: 'Asc' });
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                    expect(result[0].b).toBe(3);
+                    expect(result[1].b).toBe(23);
+                });
+                it('should identify not-empty string items', function () {
+                    //arrange
+                    var elements = [{ a: '', b: 33 }, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a:undefined, b:  'sldkf'}];
+                    //act
+                    var result = elements.Where({ a: IsNotEmpty() }).Sort({b : 'Asc'});
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                    expect(result[0].b).toBe(3);
+                    expect(result[1].b).toBe(23);
+                });
+                it('should identify empty string items also in arrays of primitives', function () {
+                    //arrange
+                    var elements = ["", "s", 32];
+                    //act
+                    var result = elements.Where(IsNotEmpty());
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                });
+            });
+            describe('Custom function evaluating single field, inside whereConditionsObject', function () {
 
-            it('should compare values by using a custom function that returns true or false', function () {
-                //arrange
-                var items = [
-                    { id: 1, name: 'aa' },
-                    { id: "1", name: 'bbb' },
-                    { id: 2, name: 'ccc' }];
+                it('should compare values by using a custom function that returns true or false', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }];
 
-                var func = function (a) {
-                    return a === 'aa';
-                };
+                    var func = function (a) {
+                        return a === 'aa';
+                    };
 
-                //act
-                var result = items.Where({ name: func });
-                expect(result.length).toBe(1);
-                expect(result[0].name).toBe('aa');
+                    //act
+                    var result = items.Where({ name: func });
+                    expect(result.length).toBe(1);
+                    expect(result[0].name).toBe('aa');
+
+                });
 
             });
+            describe('Custom evaluator function', function () {
 
-        });
-        describe('Custom evaluator function', function () {
+                it('should evaluate each item by using a custom function', function () {
+                    //arrange
+                    var items = [
+                        { id: 1, name: 'aa' },
+                        { id: "1", name: 'bbb' },
+                        { id: 2, name: 'ccc' }];
 
-            it('should evaluate each item by using a custom function', function () {
-                //arrange
-                var items = [
-                    { id: 1, name: 'aa' },
-                    { id: "1", name: 'bbb' },
-                    { id: 2, name: 'ccc' }];
+                    var func = function (a) {
+                        return a.id === 1;
+                    };
 
-                var func = function (a) {
-                    return a.id === 1;
-                };
+                    //act
+                    var result = items.Where(func);
+                    expect(result.length).toBe(1);
 
-                //act
-                var result = items.Where(func);
-                expect(result.length).toBe(1);
+                });
 
             });
+            describe('Where combinations', function () {
 
-        });
-        describe('Where combinations', function () {
+                describe('Explicit value + custom function', function () {
+                    it('should return only one object', function () {
 
-            describe('Explicit value + custom function', function () {
-                it('should return only one object', function () {
+                        var elements = [
+                            { a: 'aaaa', b: { b1: 'b1', c: { xxx: 33 } } },
+                            { a: 'aaa2', b: { b1: 'b1', c: { xxx: 99 } } }
+                        ];
 
-                    var elements = [
-                        { a: 'aaaa', b: { b1: 'b1', c: { xxx: 33 } } },
-                        { a: 'aaa2', b: { b1: 'b1', c: { xxx: 99 } } }
-                    ];
+                        var result = elements.Where({
+                            a: 'aaaa',
+                            b: function (myB) {
+                                return myB.c.xxx === 33;
+                            }
+                        });
 
-                    var result = elements.Where({
-                        a: 'aaaa',
-                        b: function (myB) {
-                            return myB.c.xxx === 33;
-                        }
+                        expect(result.length).toBe(1);
+                        expect(result[0].b.c.xxx).toBe(33);
+                    });
+                });
+
+                describe('Like => EqualTo3 combined, Like => EqualTo3 combined', function () {
+
+                    it('should return only the items containing (by indexof) an specific string in a property', function () {
+                        //arrange
+                        var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
+                            id: 2,
+                            name: 'jklmnopqrst'
+                        }];
+
+                        //act
+                        var result3 = items.Where({ name: pa.Like("a"), id: pa.EqualTo3(2) }); //pa.EqualTo3(2)});
+                        var result4 = items.Where({ name: pa.Like("t"), id: pa.EqualTo3(2) });
+
+                        expect(result3.length).toBe(0);
+                        expect(result4.length).toBe(1);
+                    });
+                });
+                describe('LikeIgnoreCase => EqualTo3 combined, LikeIgnoreCase => EqualTo3 combined', function () {
+
+                    it('should return only the items containing (by indexof) an specific string in a property', function () {
+                        //arrange
+                        var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
+                            id: 2,
+                            name: 'jklmnopqrst'
+                        }];
+
+                        //act
+                        var result3 = items.Where({ name: pa.LikeIgnoreCase("A"), id: pa.EqualTo3(2) });
+                        var result4 = items.Where({ name: pa.LikeIgnoreCase("T"), id: pa.EqualTo3(2) });
+
+                        expect(result3.length).toBe(0);
+                        expect(result4.length).toBe(1);
+
                     });
 
-                    expect(result.length).toBe(1);
-                    expect(result[0].b.c.xxx).toBe(33);
                 });
-            });
-
-            describe('Like => EqualTo3 combined, Like => EqualTo3 combined', function () {
-
-                it('should return only the items containing (by indexof) an specific string in a property', function () {
-                    //arrange
-                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
-                        id: 2,
-                        name: 'jklmnopqrst'
-                    }];
-
-                    //act
-                    var result3 = items.Where({ name: pa.Like("a"), id: pa.EqualTo3(2) }); //pa.EqualTo3(2)});
-                    var result4 = items.Where({ name: pa.Like("t"), id: pa.EqualTo3(2) });
-
-                    expect(result3.length).toBe(0);
-                    expect(result4.length).toBe(1);
-                });
-            });
-            describe('LikeIgnoreCase => EqualTo3 combined, LikeIgnoreCase => EqualTo3 combined', function () {
-
-                it('should return only the items containing (by indexof) an specific string in a property', function () {
-                    //arrange
-                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
-                        id: 2,
-                        name: 'jklmnopqrst'
-                    }];
-
-                    //act
-                    var result3 = items.Where({ name: pa.LikeIgnoreCase("A"), id: pa.EqualTo3(2) });
-                    var result4 = items.Where({ name: pa.LikeIgnoreCase("T"), id: pa.EqualTo3(2) });
-
-                    expect(result3.length).toBe(0);
-                    expect(result4.length).toBe(1);
-
-                });
-
             });
         });
-    });
 
-    describe('pa.utils', function () {
-        describe('isNullEmptyOrUndefined', function () {
+        describe('pa.utils', function () {
+            describe('isNullEmptyOrUndefined', function () {
 
-            it('should return true for null', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(null)).toBe(true);
+                it('should return true for null', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(null)).toBe(true);
+                });
+
+                it('should return false for true', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(true)).toBe(false);
+                });
+
+                it('should return false for false', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(false)).toBe(false);
+                });
+
+                it('should return true for undefined', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(undefined)).toBe(true);
+                });
+
+                it('should return true for nothing', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined()).toBe(true);
+                });
+
+                it('should return false for non-empty string', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined("moo")).toBe(false);
+                });
+
+                it('should return false for non-empty number', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(12345)).toBe(false);
+                });
+
+                it('should return false for 0 number', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined(0)).toBe(false);
+                });
+
+                it('should return false for 0 string', function () {
+                    // assert
+                    expect(pa.utils.isNullEmptyOrUndefined('0')).toBe(false);
+                });
+
+                //it('should throw error for non-number and non-string', function () {
+                //    // assert
+                //    expect(function () {
+                //        pa.utils.isNullEmptyOrUndefined({});
+                //    }).toThrow(new Error());
+                //});
+
+
             });
+            describe('parseBoolean', function () {
 
-            it('should return false for true', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(true)).toBe(false);
+                it('should return true for true', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("true", false)).toBe(true);
+                });
+
+                it('should return true for TRUE', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("TRUE", false)).toBe(true);
+                });
+
+                it('should return true for True', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("True", false)).toBe(true);
+                });
+
+                it('should return true for trUE', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("trUE", false)).toBe(true);
+                });
+
+                it('should return false for true', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("false", false)).toBe(false);
+                });
+
+                it('should return false for FALSE', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("FALSE", false)).toBe(false);
+                });
+
+                it('should return false for True', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("False", false)).toBe(false);
+                });
+
+                it('should return false for trUE', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("faLSE", false)).toBe(false);
+                });
+
+                it('should return null for invalid bool', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean("moo", false)).toBe(null);
+                });
+
+                it('should return null for null', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean(null, false)).toBe(null);
+                });
+
+                it('should return null for undefined', function () {
+                    // assert
+                    expect(pa.utils.parseBoolean(undefined, false)).toBe(null);
+                });
+
+                it('should throw error for invalid bool if error enabled', function () {
+                    // assert
+                    expect(function () {
+                        pa.utils.parseBoolean("moo", true);
+                    }).toThrow(new Error("The string passed to function parseBoolean (moo) doesn't match with any valid string"));
+                });
             });
-
-            it('should return false for false', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(false)).toBe(false);
-            });
-
-            it('should return true for undefined', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(undefined)).toBe(true);
-            });
-
-            it('should return true for nothing', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined()).toBe(true);
-            });
-
-            it('should return false for non-empty string', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined("moo")).toBe(false);
-            });
-
-            it('should return false for non-empty number', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(12345)).toBe(false);
-            });
-
-            it('should return false for 0 number', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined(0)).toBe(false);
-            });
-
-            it('should return false for 0 string', function () {
-                // assert
-                expect(pa.utils.isNullEmptyOrUndefined('0')).toBe(false);
-            });
-
-            //it('should throw error for non-number and non-string', function () {
-            //    // assert
-            //    expect(function () {
-            //        pa.utils.isNullEmptyOrUndefined({});
-            //    }).toThrow(new Error());
-            //});
-
-
-        });
-        describe('parseBoolean', function () {
-
-            it('should return true for true', function () {
-                // assert
-                expect(pa.utils.parseBoolean("true", false)).toBe(true);
-            });
-
-            it('should return true for TRUE', function () {
-                // assert
-                expect(pa.utils.parseBoolean("TRUE", false)).toBe(true);
-            });
-
-            it('should return true for True', function () {
-                // assert
-                expect(pa.utils.parseBoolean("True", false)).toBe(true);
-            });
-
-            it('should return true for trUE', function () {
-                // assert
-                expect(pa.utils.parseBoolean("trUE", false)).toBe(true);
-            });
-
-            it('should return false for true', function () {
-                // assert
-                expect(pa.utils.parseBoolean("false", false)).toBe(false);
-            });
-
-            it('should return false for FALSE', function () {
-                // assert
-                expect(pa.utils.parseBoolean("FALSE", false)).toBe(false);
-            });
-
-            it('should return false for True', function () {
-                // assert
-                expect(pa.utils.parseBoolean("False", false)).toBe(false);
-            });
-
-            it('should return false for trUE', function () {
-                // assert
-                expect(pa.utils.parseBoolean("faLSE", false)).toBe(false);
-            });
-
-            it('should return null for invalid bool', function () {
-                // assert
-                expect(pa.utils.parseBoolean("moo", false)).toBe(null);
-            });
-
-            it('should return null for null', function () {
-                // assert
-                expect(pa.utils.parseBoolean(null, false)).toBe(null);
-            });
-
-            it('should return null for undefined', function () {
-                // assert
-                expect(pa.utils.parseBoolean(undefined, false)).toBe(null);
-            });
-
-            it('should throw error for invalid bool if error enabled', function () {
-                // assert
-                expect(function () {
-                    pa.utils.parseBoolean("moo", true);
-                }).toThrow(new Error("The string passed to function parseBoolean (moo) doesn't match with any valid string"));
-            });
-
         });
     });
 });
