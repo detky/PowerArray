@@ -185,6 +185,7 @@ window.pa.paWhereHelper = {
                         case window.pa.utils.DataTypes.Object:
                             subArray = pa([item[condition.column]]);
                             result = subArray.Where.call(subArray, condition.condition, false, true);
+                            console.log(JSON.stringify(condition));
                             if (result !== undefined) {//See previous comment about justFirst param
                                 continue;
                             } else {
@@ -506,9 +507,9 @@ window.pa.auxiliaryFunctions = {
     },
     StartsWith: function (value) {
         var value2 = value + '';
-        return function (endsWithString) {
-            endsWithString = endsWithString + '';
-            return value2.substr(0, endsWithString.length) === endsWithString;
+        return function (val) {
+            val = val + '';
+            return val.indexOf(value2) === 0;
         };
     },
     GreaterThan: function (value) {
@@ -669,9 +670,9 @@ window.pa.auxiliaryFunctions = {
             return val === false;
         }
     },
-    IsEmpty : function() {
-        return function(val) {
-            return  val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
+    IsEmpty: function () {
+        return function (val) {
+            return val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
         }
     },
     IsNotEmpty: function () {
@@ -680,6 +681,26 @@ window.pa.auxiliaryFunctions = {
                 return false;
             }
             return (val + "").length > 0;
+        }
+    },
+    IsNull : function() {
+        return function (val) {
+            return val === null;
+        }
+    },
+    IsNotNull: function () {
+        return function (val) {
+            return val !== null;
+        }
+    },
+    IsNaN: function () {
+        return function (val) {
+            return isNaN(val);
+        }
+    },
+    IsNotNaN: function () {
+        return function (val) {
+            return !isNaN(val);
         }
     }
 };
@@ -900,7 +921,16 @@ window.pa.prototypedFunctions_Array = {
                         });
                     case "ASCENDINGIGNORECASE":
                         return this.sort(function (a, b) {
-                            return a.toLowerCase().localeCompare(b.toLowerCase());
+                            try {
+                                return a.toLowerCase().localeCompare(b.toLowerCase());
+                            } catch (e) {
+                                if (console && console.warn) {
+                                    console.warn('PowerArray => Error trying to sort by ' + condition + '. When sorting by ' + condition + ', all values has to be strings. Probably it\'s not the case!. Now casting to string, performance may be affected.');
+                                    a = a + '';
+                                    b = b + '';
+                                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                                }
+                            }
                         });
                     default:
                         throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function," +
