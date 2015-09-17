@@ -1406,11 +1406,11 @@ describe('PowerArrayTests', function () {
                     expect(resulta.length).toBe(1);
                 });
             });
-            describe('IsEmpty', function() {
+            describe('IsEmpty', function () {
                 it('should identify empty arrays on object properties', function () {
                     //arrange
                     var elements = [{ a: [], b: 'aaa' }, { a: 'asdf', b: 3 },
-                                    { a: 32, b: 23 }, { a: undefined, b: 'bbb' }];
+                        { a: 32, b: 23 }, { a: undefined, b: 'bbb' }];
                     //act
                     var result = elements.Where({ a: IsEmpty() }).Sort({ b: 'Asc' });
                     //assert
@@ -1431,7 +1431,7 @@ describe('PowerArrayTests', function () {
                 });
                 it('should identify empty string items also in arrays of primitives', function () {
                     //arrange
-                    var elements = ["","s",32];
+                    var elements = ["", "s", 32];
                     //act
                     var result = elements.Where(IsEmpty());
                     //assert
@@ -1442,7 +1442,7 @@ describe('PowerArrayTests', function () {
             describe('IsNotEmpty', function () {
                 it('should identify not-empty arrays on object properties', function () {
                     //arrange
-                    var elements = [{ a: [], b: 33}, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a: undefined, b: 'sldkf' }];
+                    var elements = [{ a: [], b: 33 }, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a: undefined, b: 'sldkf' }];
                     //act
                     var result = elements.Where({ a: IsNotEmpty() }).Sort({ b: 'Asc' });
                     //assert
@@ -1453,9 +1453,9 @@ describe('PowerArrayTests', function () {
                 });
                 it('should identify not-empty string items', function () {
                     //arrange
-                    var elements = [{ a: '', b: 33 }, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a:undefined, b:  'sldkf'}];
+                    var elements = [{ a: '', b: 33 }, { a: 'asdf', b: 3 }, { a: 32, b: 23 }, { a: undefined, b: 'sldkf' }];
                     //act
-                    var result = elements.Where({ a: IsNotEmpty() }).Sort({b : 'Asc'});
+                    var result = elements.Where({ a: IsNotEmpty() }).Sort({ b: 'Asc' });
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
@@ -1470,6 +1470,161 @@ describe('PowerArrayTests', function () {
                     //assert
                     expect(result).toBeDefined();
                     expect(result.length).toBe(2);
+                });
+            });
+            describe('StartsWith', function () {
+                it('should find properties starting with an specific string', function () {
+                    //arrange
+                    var elements = [{ a: 'asdf' }, { a: 'sdfj' }, { a: 'aaaaaaf' }];
+
+                    //act
+                    var result = elements.Where({ a: StartsWith('a') });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                });
+
+                it('should return no results if no matches', function () {
+                    //arrange
+                    var elements = [{ a: 'xxasdf' }, { a: 'xxsdfj' }, { a: 'xxaaaaaaf' }];
+
+                    //act
+                    var result = elements.Where({ a: StartsWith('a') });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(0);
+                });
+            });
+            describe('EndsWith', function () {
+                it('should find properties ending with an specific string', function () {
+                    //arrange
+                    var elements = [{ a: 'asdf' }, { a: 'sdfj' }, { a: 'aaaaaaf' }];
+
+                    //act
+                    var result = elements.Where({ a: EndsWith('f') });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                });
+
+                it('should return no results if no matches', function () {
+                    //arrange
+                    var elements = [{ a: 'xxasdf' }, { a: 'xxsdfj' }, { a: 'xxaaaaaaf' }];
+
+                    //act
+                    var result = elements.Where({ a: EndsWith('a') });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(0);
+                });
+            });
+            describe('IsNull', function () {
+                it('should identify items having null on a property', function () {
+                    //arrange
+                    var elements = [
+                        { a: 1, b: { b1: null } },
+                        { a: 1, b: { b1: 'something' } }
+                    ];
+
+                    //act
+                    var result = elements.Where({ b: { b1: IsNull() } });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(1);
+                });
+                it('should identify null items also on a primitive array', function () {
+                    //arrange
+                    var elements = [1, 2, 3, "s", null, new Date(), null];
+
+                    //act
+                    var result = elements.Where(IsNull());
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                });
+            });
+            describe('IsNotNull', function () {
+                it('should identify items having not null values on a property', function () {
+                    //arrange
+                    var elements = [
+                        {
+                            a: 1,
+                            b: {
+                                b1: null
+                            }
+                        },
+                        {
+                            a: 2,
+                            b: {
+                                b1: 'something'
+                            }
+                        }
+                    ];
+
+                    //act
+                    var result = elements.Where({
+                        b: {
+                            b1: IsNotNull()
+                        }
+                    });
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(1);
+                    expect(result[0].a).toBe(2);
+                });
+                it('should identify not null items also on a primitive array', function () {
+                    //arrange
+                    var elements = [1, 2, 3, "s", null, new Date(), null];
+
+                    //act
+                    var result = elements.Where(IsNotNull());
+
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(5);
+                });
+            });
+            describe('IsNaN', function () {
+                it('should identify NAN values on a property of an array of objects', function () {
+                    //arrange
+                    var elements = [
+                        { a: '3,1' }, //NAN
+                        { a: '3.1' }, //Not NAN
+                        { a: 3 }, //Not NAN
+                        { a: '0' } //Not NAN
+                    ];
+                    //act
+                    var result = elements.Where({
+                        a: IsNaN()
+                    });
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(1);
+                });
+            });
+            describe('IsNaN', function () {
+                it('should identify NAN values on a property of an array of objects', function () {
+                    //arrange
+                    var elements = [
+                        { a: '3,1' }, //NAN
+                        { a: '3.1' }, //Not NAN
+                        { a: 3 }, //Not NAN
+                        { a: '0' } //Not NAN
+                    ];
+                    //act
+                    var result = elements.Where({
+                        a: IsNotNaN()
+                    });
+                    //assert
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(3);
                 });
             });
             describe('Custom function evaluating single field, inside whereConditionsObject', function () {
