@@ -5,7 +5,7 @@ Power Array extends the native Array prototype by adding many additional feature
 ###How is implemented?
 PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
 By loading the library, all arrays become many extra functions that are designed to simplify and drastically reduce the amount of code that must be written to operate with arrays in javascript.<br>
-Current File Size: <10KB. <br>
+Current File Size: 44KB. <br>
 Dependencies : None. 
 
 ####What does this script changes on the Array prototype? Is that really dangerous?</a>
