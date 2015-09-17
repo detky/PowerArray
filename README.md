@@ -1,7 +1,7 @@
 # PowerArray
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. <br>Strongly focused on objects-arrays as those that normally are served from a rest service.
 
-<b>This document is under construction!</b>
+<b>Everything here is under construction!</b>
 ###How is implemented?
 PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
 By loading the library, all arrays become many extra functions that are designed to simplify and drastically reduce the amount of code that must be written to operate with arrays in javascript.<br>
