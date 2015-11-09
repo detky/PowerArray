@@ -3,8 +3,136 @@ window.pa = function (object) {
         return new paArray(object);
     }
 };
+window.pa.utils = {
+    DataTypes: {
+        String: 'String',
+        Number: 'Number',
+        Date: 'Date',
+        Boolean: 'Boolean',
+        Object: 'Object',
+        ArrayOfObjects: 'ArrayOfObjects',
+        ArrayOfPrimitives: 'ArrayOfPrimitives',
+        RegExp: 'RegExp',
+        Function: 'Function',
+        Null: 'Null',
+        Undefined: 'Undefined'
+    }, IsArrayOfObjects: function (val) {
+        var l;
+        if (!val.paIsArray || val.length === undefined) {
+            return false;
+        }
+        l = val.length;
+        while (l--) {
+            if (pa.utils.GetTypeOf(val[l]) !== pa.utils.DataTypes.Object) {
+                return false;
+            }
+        }
+        return true;
+    },
+    /**
+     * Parses a string to boolean value. This function searches strictly for the strings "true", "True", "trUE", "falsE", etc.
+     * @param str the string to be evaluated
+     * @param throwIfNotMatch Boolean, if true, an exception will be raised if the string does not match. If false, null will be returned
+     * @returns {*} boolean value if string matches, null if not
+     * @constructor ??
+     */
+    parseBoolean: function (str, throwIfNotMatch) {
+        if (!pa.utils.isNullEmptyOrUndefined(str)) {
+            var strU = str.toUpperCase();
+            if (strU === "TRUE") {
+                return true;
+            }
+            if (strU === "FALSE") {
+                return false;
+            }
+        }
 
-//initialize wrapper method for arrays
+        if (throwIfNotMatch) {
+            throw new Error("The string passed to function parseBoolean (" + str + ") doesn't match with any valid string");
+        }
+
+        return null;
+    }, /**
+     * evaluate if a number or a string is undefined "" or null and return true or false
+     * @param what the element to evaluate
+     * @returns {boolean}
+     * @constructor
+     */
+    isNullEmptyOrUndefined: function (what) {
+        // null has to be evaluated before checking typeof
+        if (what === null) {
+            return true;
+        }
+        var t = typeof what;
+        if (t === "boolean") {
+            return false;
+        }
+
+        if (t !== "number" && t !== "string" && t !== "undefined") {
+            throw new Error("PowerArray => The function IsNullOrEmpty is designed to evaluate strings and numbers, but something different was provided (" + t + ")");
+        }
+
+        if (t === "number" && what === 0) {
+            return false;
+        }
+
+        if (!what) {
+            return true;
+        }
+        return (what + "").length === 0;
+    },
+    GetTypeOf: function (element, analyzeData) {
+
+        if (element === null) {
+            return pa.utils.DataTypes.Null;
+        }
+
+        if (element === undefined) {
+            return pa.utils.DataTypes.Undefined;
+        }
+        var to = typeof element;
+        switch (to) {
+            case 'string':
+                return pa.utils.DataTypes.String;
+            case 'number':
+                return pa.utils.DataTypes.Number;
+            case 'boolean':
+                return pa.utils.DataTypes.Boolean;
+            case 'object':
+                //check hidden types
+                if (element instanceof String) {
+                    return pa.utils.DataTypes.String;
+                }
+
+                if (element instanceof Date) {
+                    return pa.utils.DataTypes.Date;
+                }
+
+                if (element instanceof Number) {
+                    return pa.utils.DataTypes.Number;
+                }
+
+                if (element instanceof RegExp) {
+                    return pa.utils.DataTypes.RegExp;
+                }
+                if (element.paIsArray) {
+                    // If its an array of objects, it has to be handled different,
+                    if (analyzeData && pa.utils.IsArrayOfObjects(element)) {
+                        return pa.utils.DataTypes.ArrayOfObjects;
+                    } else {
+                        return pa.utils.DataTypes.ArrayOfPrimitives;
+                    }
+                }
+                return pa.utils.DataTypes.Object;
+            default:
+                //any others
+                throw new Error("PowerArray Error : Unknown Datatype!");
+        }
+    },
+    IsNumeric: function (num) {
+        return !isNaN(parseFloat(num)) && isFinite(num);
+    }
+};
 
 window.pa.paEachParalellsHelper = {
     CheckParalellTaskStates: function (paralellId) {
@@ -28,16 +156,48 @@ window.pa.paEachParalellsHelper = {
 
 window.pa.paWhereHelper = {
     FillConditions: function (item, conditions) {
-        var l = conditions.length, condition;
+        var l = conditions.length, l2 = l, condition, result, subArray;
         while (l--) {
             condition = conditions[l];
             //conditions can be functions or single values, if there are single values, they have to ve evaluated by
             //===. if they are functions everything should continue as by default
-            if (typeof condition.condition !== 'function') { //transforms an explicit value into an === evaluation
-                condition.condition = pa.EqualTo3(condition.condition);
+            if (typeof condition.condition !== 'function') {
+                //if the condition is an object, it's necessary to handle it different.
+                //If that's the case we start internally another Where() call, but we know that we are
+                //evaluating pro Where call just ONE item.
+                if (window.pa.utils.GetTypeOf(condition.condition) === window.pa.utils.DataTypes.Object) {
+                    var itemType = window.pa.utils.GetTypeOf(item[condition.column], true);
+
+                    switch (itemType) {
+                        case window.pa.utils.DataTypes.ArrayOfObjects:
+                        case window.pa.utils.DataTypes.ArrayOfPrimitives:
+
+                            result = item[condition.column].Where.call(item[condition.column], condition.condition, false, true);//TODO: for some reason, if i set the justFirst flag, everything goes wrong.
+                            //when sending true als "justFirst", where will return the first found element, not an array,
+                            //because i'm sending true for performance, it's necessary to evaluate the result with undefined
+                            //instead of: "return result.length > 0;" it's now "return result !== undefined;"
+                            if (result !== undefined) {
+                                continue;
+                            } else {
+                                return false;
+                            }
+                            break;
+                        case window.pa.utils.DataTypes.Object:
+                            subArray = pa([item[condition.column]]);
+                            result = subArray.Where.call(subArray, condition.condition, false, true);
+                            console.log(JSON.stringify(condition));
+                            if (result !== undefined) {//See previous comment about justFirst param
+                                continue;
+                            } else {
+                                return false;
+                            }
+                            break;
+                    }
+                }
+                condition.condition = pa.EqualTo3(condition.condition); //transforms an explicit value into an === evaluation
             }
 
-            if (!condition.condition(item[condition.column])) {
+            if (!condition.condition(item[condition.column])) { //if one condition is not fulfilled, just return false;
                 return false;
             }
         }
@@ -110,51 +270,50 @@ window.pa.paWhereHelper = {
     // The following function is a copy of the of the value_equals utiliy of
     // the toubkal project.
     // https://github.com/detky/toubkal/blob/master/lib/util/value_equals.js
-    //
-    /* -----------------------------------------------------------------------------------------
-     equals( a, b [, enforce_properties_order, cyclic] )
-
-     Returns true if a and b are deeply equal, false otherwise.
-
-     Parameters:
-     - a (Any type): value to compare to b
-     - b (Any type): value compared to a
-
-     Optional Parameters:
-     - enforce_properties_order (Boolean): true to check if Object properties are provided
-     in the same order between a and b
-
-     - cyclic (Boolean): true to check for cycles in cyclic objects
-
-     Implementation:
-     'a' is considered equal to 'b' if all scalar values in a and b are strictly equal as
-     compared with operator '===' except for these two special cases:
-     - 0 === -0 but are not equal.
-     - NaN is not === to itself but is equal.
-
-     RegExp objects are considered equal if they have the same lastIndex, i.e. both regular
-     expressions have matched the same number of times.
-
-     Functions must be identical, so that they have the same closure context.
-
-     "undefined" is a valid value, including in Objects
-
-     106 automated tests.
-
-     Provide options for slower, less-common use cases:
-
-     - Unless enforce_properties_order is true, if 'a' and 'b' are non-Array Objects, the
-     order of occurence of their attributes is considered irrelevant:
-     { a: 1, b: 2 } is considered equal to { b: 2, a: 1 }
-
-     - Unless cyclic is true, Cyclic objects will throw:
-     RangeError: Maximum call stack size exceeded
-     */
     equals: function (a, b, enforce_properties_order, cyclic) {
+        /* -----------------------------------------------------------------------------------------
+         equals( a, b [, enforce_properties_order, cyclic] )
+
+         Returns true if a and b are deeply equal, false otherwise.
+
+         Parameters:
+         - a (Any type): value to compare to b
+         - b (Any type): value compared to a
+
+         Optional Parameters:
+         - enforce_properties_order (Boolean): true to check if Object properties are provided
+         in the same order between a and b
+
+         - cyclic (Boolean): true to check for cycles in cyclic objects
+
+         Implementation:
+         'a' is considered equal to 'b' if all scalar values in a and b are strictly equal as
+         compared with operator '===' except for these two special cases:
+         - 0 === -0 but are not equal.
+         - NaN is not === to itself but is equal.
+
+         RegExp objects are considered equal if they have the same lastIndex, i.e. both regular
+         expressions have matched the same number of times.
+
+         Functions must be identical, so that they have the same closure context.
+
+         "undefined" is a valid value, including in Objects
+
+         106 automated tests.
+
+         Provide options for slower, less-common use cases:
+
+         - Unless enforce_properties_order is true, if 'a' and 'b' are non-Array Objects, the
+         order of occurence of their attributes is considered irrelevant:
+         { a: 1, b: 2 } is considered equal to { b: 2, a: 1 }
+
+         - Unless cyclic is true, Cyclic objects will throw:
+         RangeError: Maximum call stack size exceeded
+         */
         return a === b       /* strick equality should be enough unless zero*/ // jshint ignore:line
             && a !== 0         /* because 0 === -0, requires test by _equals()*/   // jshint ignore:line
             || _equals(a, b) /* handles not strictly equal or zero values*/   // jshint ignore:line
-            ;
+        ;
         function _equals(a, b) {
             // a and b have already failed test for strict equality or are zero
 
@@ -179,8 +338,8 @@ window.pa.paWhereHelper = {
                         a === a ?      // a is 0 or -O
                         1 / a === 1 / b    // 1/0 !== 1/-0 because Infinity !== -Infinity
                             : b !== b        // NaN, the only Number not equal to itself!
-                        ;
-                // [object Number]
+                    ;
+                    // [object Number]
 
                 case '[object RegExp]':
                     return a.source == b.source // jshint ignore:line
@@ -188,12 +347,12 @@ window.pa.paWhereHelper = {
                         && a.ignoreCase == b.ignoreCase // jshint ignore:line
                         && a.multiline == b.multiline // jshint ignore:line
                         && a.lastIndex == b.lastIndex // jshint ignore:line
-                        ;
-                // [object RegExp]
+                    ;
+                    // [object RegExp]
 
                 case '[object Function]':
                     return false; // functions should be strictly equal because of closure context
-                // [object Function]
+                    // [object Function]
 
                 case '[object Array]':
                     // intentionally duplicated bellow for [object Object]
@@ -209,7 +368,7 @@ window.pa.paWhereHelper = {
                     }
 
                     return true;
-                // [object Array]
+                    // [object Array]
 
                 case '[object Object]':
                     // intentionally duplicated from above for [object Array]
@@ -252,7 +411,7 @@ window.pa.paWhereHelper = {
                     }
 
                     return true;
-                // [object Object]
+                    // [object Object]
             } // switch toString.call( a )
         } // _equals()
 
@@ -292,8 +451,9 @@ window.pa.paWhereHelper = {
     } // equals()
 };
 
+
 window.pa.auxiliaryFunctions = {
-    Contains: function (value, enforce_properties_order, cyclic) {
+    Contains: function (value, enforcePropsOrder, cyclic) {
         return function (val) {
             if (!val.paIsArray) {
                 throw new Error("PowerArray error => parameter val passed to Contains function should be an array, only they can 'contain' something.");
@@ -321,7 +481,7 @@ window.pa.auxiliaryFunctions = {
             }
 
             while (l--) {
-                if (pa.paWhereHelper.equals(val[l], value, enforce_properties_order, cyclic)) {
+                if (pa.paWhereHelper.equals(val[l], value, enforcePropsOrder, cyclic)) {
                     return true;
                 }
             }
@@ -338,7 +498,7 @@ window.pa.auxiliaryFunctions = {
         };
     },
     EndsWith: function (value) {
-        var value2 = value+'';
+        var value2 = value + '';
         return function (endsWithString) {
 
             endsWithString = endsWithString + '';
@@ -346,10 +506,10 @@ window.pa.auxiliaryFunctions = {
         };
     },
     StartsWith: function (value) {
-        var value2 = value+'';
-        return function (endsWithString) {
-            endsWithString = endsWithString + '';
-            return value2.substr(0, endsWithString.length) === endsWithString;
+        var value2 = value + '';
+        return function (val) {
+            val = val + '';
+            return val.indexOf(value2) === 0;
         };
     },
     GreaterThan: function (value) {
@@ -372,7 +532,20 @@ window.pa.auxiliaryFunctions = {
             return val == value; // jshint ignore:line
         };
     },
+    IsUndefined: function () {
+        return function (val) {
+            return val === undefined;
+        };
+    },
+    IsDefined: function () {
+        return function (val) {
+            return val !== undefined;
+        };
+    },
     In: function (list) {
+        //TODO: investigar si esta function pierde performance al no estar devolviendo una
+        //funci�n como todo el resto.
+
         if (arguments.length > 1) {
             list = Array.prototype.slice.call(arguments);
         }
@@ -387,94 +560,147 @@ window.pa.auxiliaryFunctions = {
         return function (val) {
             return list.indexOf(val) === -1; // jshint ignore:line
         };
-    }, EqualTo: function (object, func) {
+    },
+    EqualTo: function (object, func, enforcePropsOrder, cyclic) {
         return function (val) {
             if (func) {
                 return func(val, object);
             } else {
-                return pa.paWhereHelper.equals(object, val);
+                return pa.paWhereHelper.equals(object, val, enforcePropsOrder, cyclic);
             }
         };
-    }, Like: function (value) {
+    },
+    Like: function (value) {
         if (!value.paIsArray) {
             //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) > -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) === -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
-    }, NotLike: function (value) {
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                if (val.indexOf(value[l]) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    },
+    NotLike: function (value) {
         if (!value.paIsArray) {
             //normal search, single string parameter
-            return function (val) {
-                return val.indexOf(value) === -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    if (val.indexOf(value[l]) > -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
-    }, LikeIgnoreCase: function (value) {
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                if (val.indexOf(value[l]) > -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    },
+    LikeIgnoreCase: function (value) {
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
             //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) > -1;
-            };
-        } else {
-            //multiple search, parameters array
-
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
         }
-    }, NotLikeIgnoreCase: function (value) {
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                valueCaseInsensitive = value[l].toUpperCase();
+                if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    },
+    NotLikeIgnoreCase: function (value) {
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
             //normal search, single string parameter
-            valueCaseInsensitive = value.toUpperCase();
-            return function (val) {
-                return val.toUpperCase().indexOf(valueCaseInsensitive) === -1;
-            };
-        } else {
-            //multiple search, parameters array
-            return function (val) {
-                var l = value.length;
-                while (l--) {
-                    valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
-                        return false;
-                    }
+            if (arguments.length > 1) {
+                value = Array.prototype.slice.call(arguments);
+            } else {
+                value = [value];
+            }
+        }
+        return function (val) {
+            var l = value.length;
+            while (l--) {
+                valueCaseInsensitive = value[l].toUpperCase();
+                if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
+                    return false;
                 }
-                return true;
-            };
+            }
+            return true;
+        };
+    },
+    IsTruthy: function () {
+        return function (val) {
+            return (val) ? true : false;
+        };
+    },
+    IsFalsy: function () {
+        return function (val) {
+            return (val) ? false : true;
+        }
+    },
+    IsTrue: function () {
+        return function (val) {
+            return val === true;
+        };
+    },
+    IsFalse: function () {
+        return function (val) {
+            return val === false;
+        }
+    },
+    IsEmpty: function () {
+        return function (val) {
+            return val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
+        }
+    },
+    IsNotEmpty: function () {
+        return function (val) {
+            if (val === undefined || val === null) {
+                return false;
+            }
+            return (val + "").length > 0;
+        }
+    },
+    IsNull : function() {
+        return function (val) {
+            return val === null;
+        }
+    },
+    IsNotNull: function () {
+        return function (val) {
+            return val !== null;
+        }
+    },
+    IsNaN: function () {
+        return function (val) {
+            return isNaN(val);
+        }
+    },
+    IsNotNaN: function () {
+        return function (val) {
+            return !isNaN(val);
         }
     }
 };
@@ -605,9 +831,7 @@ window.pa.prototypedFunctions_Array = {
         var partsLength = parseInt(this.length / quantProcesses);
         var bkpQuantProcesses = quantProcesses;
         while (quantProcesses--) {
-            //for (i = 0; i < quantProcesses; i++) {
             startFrom = bkpQuantProcesses - quantProcesses * partsLength;
-            //console.log("startFrom " + startFrom);
             setTimeout(function () {
                 that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
                     window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
@@ -649,7 +873,7 @@ window.pa.prototypedFunctions_Array = {
                 };
             }.toString(),
             ')()'
-        ], {type: 'application/javascript'}));
+        ], { type: 'application/javascript' }));
         var w = new Worker(blobURL);
         w.postMessage({
             array: this,
@@ -697,7 +921,16 @@ window.pa.prototypedFunctions_Array = {
                         });
                     case "ASCENDINGIGNORECASE":
                         return this.sort(function (a, b) {
-                            return a.toLowerCase().localeCompare(b.toLowerCase());
+                            try {
+                                return a.toLowerCase().localeCompare(b.toLowerCase());
+                            } catch (e) {
+                                if (console && console.warn) {
+                                    console.warn('PowerArray => Error trying to sort by ' + condition + '. When sorting by ' + condition + ', all values has to be strings. Probably it\'s not the case!. Now casting to string, performance may be affected.');
+                                    a = a + '';
+                                    b = b + '';
+                                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                                }
+                            }
                         });
                     default:
                         throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function," +
@@ -789,7 +1022,7 @@ window.pa.prototypedFunctions_Array = {
                     for (i = 0; i < l; i++) {
                         item = this[i];
                         if (whereConditions(item)) {
-                            if(justFirst) {
+                            if (justFirst) {
                                 return item;
                             }
                             result.push(item);
@@ -799,7 +1032,7 @@ window.pa.prototypedFunctions_Array = {
                     while (l--) {
                         item = this[l];
                         if (whereConditions(item)) {
-                            if(justFirst) {
+                            if (justFirst) {
                                 return item;
                             }
                             result.push(item);
@@ -811,10 +1044,10 @@ window.pa.prototypedFunctions_Array = {
         return result;
     },
     First: function (whereConditions) {// jshint ignore:line
-        if(arguments.length === 0) {
+        if (arguments.length === 0) {
             return (this.length > 0) ? this[0] : undefined;
         }
-        return pa.prototypedFunctions_Array.Where(whereConditions, true, true);
+        return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true);
     }
 };
 
