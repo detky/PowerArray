@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head>
+    <title>Power Array  - Builder</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-theme.min.css">
+    <link rel="stylesheet" href="jjsonviewer.css">
+    <script src="jquery-2.1.4.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="angular.min.js" type="text/javascript"></script>
+    <script src="/Scripts/PowerArray.js" type="text/javascript"></script>
+    <script src="PowerArrayFunctionsDescriptor.js" type="text/javascript"></script>
+    <script src="PaBuilder.js" type="text/javascript"></script>
+    <script src="jjsonviewer.js" type="text/javascript"></script>
+    <style>
+        #overloadSelector {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            width: 40%;
+            left: 30%;
+            top: 20%;
+            z-index: 4000;
+            border: solid 1px black;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            border-top: solid 2px #5652b1;
+            border-bottom: solid 2px #5652b1;
+            background: #ebe9f9;
+            background: -moz-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, #ebe9f9), color-stop(50%, #d8d0ef), color-stop(51%, #cec7ec), color-stop(100%, #c1bfea));
+            background: -webkit-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -o-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -ms-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: linear-gradient(to bottom, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea', GradientType=0 );
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            vertical-align: middle;
+            text-align: center;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            opacity: .7;
+            filter: alpha(opacity=30);
+            -moz-opacity: .3;
+            z-index: 1500;
+        }
+
+        .typeName {
+            color: gray;
+        }
+
+        .centered {
+            text-align: center;
+        }
+
+        .right-aligned {
+            text-align: right !important;
+        }
+
+        #tblResults {
+            margin-left: 10%;
+            width: 80%;
+            align-self: center;
+            border-bottom: solid 1px gray;
+        }
+
+            #tblResults tr th {
+                vertical-align: middle;
+                text-align: center;
+                padding-left: 10px;
+                margin: 4px;
+                font-size: 16px;
+                height: 25px;
+                font-weight: normal;
+                border: solid 1px gray;
+            }
+
+        table.tblBuilder {
+            margin-left: 5%;
+            width: 90%;
+            align-self: center;
+            border-bottom: solid 1px gray;
+        }
+
+
+
+
+            table.tblBuilder tr th {
+                vertical-align: middle;
+                text-align: center;
+                padding-left: 10px;
+                margin: 4px;
+                font-size: 16px;
+                height: 25px;
+                font-weight: normal;
+                border: solid 1px gray;
+            }
+
+            table.tblBuilder tr td:first-child {
+                text-align: left;
+            }
+
+            table.tblBuilder tr td {
+                text-align: left;
+                padding-left: 20px;
+                font-size: 16px;
+                height: 25px;
+                border-right: solid 1px gray;
+                border-left: solid 1px gray;
+                vertical-align: top !important;
+            }
+
+        tr.filteredRow {
+            border-top: solid 2px #5652b1;
+            border-bottom: solid 2px #5652b1;
+            background: #ebe9f9;
+            background: -moz-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, #ebe9f9), color-stop(50%, #d8d0ef), color-stop(51%, #cec7ec), color-stop(100%, #c1bfea));
+            background: -webkit-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -o-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: -ms-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            background: linear-gradient(to bottom, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea', GradientType=0 );
+        }
+
+            tr.filteredRow td:first-child {
+                font-weight: bold;
+            }
+
+
+
+
+        table.paramsTable {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            border-spacing: 0;
+            border-collapse: separate;
+            border: 0;
+        }
+
+
+            table.paramsTable tr td {
+                font-size: 15px;
+                vertical-align: top;
+                text-align: left !important;
+                border: 0 !important;
+                padding: 3px;
+                margin: 0;
+                font-weight: normal !important;
+            }
+
+                table.paramsTable tr td input {
+                    font-size: 90%;
+                    font-weight: normal;
+                    width: 70%;
+                }
+
+
+        input.has-error {
+            border: solid 1px red !important;
+        }
+
+        .miniText {
+            font-size: 10px !important;
+            color: black !important;
+            font-weight: normal !important;
+        }
+
+        .validationError {
+            color: #c6002a;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body ng-controller="PaBuilderController">
+    <a name="up"></a>
+    <div class="container-fluid" id="JsonInputStep">
+        <div class="row" style="background: black; color: white; text-align: center">
+            <div class="col-md-4" style="display: inline;">
+                <h2>Power Array expression builder</h2>
+            </div>
+            <div class="col-md-8" style="display: inline; text-align: left; vertical-align: middle">
+                <table width="100%">
+                    <tr>
+                        <td style="vertical-align: middle !important; text-align: center; min-height: 80px;">
+                            This tool generates PowerArray expressions for filter and sort an array of objects by using the functions
+                            <span style="color:deepskyblue;">Where </span>and <span style="color:deepskyblue;">Sort</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <a name="JsonInputStep"></a>
+        <div class="row" id="headerJsonInputStep" style="background: gray; color: black; text-align: center">
+            <h3 class="col-md-3 control-label" for="radios-container"
+                style="color: black; padding: 3px 0 10px 24px;">
+                Select data Source
+            </h3>
+            <div id="radios-container">
+                <div class="checkbox col-md-3" style="padding-top: 15px; margin-top: 10px;">
+                    <label for="checkboxes-0">
+                        <input type="radio" name="checkboxes" id="checkboxes-0" checked="true" ng-click="model.sourceType='CUSTOM'">
+                        Custom JSON
+                    </label>
+                </div>
+                <div class="checkbox col-md-3" style="padding-top: 15px; margin-top: 10px;">
+                    <label for="checkboxes-1">
+                        <input type="radio" name="checkboxes" id="checkboxes-1" ng-click="model.sourceType='URL'">
+                        Load from url
+                    </label>
+                </div>
+                <div class="checkbox col-md-3" style="padding-top: 15px; margin-top: 10px;">
+                    <label for="checkboxes-2">
+                        <input type="radio" name="checkboxes" id="checkboxes-2" ng-click="controller.loadExample()">
+                        Use "ProgrammersSkills.json" example
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid centered" ng-show="model.activeTab == 'JSON'">
+            <form class="form-horizontal">
+                <fieldset>
+                    <!-- Spacer and error message-->
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-12" style="font-weight: normal !important;">
+                            <h3>Here you can test and learn how to use the PowerArray functions <b>Where</b> and <b>Sort</b> to filter an array of objects.</h3>
+                            First, you have to choose the Json array that will be used as source. If you don't have one, you can use the default example.
+                        </label>
+                    </div>
+
+                    <div class="form-group" ng-show="model.sourceType==='URL'">
+                        <div class="col-lg-12">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Url to a JSON file" ng-model="model.jsonUrl">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-enable="false" ng-click="controller.loadDataFromUrl(model.jsonUrl)">Load...</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <div class="col-md-12">
+                            <div ng-show="model.loadJsonErrorMessage.length > 0">
+                                <label style="display: inline; font-size: 14px;">
+                                    <span class="glyphicon glyphicon-exclamation-sign" style="color: red; font-size: 14px;"></span>
+                                </label>
+                                <label style="color: red; font-size: 14px; font-weight: normal; padding: 0; margin: 0; display: inline;"> An error has occurred trying to download file ({{model.loadJsonErrorMessage}})</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <textarea id="txt_Json" name="txt_Json" class="form-control"
+                                      placeholder="Paste or type JSON array here"
+                                      ng-model="model.jsonPlainText"
+                                      style="height: 350px;"></textarea>
+                        </div>
+                    </div>
+                    <!-- Button -->
+                    <div class="form-group">
+                        <button id="singlebutton" ng-class="{'disabled':model.jsonPlainText===''}"
+                                name="singlebutton" class="btn btn-primary col-md-4 col-md-offset-4"
+                                ng-click="controller.parseJsonInput()">
+                            Parse and Continue
+                        </button><br /><br />
+                        <div ng-show="model.parseJsonErrorMessage.length > 0">
+                            <label style="display: inline; font-size: 14px;">
+                                <span class="glyphicon glyphicon-exclamation-sign" style="color: red; font-size: 14px;"></span>
+                            </label>
+                            <label style="color: red; font-size: 14px; font-weight: normal; padding: 0; margin: 0; display: inline;"> An error has occurred trying to parse the content ({{model.parseJsonErrorMessage}})</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="container-fluid" style="padding-top: 800px;">
+        <a name="builderStep"></a>
+        <div class="row" style="background: gray; color: black; text-align: center">
+            <h3 class="col-md-3 control-label" for="radios-container"
+                style="color: black; padding: 3px 0 10px 24px;">
+                Define your filter criteria
+            </h3>
+            <div class="col-md-9 right-aligned" style="padding-top: 20px; padding-right: 20px;">
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('JsonInputStep')">
+                    Change source
+                </button>
+            </div>
+        </div>
+        <div class="row center center-block text-center" style="min-height: 800px;">
+            <div id="workingImg" style="width: 100%; text-align: center; margin: 40px; margin-top: 120px; display: none;">
+                <img src="images/working.gif" />
+            </div><br/>
+            <p>
+                <span class="badge"><h3>The provided Json array contains <span id="arrayCount" style="font-weight: bold"></span> items</h3></span> <br/>
+                The following table describes your data's structure. Use the filter functions to build your filter criteria <a style="cursor:pointer" ng-click="model.tableHelpVisible=!model.tableHelpVisible">{{ model.tableHelpVisible ? "hide usage instructions" : "show usage instructions"}}</a>
+                <div ng-show="model.tableHelpVisible" style="width: 90%; margin-left: 5%; text-align: left; border-radius: 8px; border: solid 1px gray; padding: 15px;">
+                    <h3>Instructions:</h3>
+                    The following table describes your data's structure, and allows you to specify one or more conditions to filter it.
+                    Each array item fulfilling all conditions will be included on the results.<br/><br/>
+                    To define a condition for an specific property, you have to find the corresponding table row, select a filter function and provide the necessary arguments (if needed).
+                    <h3>Table structure:</h3>
+                    <b>Each table row, represents a property that was found on the provided array</b>. Detected sub properties will shown next to his parent property, right indented. <br /><br />
+                    <ul class="list-group" style="padding-left: 30px;">
+                        <li class="list-group-item-text">The <b>data properties column</b> shows each property, and his (Power Array) type. <br/>
+                            If you are missing an object property or array on the list, please ensure that the property is present on the first item of the provided array!<br/><br/>
+                        </li>
+                        <li class="list-group-item-text">
+                            The <b>Filter Functions</b> column, shows a list of standard functions that can be used to filter that property type (for example GreatherThan, Like, In, NotIn, EqualTo2, EqualTo3, etc.).<br/>
+                            PowerArray include many auxiliary functions (Standard PA Functions) that can be used to avoid repetitive code and improve simplicity. The dropdown will show only<br/>
+                            the standard functions that can be used against the corresponding property type.<br/>
+                            <b>You do not have to use an auxiliary function necessarily!<br/></b>
+                            If the criterion you want to use is simple (as when filtering by a numeric "id" property), you can select the option <b>Single Value</b>,
+                            which allows you to explicitly provide the expected value. In that case, the comparison will be made by using identity operator (=== symbols).<br/><br/>
+                        </li>
+                        <li class="list-group-item-text">The <b>Arguments</b> column is where you can parametrize the filter after selecting a filter function.<br/>
+                            Not always is necessary to provide arguments: standard functions like for example IsDefined, IsNull, IsNan or IsEmpty do not require any argument.
+                            The content of this column is only visible after selecting a filter function and offers a basic autocomplete behaviour based on the provided data.
+                        </li>
+                    </ul>
+                    <div class=" right-aligned">
+                        <button class="btn btn-default" ng-click="model.tableHelpVisible=false"> Hide Instructions</button>
+                    </div>
+                </div>
+            </p>
+            <br/><br/> 
+            <table id="tblBuilder" class="table tblBuilder col-md-12 table-condensed" align="center" style="display: none;">
+                <tr>
+                    <th style="width: 25%;">Data properties</th>
+                    <th class="center" style="width: 20%;">Filter Functions</th>
+                    <th style="width: 40%;">Arguments</th>
+                </tr>
+                <tr ng-repeat="prop in model.jsonObjectPropsMatrix.flats" propname="{{prop.name}}" proppath="{{ prop.path }}" proptype="{{ prop.type }}" class="paBuilderPropertyContainerTr">
+                    <td style="border-bottom: dashed lightgray 1px" ng-style="{'padding-left': (15 + (prop.level*20)) + 'px'}">
+                        {{prop.name}} <span class="typeName">[{{prop.type}}]</span>
+                    </td>
+                    <td>
+                        <select ng-attr-id="{{ 'cmbFunctionFor_' + prop.name }}"
+                                ng-attr-propname="{{ prop.name }}"
+                                ng-attr-proppath="{{ prop.path }}"
+                                ng-attr-proptype="{{ prop.type }}"
+                                class="form-control"
+                                onchange="window.paBuilderController.functionSelected(this)">
+                            <option value="-1">No condition</option>
+                            <!--todo: -->
+                            <option value="" functionname="SINGLE" ng-if="prop.type !== pa.utils.DataTypes.ArrayOfPrimitives">Single value</option>
+                            <optgroup ng-repeat="group in controller.getFunctionGroupsForFiltersByType(prop.type)" label="{{group}}">
+                                <option ng-repeat="func in controller.getFunctionsAvailableFilters(prop.type, group)"
+                                        ng-attr-functionname="{{func.Name}}">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{func.Name}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td class="argumentsTd" style="text-align: center;" propname="{{prop.name}}" proppath="{{ prop.path }}"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="row center center-block text-center">
+            <button class="btn btn-primary" id="btnGetExpression" style="display:none"
+                    ng-click="controller.buildExpression()">
+                Get Expression
+            </button>
+            <div class="form-group" style="margin-top: 20px; display: none;" id="conditionsError">
+                <div class="col-md-12">
+                    <label style="display: inline; font-size: 14px;">
+                        <span class="glyphicon glyphicon-exclamation-sign" style="color: red; font-size: 14px;"></span>
+                    </label>
+                    <label style="color: red; font-size: 14px; font-weight: normal; padding: 0; margin: 0; display: inline;"> There are some invalid fields, please check the conditions</label>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 20px; display: none;" id="conditionsError2">
+                <div class="col-md-12">
+                    <label style="display: inline; font-size: 14px;">
+                        <span class="glyphicon glyphicon-exclamation-sign" style="color: red; font-size: 14px;"></span>
+                    </label>
+                    <label style="color: red; font-size: 14px; font-weight: normal; padding: 0; margin: 0; display: inline;">Please select at least one filter function</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" style="padding-top: 800px;">
+        <a name="resultStep"></a>
+        <div class="row" style="background: gray; color: black; text-align: center">
+            <h3 class="col-md-3 control-label" for="radios-container"
+                style="color: black; padding: 3px 0 10px 24px;">
+                Results
+            </h3>
+            <div class="col-md-9 right-aligned" style="padding-top: 20px; padding-right: 20px;">
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('JsonInputStep')">
+                    Change source
+                </button>
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('builderStep')">
+                    Change Conditions
+                </button>
+            </div>
+        </div>
+        <div class="row center center-block text-center" style="min-height: 800px;">
+            <br />
+            To get the following expression working, the variable 'theArray' should already contain an array of objects, and the library PowerArray should be loaded.<br />
+            <pre id="resultConditionsPRE" style="border: solid 1px orange; width: 80%; text-align: left; margin-left: 10%; padding: 20px;"></pre>
+            <div class="row center center-block text-center" style="margin-top: 50px;">
+                <button class="btn btn-default"
+                        ng-click="controller.runLastExpression()">
+                    Execute / View results
+                </button>
+            </div>
+
+            <div>
+                Found <b><span id="jsonResultMatchesCount"></span></b> matches.
+                <span id="jsonResultTimeTook"></span>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#gridResults">Grid</a></li>
+                <li><a data-toggle="tab" href="#jsonResults">Json</a></li>
+            </ul>
+            <div class="tab-content" id="resultsTab">
+                <div id="gridResults" class="tab-pane fade in active">
+                    <div id="resultsGrid"></div>
+                </div>
+                <div id="jsonResults" class="tab-pane fade">
+                    <div id="jsonResult" style="text-align: left; max-height: 600px; overflow-y:scroll"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="overlay" class='overlay'>
+    </div>
+    <div id="overloadSelector">
+        <form class="form-horizontal">
+            <!-- Form Name -->
+            <h3 style="margin-top: 0px;">
+                <b>{{model.selectedFunctionOverloads.func}}</b>
+            </h3>
+            <h5>has <b>{{model.selectedFunctionOverloads.overloads.length}}</b> possible usages, please select:</h5>
+            <!-- Multiple Radios -->
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="radio" ng-repeat="overload in model.selectedFunctionOverloads.overloads">
+                        <label for="radios-{{$index}}" style="margin-top: -10px;">
+                            <input type="radio" name="radios" id="radios-{{$index}}" class="paBuilderParamSelectRadio" value="1" style="margin-top: 15px;"
+                                   ng-click="controller.setselectedOverloadIndexInModel($index)">
+                            <h4>{{model.selectedFunctionOverloads.prop + overload.Example}}</h4>
+                            Parameters:
+                            <div ng-repeat="param in overload.Parameters" ng-style="{'color' : (param.MustBeUndefined === true) ? 'red' : ''}">
+                                <b>{{param.Name}}</b> - Type: {{param.Type}} {{(param.infinite) ? " - Infinite quantity" : ""}} {{ (param.MustBeUndefined === true) ? " (parameter func should be falsy for this overload)" : "" }}
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button -->
+            <div class="form-group" style="text-align: center">
+                <div class="col-md-12 right-aligned">
+                    <button id="cancelButton" name="singlebutton" class="btn btn-default" ng-click="controller.cancelOverloadSelection()">Cancel</button>
+                    <button id="okButton" name="btnSelectOverloadOk" class="btn btn-primary" ng-click="controller.confirmOverloadSelection()"
+                            ng-disabled="model.selectedFunctionOverloads.selectedOverloadIndex === -1">
+                        Continue
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>
