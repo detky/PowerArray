@@ -156,7 +156,7 @@ window.pa.paEachParalellsHelper = {
 
 window.pa.paWhereHelper = {
     FillConditions: function (item, conditions) {
-        var l = conditions.length, l2 = l, condition, result, subArray;
+        var l = conditions.length, condition, result, subArray;
         while (l--) {
             condition = conditions[l];
             //conditions can be functions or single values, if there are single values, they have to ve evaluated by
@@ -164,7 +164,7 @@ window.pa.paWhereHelper = {
             if (typeof condition.condition !== 'function') {
                 //if the condition is an object, it's necessary to handle it different.
                 //If that's the case we start internally another Where() call, but we know that we are
-                //evaluating pro Where call just ONE item.
+                //evaluating pro Where call just ONE item and it could be very expensive. TODO: optimize this somehow!
                 if (window.pa.utils.GetTypeOf(condition.condition) === window.pa.utils.DataTypes.Object) {
                     var itemType = window.pa.utils.GetTypeOf(item[condition.column], true);
 
@@ -172,9 +172,9 @@ window.pa.paWhereHelper = {
                         case window.pa.utils.DataTypes.ArrayOfObjects:
                         case window.pa.utils.DataTypes.ArrayOfPrimitives:
 
-                            result = item[condition.column].Where.call(item[condition.column], condition.condition, false, true);//TODO: for some reason, if i set the justFirst flag, everything goes wrong.
-                            //when sending true als "justFirst", where will return the first found element, not an array,
-                            //because i'm sending true for performance, it's necessary to evaluate the result with undefined
+                            result = item[condition.column].Where.call(item[condition.column], condition.condition, false, true);
+                            //when sending true als "justFirst", Where() will return the first found element, not an array,
+                            //because i'm sending true for performance reasons, it's necessary to evaluate the result with undefined
                             //instead of: "return result.length > 0;" it's now "return result !== undefined;"
                             if (result !== undefined) {
                                 continue;
@@ -185,13 +185,11 @@ window.pa.paWhereHelper = {
                         case window.pa.utils.DataTypes.Object:
                             subArray = pa([item[condition.column]]);
                             result = subArray.Where.call(subArray, condition.condition, false, true);
-                            console.log(JSON.stringify(condition));
                             if (result !== undefined) {//See previous comment about justFirst param
                                 continue;
                             } else {
                                 return false;
                             }
-                            break;
                     }
                 }
                 condition.condition = pa.EqualTo3(condition.condition); //transforms an explicit value into an === evaluation
