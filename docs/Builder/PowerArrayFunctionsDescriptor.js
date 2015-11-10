@@ -21,7 +21,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
             ]
         },
         {
-            Example: 'Like(value0[, value1][, value2][, value3][,etc])',
+            Example: 'Like(value0[, value1]....[, valueN])',
             Description: 'return all elements containing ALL values of ALL passed "value..." parameters. Unlimited parameters quantity',
             Parameters: [
                 {
@@ -68,7 +68,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
             ]
         },
         {
-            Example: 'NotLike(value0[, value1][, value2][, value3][,etc])',
+            Example: 'NotLike(value0[, value1]....[, valueN])',
             Description: 'return all elements not containing ANY values of ALL passed "value..." parameters',
             Parameters: [
                 {
@@ -112,7 +112,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
             ]
         },
         {
-            Example: '.Like(value0[, value1][, value2][, value3][,etc])',
+            Example: '.Like(value0[, value1]....[, valueN])',
             Description: 'return all elements containing ALL values of ALL passed "value..." parameters',
             Parameters: [
                 {
@@ -157,7 +157,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
             ]
         },
         {
-            Example: 'NotLikeIgnoreCase(value0[, value1][, value2][, value3][,etc])',
+            Example: 'NotLikeIgnoreCase(value0[, value1]....[, valueN])',
             Description: 'return all elements not containing ANY values of ALL passed "value..." parameters',
             Parameters: [
                 {
@@ -682,7 +682,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
                     ]
                 },
                 {
-                    Example: '.In(value0[, value1][, value2][, value3][,etc])',
+                    Example: '.In(value0[, value1]....[, valueN])',
                     Description: 'Returns true if the corresponding value is equal to one of the passed values. Unlimited parameters quantity',
                     Parameters: [
                         {
@@ -723,7 +723,7 @@ window.pa.auxiliaryFunctionsDescriptor = [
                     ]
                 },
                 {
-                    Example: 'NotIn(value0[, value1][, value2][, value3][,etc])',
+                    Example: 'NotIn(value0[, value1]....[, valueN])',
                     Description: 'Returns true if the corresponding value is different than all passed values. Unlimited parameters quantity',
                     Parameters: [
                         {
