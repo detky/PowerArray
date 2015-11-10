@@ -510,7 +510,6 @@ describe('PowerArrayTests', function () {
             });
 
 
-
         });
         describe('Process multiple condition-objects at once (whereConditions is an array)', function () {
             it('should search by 2 condition-objects', function () {
@@ -555,6 +554,61 @@ describe('PowerArrayTests', function () {
                 expect(result.length).toBe(3);
                 expect(result2).toBeDefined();
                 expect(result2.length).toBe(3);
+            });
+        });
+        fdescribe('Process condition-objects with multiple conditions for a single property (a property of whereConditions is an array)', function () {
+            it('should apply multiple simple filters for a property as an AND condition', function () {
+                //arrange
+                var items = [
+                    { name: 'abb', age: 33 },
+                    { name: 'abc', age: 43 },
+                    { name: 'aaa', age: 53 },
+                    { name: 'absdfasdc', age: 63 }
+                ];
+                var result = items.Where({
+                    name: [
+                        StartsWith('a'),
+                        EndsWith('c')
+                    ]
+                });
+                expect(result).toBeDefined();
+                expect(result.length).toBe(2);
+            });
+            it('should apply multiple simple filters for a property as an AND condition also when deep object calls are used', function () {
+                //arrange
+                var items = createComplexDummies();
+
+                var result = pa(items).Where({
+                    skills: {
+                        tests: [
+                                IsDefined(),
+                                {
+                                    score: GreaterThan(76),
+                                    name: 'One'
+                                }
+                        ]
+                    }
+                });
+                expect(result).toBeDefined();
+                expect(result.length).toBe(2);
+            });
+            it('should return no results because of impossible conditions', function () {
+                //arrange
+                var items = createComplexDummies();
+
+                var result = pa(items).Where({
+                    skills: {
+                        tests: [
+                            IsUndefined(),
+                            {
+                                score: GreaterThan(1),
+                                name: 'One'
+                            }
+                        ]
+                    }
+                });
+                expect(result).toBeDefined();
+                expect(result.length).toBe(0);
             });
         });
         describe('passing a single primitive argument to where', function () {
@@ -955,7 +1009,10 @@ describe('PowerArrayTests', function () {
                 });
                 it('should return only the items not containing the passed string in a property value (by indexof), also when N parameters were passed', function () {
                     //arrange
-                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, { id: 2, name: 'jklmnopqrst' }];
+                    var items = [{ id: 1, name: 'abcdefgh' }, { id: "1", name: 'defghijklmn' }, {
+                        id: 2,
+                        name: 'jklmnopqrst'
+                    }];
 
                     //act
                     var result = items.Where({ name: pa.NotLike("a", "b") });
@@ -1728,10 +1785,8 @@ describe('PowerArrayTests', function () {
                 });
             });
         });
-
         describe('pa.utils', function () {
             describe('isNullEmptyOrUndefined', function () {
-
                 it('should return true for null', function () {
                     // assert
                     expect(pa.utils.isNullEmptyOrUndefined(null)).toBe(true);
@@ -1766,25 +1821,20 @@ describe('PowerArrayTests', function () {
                     // assert
                     expect(pa.utils.isNullEmptyOrUndefined(12345)).toBe(false);
                 });
-
                 it('should return false for 0 number', function () {
                     // assert
                     expect(pa.utils.isNullEmptyOrUndefined(0)).toBe(false);
                 });
-
                 it('should return false for 0 string', function () {
                     // assert
                     expect(pa.utils.isNullEmptyOrUndefined('0')).toBe(false);
                 });
-
                 //it('should throw error for non-number and non-string', function () {
                 //    // assert
                 //    expect(function () {
                 //        pa.utils.isNullEmptyOrUndefined({});
                 //    }).toThrow(new Error());
                 //});
-
-
             });
             describe('parseBoolean', function () {
 
@@ -1852,4 +1902,6 @@ describe('PowerArrayTests', function () {
             });
         });
     });
+
+
 });
