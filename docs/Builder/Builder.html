@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
 <head>
     <title>Power Array  - Builder</title>
@@ -362,6 +362,7 @@
                             <option value="-1">No condition</option>
                             <!--todo: -->
                             <option value="" functionname="SINGLE" ng-if="prop.type !== pa.utils.DataTypes.ArrayOfPrimitives">Single value</option>
+                            <option value="" functionname="CUSTOM_FUNCTION">Custom function</option>
                             <optgroup ng-repeat="group in controller.getFunctionGroupsForFiltersByType(prop.type)" label="{{group}}">
                                 <option ng-repeat="func in controller.getFunctionsAvailableFilters(prop.type, group)"
                                         ng-attr-functionname="{{func.Name}}">
@@ -452,8 +453,9 @@
             <!-- Form Name -->
             <h3 style="margin-top: 0px;">
                 <b>{{model.selectedFunctionOverloads.func}}</b>
+                   <br/>{{pa.auxiliaryFunctionsDescriptor.First({Name : model.selectedFunctionOverloads.func}).Description}} 
             </h3>
-            <h5>has <b>{{model.selectedFunctionOverloads.overloads.length}}</b> possible usages, please select:</h5>
+            <h5><b>{{model.selectedFunctionOverloads.overloads.length}}</b> possible signatures can be used to filter the property <b>{{model.selectedFunctionOverloads.prop}}</b> (type {{model.selectedFunctionOverloads.type}}), please select:</h5>
             <!-- Multiple Radios -->
             <div class="form-group">
                 <div class="col-md-12">
@@ -461,12 +463,12 @@
                         <label for="radios-{{$index}}" style="margin-top: -10px;">
                             <input type="radio" name="radios" id="radios-{{$index}}" class="paBuilderParamSelectRadio" value="1" style="margin-top: 15px;"
                                    ng-click="controller.setselectedOverloadIndexInModel($index)">
-                            <h4>{{model.selectedFunctionOverloads.prop + overload.Example}}</h4>
+                            <h4>{{model.selectedFunctionOverloads.prop + " : " +  overload.Example}}</h4>
                             Parameters:
                             <div ng-repeat="param in overload.Parameters" ng-style="{'color' : (param.MustBeUndefined === true) ? 'red' : ''}">
                                 <b>{{param.Name}}</b> - Type: {{param.Type}} {{(param.infinite) ? " - Infinite quantity" : ""}} {{ (param.MustBeUndefined === true) ? " (parameter func should be falsy for this overload)" : "" }}
                             </div>
-                        </label>
+                        </label><br/><br/>
                     </div>
                 </div>
             </div>
