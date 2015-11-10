@@ -204,7 +204,7 @@ window.pa.paWhereHelper = {
     ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst) {
         //to call this function, "this" should be an array!
         var fc = window.pa.paWhereHelper.FillConditions,
-            i, w, item, lw, assert, l = this.length, result = [];
+            i, w, item, lw, assert, l, result = [];
 
         if (!isArrayOfConditions) {
             //whereConditions is not an array, but i need it in that form
@@ -216,10 +216,22 @@ window.pa.paWhereHelper = {
             for (var property in whereConditionObject) {
                 if (property !== 'realConditions' && whereConditionObject.hasOwnProperty(property)) {
                     //transform the keys into a better object with properties Column and Condition
-                    realConditions.push({
-                        column: property,
-                        condition: whereConditionObject[property]
-                    });
+
+                    //if whereConditionObject[property] is an array, that means that its a multi filter for a single column, for example: array.Where({age : [GreatherThan(33), BiggerThan(21)], otherField : '33'   });
+                    if (whereConditionObject[property].paIsArray) {
+                        /** MULTIPLE CONDITIONS FOR A SINGLE PROPERTY. Pushed on the realconditions as an AND **/
+                        whereConditionObject[property].RunEach(function (subCondition) {
+                            realConditions.push({
+                                column: property,
+                                condition: subCondition
+                            });
+                        });
+                    } else {
+                        realConditions.push({
+                            column: property,
+                            condition: whereConditionObject[property]
+                        });
+                    }
                 }
             }
             whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
@@ -681,7 +693,7 @@ window.pa.auxiliaryFunctions = {
             return (val + "").length > 0;
         }
     },
-    IsNull : function() {
+    IsNull: function () {
         return function (val) {
             return val === null;
         }
@@ -1009,6 +1021,10 @@ window.pa.prototypedFunctions_Array = {
             //If It's an object, but not an array, it's an explicit object with N filters
             result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst);
         } else {
+
+            if (whereConditions.paIsArray) {
+                console.debug('Array condition found: ' + whereConditions.toString());
+            }
             //At this point, whereConditions could be a function (a custom function), an pa.EqualTo, OR an Array of condition-objects
             if (whereConditions.paIsArray) {
                 //It's a conditions array
