@@ -183,6 +183,12 @@
             color: #c6002a;
             font-size: 12px;
         }
+        #sortingUl {
+            width: 100%;
+        }
+            #sortingUl li {
+                list-style: none;
+            }
     </style>
 </head>
 <body ng-controller="PaBuilderController">
@@ -197,7 +203,7 @@
                     <tr>
                         <td style="vertical-align: middle !important; text-align: center; min-height: 80px;">
                             This tool generates PowerArray expressions for filter and sort an array of objects by using the functions
-                            <span style="color:deepskyblue;">Where </span>and <span style="color:deepskyblue;">Sort</span>
+                            <span style="color: deepskyblue;">Where </span>and <span style="color: deepskyblue;">Sort</span>
                         </td>
                     </tr>
                 </table>
@@ -237,7 +243,9 @@
                     <!-- Textarea -->
                     <div class="form-group">
                         <label class="col-md-12" style="font-weight: normal !important;">
-                            <h3>Here you can test and learn how to use the PowerArray functions <b>Where</b> and <b>Sort</b> to filter an array of objects.</h3>
+                            <h3>
+                                Here you can test and learn how to use the PowerArray functions <b>Where</b> and <b>Sort</b> to filter an array of objects.
+                            </h3>
                             First, you have to choose the Json array that will be used as source. If you don't have one, you can use the default example.
                         </label>
                     </div>
@@ -287,11 +295,10 @@
                     </div>
                 </fieldset>
             </form>
-
         </div>
     </div>
 
-    <div class="container-fluid" style="padding-top: 800px;">
+    <div id="BuilderStep" class="container-fluid" style="padding-top: 800px;">
         <a name="builderStep"></a>
         <div class="row" style="background: gray; color: black; text-align: center">
             <h3 class="col-md-3 control-label" for="radios-container"
@@ -308,30 +315,32 @@
         <div class="row center center-block text-center" style="min-height: 800px;">
             <div id="workingImg" style="width: 100%; text-align: center; margin: 40px; margin-top: 120px; display: none;">
                 <img src="images/working.gif" />
-            </div><br/>
+            </div><br />
             <p>
-                <span class="badge"><h3>The provided Json array contains <span id="arrayCount" style="font-weight: bold"></span> items</h3></span> <br/>
-                The following table describes your data's structure. Use the filter functions to build your filter criteria <a style="cursor:pointer" ng-click="model.tableHelpVisible=!model.tableHelpVisible">{{ model.tableHelpVisible ? "hide usage instructions" : "show usage instructions"}}</a>
+                <span class="badge"><h3>The provided Json array contains <span id="arrayCount" style="font-weight: bold"></span> items</h3></span> <br />
+                The following table describes your data's structure. Use the filter functions to build your filter criteria <a style="cursor: pointer" ng-click="model.tableHelpVisible=!model.tableHelpVisible">{{ model.tableHelpVisible ? "hide usage instructions" : "show usage instructions"}}</a>
                 <div ng-show="model.tableHelpVisible" style="width: 90%; margin-left: 5%; text-align: left; border-radius: 8px; border: solid 1px gray; padding: 15px;">
                     <h3>Instructions:</h3>
                     The following table describes your data's structure, and can be used to specify one condition to filter each property of your data.
-                    Any array item fulfilling all conditions, will be included on the results.<br/><br/>
+                    Any array item fulfilling all conditions, will be included on the results.<br /><br />
                     To define a condition for an specific property, first you have to find the corresponding table row, select a filter function and provide the necessary arguments (if needed).
                     <h3>Table structure:</h3>
                     <b>Each table row, represents a property that was found on the provided array</b>. Detected sub properties will shown next to his parent property, right indented. <br /><br />
                     <ul class="list-group" style="padding-left: 30px;">
-                        <li class="list-group-item-text">The <b>data properties column</b> shows each property, and his (Power Array) type. <br/>
-                            If you are missing a property on the table, please ensure that the provided json array contains at least one item having a well formated value on that property!<br/><br/>
+                        <li class="list-group-item-text">
+                            The <b>data properties column</b> shows each property, and his (Power Array) type. <br />
+                            If you are missing a property on the table, please ensure that the provided json array contains at least one item having a well formated value on that property!<br /><br />
                         </li>
                         <li class="list-group-item-text">
-                            The <b>Filter Functions</b> column, shows a list of standard functions that can be used to filter that property type (for example GreatherThan, Like, In, NotIn, EqualTo2, EqualTo3, etc.).<br/>
-                            PowerArray include many auxiliary functions (Standard PA Functions) that can be used to avoid repetitive code and improve simplicity. The dropdown will show only<br/>
-                            the standard functions that can be used against the corresponding property type.<br/>
-                            <b>You do not have to use an auxiliary function necessarily!<br/></b>
+                            The <b>Filter Functions</b> column, shows a list of standard functions that can be used to filter that property type (for example GreatherThan, Like, In, NotIn, EqualTo2, EqualTo3, etc.).<br />
+                            PowerArray include many auxiliary functions (Standard PA Functions) that can be used to avoid repetitive code and improve simplicity. The dropdown will show only<br />
+                            the standard functions that can be used against the corresponding property type.<br />
+                            <b>You do not have to use an auxiliary function necessarily!<br /></b>
                             If the criterion you want to use is simple (as when filtering by a numeric "id" property), you can select the option <b>Single Value</b>,
-                            which allows you to explicitly provide the expected value. In that case, the comparison will be made by using identity operator (=== symbols).<br/><br/>
+                            which allows you to explicitly provide the expected value. In that case, the comparison will be made by using identity operator (=== symbols).<br /><br />
                         </li>
-                        <li class="list-group-item-text">The <b>Arguments</b> column is where you can parametrize the filter after selecting a filter function.<br/>
+                        <li class="list-group-item-text">
+                            The <b>Arguments</b> column is where you can parametrize the filter after selecting a filter function.<br />
                             Not always is necessary to provide arguments: standard functions like for example IsDefined, IsNull, IsNan or IsEmpty do not require any argument.
                             The content of this column is only visible after selecting a filter function and offers a basic autocomplete behaviour based on the provided data.
                         </li>
@@ -341,7 +350,7 @@
                     </div>
                 </div>
             </p>
-            <br/><br/> 
+            <br /><br />
             <table id="tblBuilder" class="table tblBuilder col-md-12 table-condensed" align="center" style="display: none;">
                 <tr>
                     <th style="width: 25%;">Data properties</th>
@@ -376,10 +385,16 @@
             </table>
         </div>
         <div class="row center center-block text-center">
-            <button class="btn btn-primary" id="btnGetExpression" style="display:none"
-                    ng-click="controller.buildExpression()">
-                Get Expression
+            <button class="btn btn-primary" id="btnSetSorting" style="display: inline"
+                    ng-click="controller.gotoSorting()">
+                Define Sorting criteria
             </button>
+            <button class="btn btn-primary" id="btnGetExpression" style="display: inline"
+                    ng-click="controller.buildExpression()">
+                No sorting, show me the Expression
+            </button>
+        </div>
+        <div class="row center center-block text-center">
             <div class="form-group" style="margin-top: 20px; display: none;" id="conditionsError">
                 <div class="col-md-12">
                     <label style="display: inline; font-size: 14px;">
@@ -398,6 +413,59 @@
             </div>
         </div>
     </div>
+
+<div id="sortingStep" class="container-fluid" style="padding-top: 800px;">
+    <a name="sortingStep"></a>
+    <div class="row" style="background: gray; color: black; text-align: center">
+        <h3 class="col-md-3 control-label" for="radios-container"
+            style="color: black; padding: 3px 0 10px 24px;">
+            Sorting
+        </h3>
+        <div class="col-md-9 right-aligned" style="padding-top: 20px; padding-right: 20px;">
+            <button class="btn btn-default"
+                    ng-click="controller.scrollToAnchor('JsonInputStep')">
+                Change source
+            </button>
+            <button class="btn btn-default"
+                    ng-click="controller.scrollToAnchor('builderStep')">
+                Change Conditions
+            </button>
+        </div>
+    </div>
+    
+    oiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiii
+    ioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiii
+    <br/><br/>
+    
+    <table id="tblBuilder2" class="table tblBuilder col-md-12 table-condensed" align="center" style="display: block; width: 100%;">
+        <tr>
+            <th style="width: 50%;">Data properties</th>
+            <th style="width: 50%;">Sort order</th>
+        </tr>
+        <tr>
+            <td>
+                <ul id="sortingUl">
+                    <li ng-repeat="prop in model.jsonObjectPropsMatrix.flats" propname="{{prop.name}}" proppath="{{ prop.path }}" proptype="{{ prop.type }}" >
+                        <span style="border-bottom: dashed lightgray 1px" ng-style="{'padding-left': (15 + (prop.level*20)) + 'px'}">
+                            {{prop.name}} <span class="typeName">[{{prop.type}}]</span>
+                        </span>
+                    </li>
+                </ul>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+
+
+
+    <div class="row center center-block text-center">
+        <button class="btn btn-primary" id="xxxx" style="display: inline"
+                ng-click="controller.buildExpression()">
+            Get Expression
+        </button>
+    </div>
+</div>
+
     <div class="container-fluid" style="padding-top: 800px;">
         <a name="resultStep"></a>
         <div class="row" style="background: gray; color: black; text-align: center">
@@ -414,6 +482,10 @@
                         ng-click="controller.scrollToAnchor('builderStep')">
                     Change Conditions
                 </button>
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('sortingStep')">
+                    Change Sorting
+                </button>
             </div>
         </div>
         <div class="row center center-block text-center" style="min-height: 800px;">
@@ -426,7 +498,6 @@
                     Execute / View results
                 </button>
             </div>
-
             <div>
                 Found <b><span id="jsonResultMatchesCount"></span></b> matches.
                 <span id="jsonResultTimeTook"></span>
@@ -444,7 +515,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div id="overlay" class='overlay'>
     </div>
@@ -453,7 +523,8 @@
             <!-- Form Name -->
             <h3 style="margin-top: 0px;">
                 <b>{{model.selectedFunctionOverloads.func}}</b>
-                   <br/>{{pa.auxiliaryFunctionsDescriptor.First({Name : model.selectedFunctionOverloads.func}).Description}} 
+                <!--The ternary on the next expression, model.selectedFunctionOverloads.func ? ... : ... is there only to ensure that angular do not try to search until pa.auxiliaryFunctionsDescriptor is set. Array condition found:-->
+                <br />{{model.selectedFunctionOverloads.func ? pa.auxiliaryFunctionsDescriptor.First({Name : model.selectedFunctionOverloads.func}).Description : ""}}
             </h3>
             <h5><b>{{model.selectedFunctionOverloads.overloads.length}}</b> possible signatures can be used to filter the property <b>{{model.selectedFunctionOverloads.prop}}</b> (type {{model.selectedFunctionOverloads.type}}), please select:</h5>
             <!-- Multiple Radios -->
@@ -468,11 +539,10 @@
                             <div ng-repeat="param in overload.Parameters" ng-style="{'color' : (param.MustBeUndefined === true) ? 'red' : ''}">
                                 <b>{{param.Name}}</b> - Type: {{param.Type}} {{(param.infinite) ? " - Infinite quantity" : ""}} {{ (param.MustBeUndefined === true) ? " (parameter func should be falsy for this overload)" : "" }}
                             </div>
-                        </label><br/><br/>
+                        </label><br /><br />
                     </div>
                 </div>
             </div>
-
             <!-- Button -->
             <div class="form-group" style="text-align: center">
                 <div class="col-md-12 right-aligned">
@@ -483,7 +553,6 @@
                     </button>
                 </div>
             </div>
-
         </form>
     </div>
 </body>
