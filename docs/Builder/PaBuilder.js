@@ -1,4 +1,4 @@
-﻿var app = angular.module('app', []);
+var app = angular.module('app', []);
 app.controller('PaBuilderController',
     function PaBuilderController($scope, $http, $timeout) {
         function PaBuilderController(scope, http, timeout) {
@@ -80,7 +80,18 @@ app.controller('PaBuilderController',
                     selectedOverloadIndex: -1,
                     overloads: []
                 }
-                this.confirmOverloadSelection(true, type);
+                this.confirmOverloadSelection(func, type);
+                return;
+            } else if (func === 'CUSTOM_FUNCTION') {
+                this._model.selectedFunctionOverloads = {
+                    prop: prop,
+                    path: path,
+                    type: type,
+                    func: func,
+                    selectedOverloadIndex: -1,
+                    overloads: []
+                }
+                this.confirmOverloadSelection(func, type);
                 return;
             }
 
@@ -201,7 +212,25 @@ app.controller('PaBuilderController',
             return result;
         };
 
-
+        
+        PaBuilderController.prototype._validateFunction = function (value, primitiveType) {
+            var result = {};
+            try {
+                console.log("var testFunc " + value);
+                eval("var testFunc = " + value);
+                    if (typeof testFunc !== 'function') {
+                        result.msg = 'Invalid function declaration';
+                        result.result = false;
+                    } else {
+                        result.msg = '';
+                        result.result = true;
+                    }
+            } catch (e) {
+                result.msg = 'Invalid Function => ' + e.message;
+                result.result = false;
+            }
+            return result;
+        };
         PaBuilderController.prototype._validateArrayOfPrimitives = function (value, primitiveType) {
             var result = {};
             try {
@@ -307,6 +336,13 @@ app.controller('PaBuilderController',
                         return;
                     }
                     break;
+                case window.pa.utils.DataTypes.Function:
+                    result = window.paBuilderController._validateFunction(elementValue, propType);
+                    if (!result.result) {
+                        window.paBuilderController.setInputAsInvalid(element, result.msg);
+                        return;
+                    }
+                    break;
                 case window.pa.utils.DataTypes.RegExp:
                     break;
 
@@ -368,20 +404,21 @@ app.controller('PaBuilderController',
         /**
          * 
          * @param {} tdArguments 
-         * @param {} isSingleValue indicates if the property will be compared using a single, explicit value instead of a function call
+         * @param {} valueType contains SINGLE, CUSTOM_FUNCTION or a function name
          * @returns {} 
          */
-        PaBuilderController.prototype.generateHtmlForTdArguments = function (tdArguments, isSingleValue, proptype) {//proptype is only provided when isSingleValue is true
+        PaBuilderController.prototype.generateHtmlForTdArguments = function (tdArguments, valueType, proptype) {//proptype is only provided when isSingleValue is true
+            //nehme ich isSingleValue
             var model = this._model.selectedFunctionOverloads;
             var selectedOverload = model.overloads[model.selectedOverloadIndex];
 
-            var paramsLength = (isSingleValue) ? 1 : selectedOverload.Parameters.length;
+            var paramsLength = (valueType === 'SINGLE' || valueType === 'CUSTOM_FUNCTION') ? 1 : selectedOverload.Parameters.length;
 
             var paramsTableId = Math.floor((Math.random() * 1000000000) + 1);
             var result = "<table class=paramsTable id='" + paramsTableId + "'>";
-            var param, placeHolderText = this._generatePlaceHolderTextForCurrentOverloadAndParam(((isSingleValue) ? { Type: proptype } : selectedOverload.Example), tdArguments);
+            var param, placeHolderText = this._generatePlaceHolderTextForCurrentOverloadAndParam(((valueType === 'SINGLE' || valueType === 'CUSTOM_FUNCTION') ? { Type: proptype } : selectedOverload.Example), tdArguments);
 
-            if (isSingleValue) { //in this case, add a fake parameter to keep the next loop running without specific changes
+            if (valueType === 'SINGLE') { //in this case, add a fake parameter to keep the next loop running without changes
                 selectedOverload = {
                     Parameters: [
                         {
@@ -389,6 +426,19 @@ app.controller('PaBuilderController',
                             PlaceHolder: placeHolderText,
                             Type: proptype,
                             Name: 'explicit comparison',
+                            Infinite: false
+                        }
+                    ]
+                }
+            } else if (valueType === 'CUSTOM_FUNCTION') { //in this case, add a fake parameter to keep the next loop running without changes
+                selectedOverload = {
+                    Parameters: [
+                        {
+                            MustBeUndefined: false,
+                            PlaceHolder: 'function(item) {\r\n}',
+                            //Type: proptype,
+                            Type: pa.utils.DataTypes.Function,
+                            Name: 'Custom function',
                             Infinite: false
                         }
                     ]
@@ -520,11 +570,12 @@ app.controller('PaBuilderController',
             return result;
         };
 
-        PaBuilderController.prototype.confirmOverloadSelection = function (isSingleValue, propType) {//proptype is only considered when isSingleValue is true
+        PaBuilderController.prototype.confirmOverloadSelection = function (valueType, propType) {//proptype is only considered when isSingleValue is SINGLE
+            //nehme ich isSingleValue
             //Create the TD with parameters for selected overload
             var tdArguments = $('td.argumentsTd[propname=' + this._model.selectedFunctionOverloads.prop + "][proppath=" + this._model.selectedFunctionOverloads.path + ']');
             tdArguments.attr('selectedOverloadIndex', this._model.selectedFunctionOverloads.selectedOverloadIndex);
-            tdArguments.html(this.generateHtmlForTdArguments(tdArguments, isSingleValue, propType));
+            tdArguments.html(this.generateHtmlForTdArguments(tdArguments, valueType, propType));
 
             //Create / Initialize autocomplete
             var autoCompleteListId, autoCompleteListHtml;
@@ -655,8 +706,6 @@ app.controller('PaBuilderController',
             var that = this;
             var propsTree = this.extractPropertiesFromObject4Matrix(objArr);
             var flats = this.getFlatPropsWithChilds(propsTree);
-            console.log("propsTree = " + JSON.stringify(propsTree));
-            console.log("flats = " + JSON.stringify(flats));
             $('#workingImg').fadeOut(300, function () {
                 that._timeout(function () {
                     $('#tblBuilder').fadeIn(500);
@@ -671,50 +720,42 @@ app.controller('PaBuilderController',
 
 
         PaBuilderController.prototype.getFuncParams = function (tdArguments, funcName, overloadIdx, proptype, propname, proppath) {
-            var inputs = tdArguments.find('input'), i, l, result = '', overload, isInfiniteParameterPresent = false;
-            if (funcName === 'SINGLE') {
-                //create fake overload
-                overload = {
-                    Parameters: [{
-                        Type: proptype
-                    }]
-                }
-            } else {
-                overload = pa.auxiliaryFunctionsDescriptor.First({ Name: funcName }).Targets.First().Overloads[overloadIdx];
-                isInfiniteParameterPresent = overload.Parameters.Where({ Infinite: true }).length > 0;
-            }
+            var inputs = tdArguments.find('input'), i, l, result = '', overload;
 
             var singleValuePrefix = "";//the ' before and after param values
             var parameterPrefix = "";//the [] before and after array params 
             var parameterSufix = "";//the [] before and after array params 
-            switch (proptype) {
-                case pa.utils.DataTypes.String:
-                    singleValuePrefix = "'";
-                    break;
-            }
-
+  
+            //    overload = pa.auxiliaryFunctionsDescriptor.First({ Name: funcName }).Targets.First().Overloads[overloadIdx];
+            
             //each input is a parameter OR there are infinite parameters
 
             for (i = 0, l = inputs.length; i < l; i++) {
 
-                //if (!isInfiniteParameterPresent) {
-                //    switch (overload.Parameters[i].Type) {
-                //        case pa.utils.DataTypes.ArrayOfObjects:
-                //        case pa.utils.DataTypes.ArrayOfPrimitives:
-                //            parameterPrefix = "[";
-                //            parameterSufix = "]";
-                //            break;
-                //    }
-                //}
-
-
                 var input = $(inputs[i]);
                 var inputValue = input.val();
-                var pathForNestedParamsSufix = '';
-                var pathForNestedParamsPrefix = '';
 
                 if (input.attr('type').toUpperCase() === 'CHECKBOX') {
                     inputValue = (inputValue.toUpperCase() === 'ON') ? "true" : "false";
+                }
+
+                //remove the ' for object that do not need it as arrays
+
+                var paramType = $(input).attr("paramtype");
+
+                if (funcName === 'CUSTOM_FUNCTION' ||
+                    paramType === pa.utils.DataTypes.ArrayOfObjects ||
+                    paramType === pa.utils.DataTypes.ArrayOfPrimitives) {
+                    singleValuePrefix = '';
+                } else {
+                    singleValuePrefix = "'";
+                }
+                 
+                //Replace any ' present in the value with a \'
+                //but only when it's not a custom function, that may use ' symbols.
+
+                if (funcName !== 'CUSTOM_FUNCTION') {
+                    inputValue = inputValue.replace(new RegExp("\'", "g"), "\\\'");
                 }
 
                 var paramAssignation = parameterPrefix + singleValuePrefix + inputValue + singleValuePrefix + parameterSufix;
@@ -727,19 +768,46 @@ app.controller('PaBuilderController',
             return result;
         };
 
-        PaBuilderController.prototype.buildExpression = function () {
-            var i, l, proptype, proppath, propname, funcName, overloadIdx;
-            var conditions = [];
-            var exp = {
-                conditions: [{}],
-                sort: []
-            };
-            var invalidInputs = $('input.has-error');
-            if (invalidInputs.length) {
+
+        PaBuilderController.prototype.validateBuilderTable = function() {
+            if (this.getInvalidBuilderFieldsQuantity === 0) {
                 $('#conditionsError').fadeIn(500);
+                return false;
+            }
+            if ($('tr.paBuilderPropertyContainerTr.filteredRow').length === 0) {
+                $('#conditionsError2').fadeIn(500);
+                return false;
+            }
+            return true;
+        };
+
+        PaBuilderController.prototype.getInvalidBuilderFieldsQuantity = function() {
+            var invalidInputs = $('input.has-error');
+            return invalidInputs.length;
+        }
+
+        PaBuilderController.prototype.gotoSorting = function() {
+
+            if (!this.validateBuilderTable()) {
                 return;
             }
             $('#conditionsError').hide();
+            $('#conditionsError2').hide();
+
+            this.scrollToAnchor("sortingStep");
+        }
+
+
+        PaBuilderController.prototype.buildExpression = function () {
+            var i, l, proptype, proppath, propname, funcName, overloadIdx;
+            var conditions = [];
+           
+            if (!this.validateBuilderTable()) {
+                return;
+            }
+
+            $('#conditionsError').hide();
+            $('#conditionsError2').hide();
 
             var trs = $('tr.paBuilderPropertyContainerTr.filteredRow');
 
@@ -760,11 +828,10 @@ app.controller('PaBuilderController',
                 });
             }
 
-            if (conditions.length === 0) {
-                $('#conditionsError2').show();
-                return;
-            }
             $('#conditionsError2').hide();
+
+
+
             this.scrollToAnchor('resultStep');
 
             var orderedPaths = [], lastPath = '';
@@ -831,11 +898,17 @@ app.controller('PaBuilderController',
 
                 for (var ci = 0, cl = conditionsOnLevel.length; ci < cl; ci++) {
                     var cond = conditionsOnLevel[ci];
-                    if (cond.filter === 'SINGLE') {
-                        condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
-                    } else {
-                        condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
+
+                    switch(cond.filter) {
+                        case "SINGLE":
+                        case "CUSTOM_FUNCTION":
+                            condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
+                            break;
+                        default:
+                            condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
+                            break;
                     }
+
                     result.push({ text: condStr, level: countOpenPaths });
                 }
 
