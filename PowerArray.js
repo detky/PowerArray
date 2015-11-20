@@ -969,10 +969,14 @@ window.pa.prototypedFunctions_Array = {
 
                         switch (value) {
                             case "ASC":
+                            case "ASCENDING":
+                            case "ASCENDINGIGNORECASE":
                             case "DESC":
+                            case "DESCENDING":
+                            case "DESCENDINGIGNORECASE":
                                 break;
                             default:
-                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC or DESC");
+                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC, ASCENDING, ASCENDINGIGNORECASE, DESC, DESCENDING or DESCIGNORECASE");
                         }
 
                         realConditions.push({
@@ -989,6 +993,8 @@ window.pa.prototypedFunctions_Array = {
                         currentColumn = realConditions[i].column;
                         switch (realConditions[i].sortDirection) {
                             case "ASC":
+                            case "ASCENDING":
+                            case "ASCENDINGIGNORECASE":
                                 if (a[currentColumn] < b[currentColumn]) {
                                     result -= cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
@@ -996,6 +1002,8 @@ window.pa.prototypedFunctions_Array = {
                                 }
                                 break;
                             case "DESC":
+                            case "DESCENDING":
+                            case "DESCENDINGIGNORECASE":
                                 if (a[currentColumn] < b[currentColumn]) {
                                     result += cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
@@ -1022,10 +1030,10 @@ window.pa.prototypedFunctions_Array = {
             result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst);
         } else {
 
-            if (whereConditions.paIsArray) {
-                console.debug('Array condition found: ' + whereConditions.toString());
-            }
-            //At this point, whereConditions could be a function (a custom function), an pa.EqualTo, OR an Array of condition-objects
+            //At this point, whereConditions could be a:
+            //                                          => function (a custom function), 
+            //                                          => an pa.EqualTo, 
+            //                                          => an Array of condition-objects
             if (whereConditions.paIsArray) {
                 //It's a conditions array
                 result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true, justFirst));
