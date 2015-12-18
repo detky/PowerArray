@@ -12,6 +12,8 @@
     <script src="PowerArrayFunctionsDescriptor.js" type="text/javascript"></script>
     <script src="PaBuilder.js" type="text/javascript"></script>
     <script src="jjsonviewer.js" type="text/javascript"></script>
+    <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,900' rel='stylesheet' type='text/css'>
     <style>
         #overloadSelector {
             display: none;
@@ -37,6 +39,11 @@
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea', GradientType=0 );
         }
 
+        #resultConditionsPRE {
+            font-size: 24px;
+            font-family: 'Source Code Pro';
+        } 
+        
         #overlay {
             display: none;
             position: fixed;
@@ -87,7 +94,7 @@
                 border: solid 1px gray;
             }
 
-        table.tblBuilder {
+        table.tblBuilder, table.tblSorting {
             margin-left: 5%;
             width: 90%;
             align-self: center;
@@ -97,6 +104,7 @@
 
 
 
+            table.tblSorting tr th,
             table.tblBuilder tr th {
                 vertical-align: middle;
                 text-align: center;
@@ -108,10 +116,12 @@
                 border: solid 1px gray;
             }
 
-            table.tblBuilder tr td:first-child {
+            table.tblBuilder tr td:first-child,
+            table.tblSorting tr td:first-child {
                 text-align: left;
             }
 
+            table.tblSorting tr td,
             table.tblBuilder tr td {
                 text-align: left;
                 padding-left: 20px;
@@ -122,9 +132,8 @@
                 vertical-align: top !important;
             }
 
+        #sortingUlSource li.alreadySortedByColumn div,
         tr.filteredRow {
-            border-top: solid 2px #5652b1;
-            border-bottom: solid 2px #5652b1;
             background: #ebe9f9;
             background: -moz-linear-gradient(top, #ebe9f9 0%, #d8d0ef 50%, #cec7ec 51%, #c1bfea 100%);
             background: -webkit-gradient(left top, left bottom, color-stop(0%, #ebe9f9), color-stop(50%, #d8d0ef), color-stop(51%, #cec7ec), color-stop(100%, #c1bfea));
@@ -135,7 +144,12 @@
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea', GradientType=0 );
         }
 
-            tr.filteredRow td:first-child {
+        tr.filteredRow {
+            border-top: solid 2px #5652b1;
+            border-bottom: solid 2px #5652b1;
+        }
+
+            tr.filteredRow td:first-child; {
                 font-weight: bold;
             }
 
@@ -183,11 +197,48 @@
             color: #c6002a;
             font-size: 12px;
         }
-        #sortingUl {
-            width: 100%;
+
+        #sortingUlSource, #sortingUlDestination {
+            width: 100% !important;
+            min-width: 300px;
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+            min-height: 300px;
+            height: 100% !important;
         }
-            #sortingUl li {
+
+            #sortingUlSource li {
                 list-style: none;
+                min-width: 300px;
+                width: 100% !important;
+                margin: 0;
+                padding: 0;
+            }
+
+                #sortingUlSource li div div span.sortedPropertyremoveIcon,
+                #sortingUlSource li div div.sortedColumnControlsContainer {
+                    display: none;
+                }
+
+            #sortingUlDestination li div div span.sortedPropertyremoveIcon:hover {
+                color: #337ab7;
+            }
+
+            #sortingUlDestination li div div span.sortedPropertyremoveIcon {
+                font-size: 20px;
+                margin-top: 4px;
+                cursor: pointer;
+            }
+
+            #sortingUlDestination > li > div > div > div > div.sortedColumnControlsContainer {
+                position: absolute;
+                top: 10px;
+                right: 50px;
+                padding: 0;
+                margin: 0;
+                display: block;
+                cursor: pointer;
             }
     </style>
 </head>
@@ -369,7 +420,6 @@
                                 class="form-control"
                                 onchange="window.paBuilderController.functionSelected(this)">
                             <option value="-1">No condition</option>
-                            <!--todo: -->
                             <option value="" functionname="SINGLE" ng-if="prop.type !== pa.utils.DataTypes.ArrayOfPrimitives">Single value</option>
                             <option value="" functionname="CUSTOM_FUNCTION">Custom function</option>
                             <optgroup ng-repeat="group in controller.getFunctionGroupsForFiltersByType(prop.type)" label="{{group}}">
@@ -414,57 +464,58 @@
         </div>
     </div>
 
-<div id="sortingStep" class="container-fluid" style="padding-top: 800px;">
-    <a name="sortingStep"></a>
-    <div class="row" style="background: gray; color: black; text-align: center">
-        <h3 class="col-md-3 control-label" for="radios-container"
-            style="color: black; padding: 3px 0 10px 24px;">
-            Sorting
-        </h3>
-        <div class="col-md-9 right-aligned" style="padding-top: 20px; padding-right: 20px;">
-            <button class="btn btn-default"
-                    ng-click="controller.scrollToAnchor('JsonInputStep')">
-                Change source
-            </button>
-            <button class="btn btn-default"
-                    ng-click="controller.scrollToAnchor('builderStep')">
-                Change Conditions
+    <div id="sortingStep" class="container-fluid" style="padding-top: 800px;">
+        <a name="sortingStep"></a>
+        <div class="row" style="background: gray; color: black; text-align: center">
+            <h3 class="col-md-3 control-label" for="radios-container"
+                style="color: black; padding: 3px 0 10px 24px;">
+                Sorting
+            </h3>
+            <div class="col-md-9 right-aligned" style="padding-top: 20px; padding-right: 20px;">
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('JsonInputStep')">
+                    Change source
+                </button>
+                <button class="btn btn-default"
+                        ng-click="controller.scrollToAnchor('builderStep')">
+                    Change Conditions
+                </button>
+            </div>
+        </div>
+        <div class="row center center-block text-center">
+            <p>
+                <h3>Build your sorting criteria</h3> <br />
+                The following table describes your data's structure. Use the filter functions to build your filter criteria
+            </p>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <table class="tblSorting col-md-12 col-lg-8 col-lg-offset-2">
+                    <tr>
+                        <th style="width: 50% !important;">Data properties</th>
+                        <th style="width: 50% !important;">Sort order</th>
+                    </tr>
+                    <tr>
+                        <td style="margin: 0; padding: 0; min-width: 415px; width: 50%; position: relative;">
+                            <ul id="sortingUlSource"></ul>
+                        </td>
+                        <td style="margin: 0; padding: 0; min-width: 415px; width: 50%; position: relative; ">
+                            <ul id="sortingUlDestination"></ul>
+                            <div id="alertNoItemsDragged" style="display: block; text-align: center; z-index: 9999999; color: #337ab7; position: absolute; top: 10%; width: 100%;">Drag and drop here the properties you would like to use for sort!</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <div class="row center center-block text-center">
+            <button class="btn btn-primary" id="xxxx" style="display: inline"
+                    ng-click="controller.buildExpression()">
+                Get Expression
             </button>
         </div>
     </div>
-    
-    oiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiii
-    ioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiiiioiooo iio oiii o i oiooooi iiooiii
-    <br/><br/>
-    
-    <table id="tblBuilder2" class="table tblBuilder col-md-12 table-condensed" align="center" style="display: block; width: 100%;">
-        <tr>
-            <th style="width: 50%;">Data properties</th>
-            <th style="width: 50%;">Sort order</th>
-        </tr>
-        <tr>
-            <td>
-                <ul id="sortingUl">
-                    <li ng-repeat="prop in model.jsonObjectPropsMatrix.flats" propname="{{prop.name}}" proppath="{{ prop.path }}" proptype="{{ prop.type }}" >
-                        <span style="border-bottom: dashed lightgray 1px" ng-style="{'padding-left': (15 + (prop.level*20)) + 'px'}">
-                            {{prop.name}} <span class="typeName">[{{prop.type}}]</span>
-                        </span>
-                    </li>
-                </ul>
-            </td>
-            <td></td>
-        </tr>
-    </table>
-
-
-
-    <div class="row center center-block text-center">
-        <button class="btn btn-primary" id="xxxx" style="display: inline"
-                ng-click="controller.buildExpression()">
-            Get Expression
-        </button>
-    </div>
-</div>
 
     <div class="container-fluid" style="padding-top: 800px;">
         <a name="resultStep"></a>
