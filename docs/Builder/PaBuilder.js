@@ -948,7 +948,7 @@ app.controller('PaBuilderController',
 
         };
 
-        PaBuilderController.prototype.buildExpression = function() {
+        PaBuilderController.prototype.buildExpression = function () {
             var i, l, proptype, proppath, propname, funcName, overloadIdx;
             var conditions = [];
 
@@ -999,7 +999,7 @@ app.controller('PaBuilderController',
             var openPaths = [];
             var spacer = '';
             var spacesPerLevel = 5;
-            var getSpaces = function(howMany, str) {
+            var getSpaces = function (howMany, str) {
                 if (!str) str = ' ';
                 var a = new Array(howMany + 1);
                 return a.join(str);
@@ -1049,13 +1049,13 @@ app.controller('PaBuilderController',
                     var cond = conditionsOnLevel[ci];
 
                     switch (cond.filter) {
-                    case "SINGLE":
-                    case "CUSTOM_FUNCTION":
-                        condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
-                        break;
-                    default:
-                        condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
-                        break;
+                        case "SINGLE":
+                        case "CUSTOM_FUNCTION":
+                            condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
+                            break;
+                        default:
+                            condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
+                            break;
                     }
 
                     result.push({ text: condStr, level: countOpenPaths });
@@ -1088,7 +1088,7 @@ app.controller('PaBuilderController',
              PRODUCE THE SORT EXPRESSSION
              */
 
-            var sortingExpression = this.generateSortExpression(getSpaces(27, '&nbsp;')), beautySort = '';
+            var sortingExpression = this.BuildSortExpression(getSpaces(27, '&nbsp;')), beautySort = '';
 
             this._lastWhereExpressionConditions = plain; //+ ".Sort({" + sortingExpression + "})";
             this._lastSortExpressionConditions = sortingExpression;
@@ -1100,7 +1100,7 @@ app.controller('PaBuilderController',
                 beautySort = ".Sort({\r\n" + sortingExpression + "\r\n" + marginHtmlEnd + "})";
             }
 
-            
+
             $('#resultConditions').html(beautyHtml);
             $('#resultConditionsPRE').html("\
 \
@@ -1111,23 +1111,54 @@ var result = theArray.Where({\r\n" + beautyPlain + marginHtmlEnd + "}" + beautyS
         };
 
 
-        PaBuilderController.prototype.generateSortExpression = function(prefixForEachLine) {
-            var result = '', i, select,  li, lis = $('#sortingUlDestination li'), l,
-                propName, propType, propPath;
+        PaBuilderController.prototype.BuildSortExpression = function (prefixForEachLine) {
+            var result = '', i, select, li, lis = $('#sortingUlDestination li'), l,
+                propName, propType, propPath, propPathArr;
             if (lis.length === 0) {
                 return '';
             }
 
             //keep order
+            var lastOpenLevel = { deepness: 0, pathString: window.paBuilderController.paPropertyLevelsSeparator, pathArr: [] },
+                currentOpenLevel = {};
             for (i = 0, l = lis.length; i < l; i++) {
                 li = $(lis[i]);
-                select = $(li.find('select')); //will be always one
-                result += prefixForEachLine + "\t" + li.attr('propName') + " : '" + select.val() + ((i+1 < l) ? "',\r\n" : "'");
+                select = $(li.find('select'));
+                propName = li.attr('propName');
+                propType = li.attr('propType');
+                propPath = li.attr('propPath');
+                propPathArr = propPath.split(window.paBuilderController.paPropertyLevelsSeparator).Where(IsNotEmpty());
+                currentOpenLevel.deepness = propPathArr.length;
+                currentOpenLevel.pathString = propPath;
+                currentOpenLevel.pathArr = propPathArr;
+
+                if (currentOpenLevel.pathString !== lastOpenLevel.pathString) {
+                    //we have to make something, open or close braces, but we dont now yet which of both.
+
+                    if (lastOpenLevel.deepness === currentOpenLevel.deepness) {
+                        // We have the same deepnes but a different path, there is for sure something to close:
+                        // 1 find out how many closing braces are needed:
+                        for (var x = 0, xl = Math.max([lastOpenLevel.deepness, currentOpenLevel.deepness]) ; x < xl; x++) {
+                            result += prefixForEachLine + "\t}";
+                        }
+
+                        //TODO: CONTINUE THIS 
+                    }
+                }
+
+                result += prefixForEachLine + "\tx" + propPathArr.length + " " + propName + " : '" + select.val() + ((i + 1 < l) ? "',\r\n" : "'");
+
+                //explicit copy currentOpenLevel object to lastOpenLevel
+                lastOpenLevel = {
+                    deepness: currentOpenLevel.deepness,
+                    pathString: currentOpenLevel.pathString,
+                    pathArr: currentOpenLevel.pathArr
+                };
             }
             return result;
         };
 
-       
+
         PaBuilderController.prototype.runLastExpression = function () {
 
             var p = "var theResult = this._model.jsonObject.Where({" + this._lastWhereExpressionConditions + "})";
