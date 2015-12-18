@@ -1,3 +1,35 @@
+window.pa.auxiliarySortCriteriaDescriptor = [
+    {
+        Name: 'Ascending',
+        Description: 'Sort ascending',
+        TargetTypes: [
+            window.pa.utils.DataTypes.String,
+            window.pa.utils.DataTypes.Number,
+            window.pa.utils.DataTypes.Boolean
+        ]
+    }, {
+        Name: 'Descending',
+        Description: 'Sort descending',
+        TargetTypes: [
+            window.pa.utils.DataTypes.String,
+            window.pa.utils.DataTypes.Number,
+            window.pa.utils.DataTypes.Boolean
+        ]
+    }, {
+        Name: 'AscendingIgnoreCase',
+        Description: 'Sort ascending, case insensitive',
+        TargetTypes: [
+            window.pa.utils.DataTypes.String
+        ]
+    }, {
+        Name: 'DescendingIgnoreCase',
+        Description: 'Sort descending, case insensitive',
+        TargetTypes: [
+            window.pa.utils.DataTypes.String
+        ]
+    }
+];
+
 window.pa.auxiliaryFunctionsDescriptor = [
 {
     Name: 'Like',
