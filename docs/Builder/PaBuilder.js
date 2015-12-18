@@ -12,7 +12,8 @@ app.controller('PaBuilderController',
             this._descriptor = window.pa.auxiliaryFunctionsDescriptor;
             this.paPropertyLevelsSeparator = "_paPLS_";
             this._default_prop_path = '';
-
+            this._lastWhereExpressionConditions = '';
+            this._lastSortExpressionConditions = '';
         };
 
         PaBuilderController.prototype._init = function () {
@@ -131,7 +132,7 @@ app.controller('PaBuilderController',
 
             //reset the radios for select overload
             $('input.paBuilderParamSelectRadio').prop('checked', false);
-            this._timeout(function () {//angular trigger
+            this._timeout(function () { //angular trigger
                 $('#overlay').fadeIn(300, function () {
                     $('#overloadSelector').fadeIn(300);
                 });
@@ -212,19 +213,19 @@ app.controller('PaBuilderController',
             return result;
         };
 
-        
+
         PaBuilderController.prototype._validateFunction = function (value, primitiveType) {
             var result = {};
             try {
                 console.log("var testFunc " + value);
                 eval("var testFunc = " + value);
-                    if (typeof testFunc !== 'function') {
-                        result.msg = 'Invalid function declaration';
-                        result.result = false;
-                    } else {
-                        result.msg = '';
-                        result.result = true;
-                    }
+                if (typeof testFunc !== 'function') {
+                    result.msg = 'Invalid function declaration';
+                    result.result = false;
+                } else {
+                    result.msg = '';
+                    result.result = true;
+                }
             } catch (e) {
                 result.msg = 'Invalid Function => ' + e.message;
                 result.result = false;
@@ -358,7 +359,6 @@ app.controller('PaBuilderController',
             //return row.attr('proptype');
 
 
-
             //TODO: complete this cases
             var paramType = overloadParam.Type; //the type of the selected overload
             var propType = row.attr('proptype'); //the type of the property we are filtering
@@ -407,7 +407,7 @@ app.controller('PaBuilderController',
          * @param {} valueType contains SINGLE, CUSTOM_FUNCTION or a function name
          * @returns {} 
          */
-        PaBuilderController.prototype.generateHtmlForTdArguments = function (tdArguments, valueType, proptype) {//proptype is only provided when isSingleValue is true
+        PaBuilderController.prototype.generateHtmlForTdArguments = function (tdArguments, valueType, proptype) { //proptype is only provided when isSingleValue is true
             //nehme ich isSingleValue
             var model = this._model.selectedFunctionOverloads;
             var selectedOverload = model.overloads[model.selectedOverloadIndex];
@@ -452,8 +452,7 @@ app.controller('PaBuilderController',
                 placeHolderText = param.PlaceHolder || this._generatePlaceHolderTextForCurrentOverloadAndParam(param, tdArguments);
                 if (param.MustBeUndefined) { //the parameter must be undefined for the selected overload
                     result += patternTrWithNotNeccesaryParameter.format(param.Name, param.Type, 'false', '', i, placeHolderText, paramsTableId);
-                }
-                else if (param.Type === pa.utils.DataTypes.Boolean) {
+                } else if (param.Type === pa.utils.DataTypes.Boolean) {
                     result += patternTrWithCheckboxField.format('Value for <b>' + param.Name + '</b>', param.Type, 'false', '(checked = true)', i, placeHolderText, paramsTableId);
                 } else {
                     if (param.Infinite) {
@@ -462,8 +461,8 @@ app.controller('PaBuilderController',
                                      style="cursor:pointer" \
                                      ParamExpander="' + paramsTableId + '_expander_' + i + '" \
                                      onClick="window.paBuilderController.addArgumentToOverload(this,' + (i + 1) + ',\'' + paramsTableId + '\',\'' +
-                                        param.Name + '\',\'' + param.Type + '\',\'' + placeHolderText + '\');"></span>',
-                                         i, placeHolderText, paramsTableId, "", proptype);
+                            param.Name + '\',\'' + param.Type + '\',\'' + placeHolderText + '\');"></span>',
+                            i, placeHolderText, paramsTableId, "", proptype);
                     } else {
                         result += patternTrWithTextField.format('Value for <b>' + param.Name + '</b>', param.Type, 'false', '', i, placeHolderText, paramsTableId, "", proptype);
                     }
@@ -481,11 +480,11 @@ app.controller('PaBuilderController',
             var lastIcon = $('span.glyphicon[ParamExpander=' + paramTableId + '_expander_' + (nextParameterIndex - 1) + ']');
             lastIcon.css('display', 'none');
             paramTable.append(patternTrWithTextField.format('Value for <b>' + paramName + nextParameterIndex + '</b>', paramType, 'true',
-                        '&nbsp;<span class="glyphicon glyphicon-plus" \
+                '&nbsp;<span class="glyphicon glyphicon-plus" \
                                      style="cursor:pointer" \
                                      ParamExpander="' + paramTableId + '_expander_' + nextParameterIndex + '" \
                                      onClick="window.paBuilderController.addArgumentToOverload(this,' + (nextParameterIndex + 1) + ',\'' + paramTableId + '\',\'' + paramName + '\',\'' + paramType + '\',\'' + placeHolderText + '\');"></span>',
-                                     nextParameterIndex, placeHolderText, paramTableId, datalist));
+                nextParameterIndex, placeHolderText, paramTableId, datalist));
 
 
         };
@@ -506,10 +505,14 @@ app.controller('PaBuilderController',
                 }
                 var steps = path.split(self.paPropertyLevelsSeparator).Where(IsNotEmpty()).Sort(), mi, ml;
                 var tmpObj = item;
-                if (!tmpObj) { return []; }
+                if (!tmpObj) {
+                    return [];
+                }
                 for (mi = 0, ml = steps.length; mi < ml; mi++) {
                     var newVal = tmpObj[steps[mi]];
-                    if (!newVal) { return []; }
+                    if (!newVal) {
+                        return [];
+                    }
                     t = pa.utils.GetTypeOf(newVal, true);
                     if (t === pa.utils.DataTypes.ArrayOfObjects) {
                         var subPath = window.paBuilderController.paPropertyLevelsSeparator;
@@ -526,7 +529,9 @@ app.controller('PaBuilderController',
                     }
                     tmpObj = newVal;
                 }
-                if (!tmpObj) { return []; }
+                if (!tmpObj) {
+                    return [];
+                }
                 var r = tmpObj;
                 if (r.paIsArray) {
                     t = pa.utils.GetTypeOf(r, true);
@@ -570,7 +575,7 @@ app.controller('PaBuilderController',
             return result;
         };
 
-        PaBuilderController.prototype.confirmOverloadSelection = function (valueType, propType) {//proptype is only considered when isSingleValue is SINGLE
+        PaBuilderController.prototype.confirmOverloadSelection = function (valueType, propType) { //proptype is only considered when isSingleValue is SINGLE
             //nehme ich isSingleValue
             //Create the TD with parameters for selected overload
             var tdArguments = $('td.argumentsTd[propname=' + this._model.selectedFunctionOverloads.prop + "][proppath=" + this._model.selectedFunctionOverloads.path + ']');
@@ -722,12 +727,12 @@ app.controller('PaBuilderController',
         PaBuilderController.prototype.getFuncParams = function (tdArguments, funcName, overloadIdx, proptype, propname, proppath) {
             var inputs = tdArguments.find('input'), i, l, result = '', overload;
 
-            var singleValuePrefix = "";//the ' before and after param values
-            var parameterPrefix = "";//the [] before and after array params 
-            var parameterSufix = "";//the [] before and after array params 
-  
+            var singleValuePrefix = ""; //the ' before and after param values
+            var parameterPrefix = ""; //the [] before and after array params 
+            var parameterSufix = ""; //the [] before and after array params 
+
             //    overload = pa.auxiliaryFunctionsDescriptor.First({ Name: funcName }).Targets.First().Overloads[overloadIdx];
-            
+
             //each input is a parameter OR there are infinite parameters
 
             for (i = 0, l = inputs.length; i < l; i++) {
@@ -745,12 +750,14 @@ app.controller('PaBuilderController',
 
                 if (funcName === 'CUSTOM_FUNCTION' ||
                     paramType === pa.utils.DataTypes.ArrayOfObjects ||
-                    paramType === pa.utils.DataTypes.ArrayOfPrimitives) {
+                    paramType === pa.utils.DataTypes.ArrayOfPrimitives ||
+                    proptype === pa.utils.DataTypes.Number ||
+                    proptype === pa.utils.DataTypes.Boolean) {
                     singleValuePrefix = '';
                 } else {
                     singleValuePrefix = "'";
                 }
-                 
+
                 //Replace any ' present in the value with a \'
                 //but only when it's not a custom function, that may use ' symbols.
 
@@ -769,7 +776,7 @@ app.controller('PaBuilderController',
         };
 
 
-        PaBuilderController.prototype.validateBuilderTable = function() {
+        PaBuilderController.prototype.validateBuilderTable = function () {
             if (this.getInvalidBuilderFieldsQuantity === 0) {
                 $('#conditionsError').fadeIn(500);
                 return false;
@@ -781,12 +788,12 @@ app.controller('PaBuilderController',
             return true;
         };
 
-        PaBuilderController.prototype.getInvalidBuilderFieldsQuantity = function() {
+        PaBuilderController.prototype.getInvalidBuilderFieldsQuantity = function () {
             var invalidInputs = $('input.has-error');
             return invalidInputs.length;
         }
 
-        PaBuilderController.prototype.gotoSorting = function() {
+        PaBuilderController.prototype.gotoSorting = function () {
 
             if (!this.validateBuilderTable()) {
                 return;
@@ -794,14 +801,157 @@ app.controller('PaBuilderController',
             $('#conditionsError').hide();
             $('#conditionsError2').hide();
 
+            this.buildSortingUls();
+
+
             this.scrollToAnchor("sortingStep");
         }
 
 
-        PaBuilderController.prototype.buildExpression = function () {
+        PaBuilderController.prototype.generateDropdownHtmlForSortingProperty = function (propName, propPath, propType) {
+            var dropDownPattern = '<select propName="{0}" propPath="{1}" class="form-control input-md">{2}</select>';
+            var optionPattern = '<option value="{0}">{1}</option>';
+            var possibleSort = '', possibleSorts = pa.auxiliarySortCriteriaDescriptor.Where({ TargetTypes: Contains(propType) }).Sort({ Name: 'Descending' });
+            var l = possibleSorts.length, options = '';
+            while (l--) {
+                possibleSort = possibleSorts[l];
+                options += optionPattern.format(possibleSort.Name, possibleSort.Name + " (" + possibleSort.Description + ")");
+            }
+            return dropDownPattern.format(propName, propPath, options);
+        };
+
+        PaBuilderController.prototype.buildSortingUls = function () {
+            var result = '';
+            var that = this;
+            /**
+           <li propname="{{prop.name}}" proppath="{{ prop.path }}" proptype="{{ prop.type }}" >
+                        <span style="border-bottom: dashed lightgray 1px" ng-style="{'padding-left': (15 + (prop.level*20)) + 'px'}">
+                            {{prop.name}} <span class="typeName">[{{prop.type}}]</span>
+                        </span>
+                    </li>
+           */
+            var liPattern = '<li propname="{0}" proppath="{2}" proptype="{3}" >\
+                                <div class="row" style="margin: 3px; padding: 3px;padding-top:7px;border-radius:5px;border: dashed 1px gray;">\
+                                    <div class="form-group" style="position: relative;width:100% !important;">\
+                                      <label class="col-md-4 control-label" for="textinput">{1}<a><b>{0}</b>&nbsp;<span class="badge">{3}</span></a></label>  \
+                                      <div class="col-md-7 sortedColumnControlsContainer" style="margin-top: -4px;">\
+                                        {4}\
+                                      </div>\
+                                        <span class="glyphicon glyphicon-trash sortedPropertyremoveIcon col-md-1" onclick="window.paBuilderController.removeSelectedSortingColumn(this)"></span>\
+                                    </div>\
+                                </div>\
+                                <!--<div class="alert alert-info" role="alert" style="position: relative;" >\
+                                   <span class="glyphicon glyphicon-trash sortedPropertyremoveIcon" onclick="window.paBuilderController.removeSelectedSortingColumn(this)"></span>  \
+                                   <div class="sortedColumnControlsContainer">{4}</div>\
+                                   {1}<a><b>{0}</b>&nbsp;<span class="badge">{3}</span></a>\
+                                </div>-->\
+                            </li>';
+
+            for (var i = 0, l = this._model.jsonObjectPropsMatrix.flats.length; i < l; i++) {
+                var prop = this._model.jsonObjectPropsMatrix.flats[i];
+                var pName = prop.path.split(window.paBuilderController.paPropertyLevelsSeparator).Where(IsNotEmpty());
+                var dropDownHtml = this.generateDropdownHtmlForSortingProperty(prop.name, prop.path, prop.type);
+                var pPath = '<span style="color:gray;">';
+                n = pName.length;
+                while (n--) {
+                    if (pName[n] === '') continue;
+                    pPath += pName[n] + ".";
+                }
+                pPath += '</span>';
+                result += liPattern.format(prop.name, pPath, prop.path, prop.type, dropDownHtml); // (15 + (prop.level * 20)
+            }
+            $('#sortingUlSource').html(result);
+            //$('#sortingUlDestination').empty();
+            //$('#sortingUlDestination').empty();
+            $('#alertNoItemsDragged').fadeIn(1000);
+
+            //following names are not variables, but existing html ids
+
+            Sortable.create(sortingUlSource, {
+                group: {
+                    name: 'source',
+                    put: false,
+                    pull: 'clone'
+                },
+                animation: 100,
+                sort: false,
+                filter: ".alreadySortedByColumn"
+            });
+
+            Sortable.create(sortingUlDestination, {
+                group: {
+                    name: 'destination',
+                    put: ['source'],
+                    pull: true
+                },
+                animation: 100,
+                // Changed sorting within list
+                /*onUpdate: function (evt) {
+                    var itemEl = evt.item;  // dragged HTMLElement
+                    // + indexes from onEnd
+                    alert('resorted');
+                },*/
+                // Called by any change to the list (add / update / remove)
+                onSort: function (/**Event*/evt) {
+                    // same properties as onUpdate
+                    /*var liItem = $(evt.item);
+                    alert(liItem.attr("propname"));*/
+                    that.sortingChanged(evt);
+                }
+            });
+
+        };
+
+        PaBuilderController.prototype.removeSelectedSortingColumn = function (element) {
+            var li = $(element).closest('li');
+            li.fadeOut(300);
+            setTimeout(function () {
+                li.remove();
+                window.paBuilderController.sortingChanged();
+            }, 700);
+
+        };
+
+        PaBuilderController.prototype.sortingChanged = function (evt) {
+            /*
+            var liItem = $(evt.item);
+            alert(liItem.attr("propname"));
+            */
+
+            /* 1 - If there is nothing on the right side, show the message "please select" */
+
+            var sortingLis = $('#sortingUlDestination li');
+
+            if (sortingLis.length === 0) {
+                $('#alertNoItemsDragged').fadeIn(1000);
+            } else {
+                $('#alertNoItemsDragged').fadeOut(1000);
+            }
+
+            /* 2 - remove all "alreadySortedByColumn" class from each property on the left panel. Those that are used will be restored on the next point */
+
+            $('#sortingUlSource li').removeClass('alreadySortedByColumn');
+
+            /* 3 - Check that the columns that already are on the right panel dont be selectable again*/
+
+            var total = sortingLis.length;
+            while (total--) {
+                var li = $(sortingLis[total]);
+                var pName = li.attr('propname'), pPath = li.attr('proppath');
+
+                //Items already used:
+                var usedPropertyLi = $('#sortingUlSource li[propname=' + pName + '][proppath=' + pPath + ']');
+                if (usedPropertyLi.length > 0) {
+                    $(usedPropertyLi).addClass('alreadySortedByColumn');
+                }
+            }
+
+        };
+
+        PaBuilderController.prototype.buildExpression = function() {
             var i, l, proptype, proppath, propname, funcName, overloadIdx;
             var conditions = [];
-           
+
             if (!this.validateBuilderTable()) {
                 return;
             }
@@ -831,7 +981,6 @@ app.controller('PaBuilderController',
             $('#conditionsError2').hide();
 
 
-
             this.scrollToAnchor('resultStep');
 
             var orderedPaths = [], lastPath = '';
@@ -850,7 +999,7 @@ app.controller('PaBuilderController',
             var openPaths = [];
             var spacer = '';
             var spacesPerLevel = 5;
-            var getSpaces = function (howMany, str) {
+            var getSpaces = function(howMany, str) {
                 if (!str) str = ' ';
                 var a = new Array(howMany + 1);
                 return a.join(str);
@@ -862,7 +1011,7 @@ app.controller('PaBuilderController',
                 condStr = '';
 
 
-                if (lastPath != currPath) {//if the path changed
+                if (lastPath != currPath) { //if the path changed
                     lastPathArr = lastPath.split(window.paBuilderController.paPropertyLevelsSeparator).Where(IsNotEmpty(), true);
                     currPathArr = currPath.split(window.paBuilderController.paPropertyLevelsSeparator).Where(IsNotEmpty(), true);
 
@@ -899,14 +1048,14 @@ app.controller('PaBuilderController',
                 for (var ci = 0, cl = conditionsOnLevel.length; ci < cl; ci++) {
                     var cond = conditionsOnLevel[ci];
 
-                    switch(cond.filter) {
-                        case "SINGLE":
-                        case "CUSTOM_FUNCTION":
-                            condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
-                            break;
-                        default:
-                            condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
-                            break;
+                    switch (cond.filter) {
+                    case "SINGLE":
+                    case "CUSTOM_FUNCTION":
+                        condStr = cond.prop + ": " + cond.params + ((ci + 1 < cl) ? ", " : "");
+                        break;
+                    default:
+                        condStr = cond.prop + ": " + cond.filter + "(" + cond.params + ")" + ((ci + 1 < cl) ? ", " : "");
+                        break;
                     }
 
                     result.push({ text: condStr, level: countOpenPaths });
@@ -923,11 +1072,11 @@ app.controller('PaBuilderController',
 
 
             var plain = ""; //used for execution
-            var beautyPlain = "";//for display
-            var beautyHtml = "";//for display
+            var beautyPlain = ""; //for display
+            var beautyHtml = ""; //for display
             var marginPlain = getSpaces(29, ' ');
             var marginHtml = getSpaces(29, '&nbsp;');
-            var marginHtmlEnd = getSpaces(29, '&nbsp;');
+            var marginHtmlEnd = getSpaces(27, '&nbsp;');
 
             for (i = 0, l = result.length; i < l; i++) {
                 plain += result[i].text;
@@ -935,47 +1084,58 @@ app.controller('PaBuilderController',
                 beautyHtml += marginHtml + getSpaces(result[i].level * spacesPerLevel, '&nbsp;') + result[i].text + "<br>";
             }
 
-            this._lastExpression = plain;
+            /**
+             PRODUCE THE SORT EXPRESSSION
+             */
 
+            var sortingExpression = this.generateSortExpression(getSpaces(27, '&nbsp;')), beautySort = '';
 
+            this._lastWhereExpressionConditions = plain; //+ ".Sort({" + sortingExpression + "})";
+            this._lastSortExpressionConditions = sortingExpression;
+            while (this._lastSortExpressionConditions.indexOf('&nbsp;') > -1) {
+                this._lastSortExpressionConditions = this._lastSortExpressionConditions.replace('&nbsp;', '');
+            }
+
+            if (sortingExpression) {
+                beautySort = ".Sort({\r\n" + sortingExpression + "\r\n" + marginHtmlEnd + "})";
+            }
+
+            
             $('#resultConditions').html(beautyHtml);
             $('#resultConditionsPRE').html("\
 \
-var result = theArray.Where({\r\n" + beautyPlain + marginHtmlEnd + "\r\n\t\t\t});\
+var result = theArray.Where({\r\n" + beautyPlain + marginHtmlEnd + "}" + beautySort + ");\
 \
 ");
 
         };
 
 
-        PaBuilderController.prototype.formatResultConditions = function (str) {
-            //example: last: EndsWith('s'),skills: {category: EqualTo3('JavaScript'), tests: {score: GreaterThan(55), name: EqualTo3('One')}}
-
-            /*
-            last: EndsWith('s'),
-            
-            skills: {category: EqualTo3('JavaScript'), 
-            
-            tests: {score: GreaterThan(55), 
-            
-            name: EqualTo3('One')}}
-           
-
-
-            console.log(str);
-            var i, l = str.length, result='', openPaths = 0, openFunctions = 0;
-
-            for (i = 0; i < l; i++) {
-                
+        PaBuilderController.prototype.generateSortExpression = function(prefixForEachLine) {
+            var result = '', i, select,  li, lis = $('#sortingUlDestination li'), l,
+                propName, propType, propPath;
+            if (lis.length === 0) {
+                return '';
             }
 
-            console.log(result); */
-            return str;
+            //keep order
+            for (i = 0, l = lis.length; i < l; i++) {
+                li = $(lis[i]);
+                select = $(li.find('select')); //will be always one
+                result += prefixForEachLine + "\t" + li.attr('propName') + " : '" + select.val() + ((i+1 < l) ? "',\r\n" : "'");
+            }
+            return result;
         };
 
+       
         PaBuilderController.prototype.runLastExpression = function () {
 
-            var p = "var theResult = this._model.jsonObject.Where({" + this._lastExpression + "});";
+            var p = "var theResult = this._model.jsonObject.Where({" + this._lastWhereExpressionConditions + "})";
+            if (this._lastSortExpressionConditions) {
+                p += ".Sort({" + this._lastSortExpressionConditions.replace('&nbsp;', '') + "})";
+            }
+            p += ";";
+            console.log(p);
             eval(p);
 
 
