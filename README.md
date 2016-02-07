@@ -8,14 +8,19 @@ Power Array extends the native Array prototype by adding many additional feature
 ```javascript
 var orders = [order1, order2, ...];  //Orders is is an array containing Json objects, as we could get from a rest service
 
-//Get Orders in 'Pending' state
-var filteredOrders = orders.Where({status: 'Pending'}); //openOrders is a new array, having all pending orders
+//To extract all orders in 'Pending' state from the orders array:
+var filteredOrders = orders.Where({status: 'Pending'}); 
+/*filteredOrders is a new array that contains all pending orders.
+{status: 'Pending'} is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:*/
 
-//Get Orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
+//To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
 var filteredOrders = orders.Where({
 				status: 'Pending'
-				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3'])
+				products: { //each order have an array of products 
+					   category: In ('A1', 'B2', 'C3') //and each product a 'category' property
+					  }
 				});
+//				
 //Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3 
 var filteredOrders = orders.Where({
 				status: 'Pending'
