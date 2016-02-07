@@ -1,18 +1,19 @@
 # PowerArray
-Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. <br>Strongly focused on objects-arrays as those that normally are served from a rest service.
+Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
 
-<b>Everything here is under construction!</b>
-
-###See it in action:
-
+##See it in action:
+###"Hello World": Filtering an objects array by a single condition:
 ```javascript
-var orders = [order1, order2, ...];  //Orders is is an array containing Json objects, as we could get from a rest service
+var orders = [order1, order2, ...];  //Orders is an array containing Json objects, as a rest service could serve
 
-//To extract all orders in 'Pending' state from the orders array:
+// To extract all orders in 'Pending' state from the orders array:
 var filteredOrders = orders.Where({status: 'Pending'}); 
-/*filteredOrders is a new array that contains all pending orders.
-{status: 'Pending'} is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:*/
 
+// filteredOrders is now a new array which contains all pending orders.
+// {status: 'Pending'} is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:
+```
+####By multiple conditions and deep properties:
+```
 //To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
 var filteredOrders = orders.Where({
 				status: 'Pending'
