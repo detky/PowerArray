@@ -1,7 +1,6 @@
 # PowerArray
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
-
-##See it in action:
+##Quick examples:
 ###"Hello World": Filtering an objects array by a single condition:
 ```javascript
 var orders = [order1, order2, ...];  //Orders is an array containing Json objects, as a rest service could serve
@@ -9,8 +8,8 @@ var orders = [order1, order2, ...];  //Orders is an array containing Json object
 // To extract all orders in 'Pending' state from the orders array:
 var filteredOrders = orders.Where({status: 'Pending'}); 
 ```
-####**filteredOrders** is now a new array which contains all pending orders.
-####**{STATUS: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:
+**filteredOrders** is now a new array which contains all pending orders.
+**{STATUS: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:
 
 ####By multiple conditions and deep properties:
 ```
