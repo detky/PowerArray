@@ -2,6 +2,33 @@
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. <br>Strongly focused on objects-arrays as those that normally are served from a rest service.
 
 <b>Everything here is under construction!</b>
+
+###See it in action:
+
+```javascript
+var orders = [order1, order2, ...];  //Orders is is an array containing Json objects, as we could get from a rest service
+
+//Get Orders in 'Pending' state
+var filteredOrders = orders.Where({status: 'Pending'}); //openOrders is a new array, having all pending orders
+
+//Get Orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
+var filteredOrders = orders.Where({
+				status: 'Pending'
+				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3'])
+				});
+//Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3 
+var filteredOrders = orders.Where({
+				status: 'Pending'
+				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3'])
+				});
+//Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3, having a total price between $5000 and $10000. Orders with priority bigger than 3 shoudl be excluded.
+var filteredOrders = orders.Where({
+				status: 'Pending'
+				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3']),
+				priority: BiggerThan(3)
+				});
+```
+
 ###How is implemented?
 PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
 By loading the library, all arrays become many extra functions that are designed to simplify and drastically reduce the amount of code that must be written to operate with arrays in javascript.<br>
