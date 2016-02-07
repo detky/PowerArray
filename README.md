@@ -6,9 +6,7 @@ Power Array extends the native Array prototype by adding many additional feature
 var orders = [order1, order2, ...];  //Orders is an array containing Json objects, as a rest service could serve
 var filteredOrders = orders.Where({status: 'Pending'}); // To extract all orders in 'Pending' state from the orders array:
 ```
-
-_filteredOrders** is now a new array which contains all pending orders.
-{STATUS: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:_
+_{STATUS: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:_
 ####By multiple conditions and deep properties:
 ```
 //To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
