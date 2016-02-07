@@ -8,10 +8,10 @@ var orders = [order1, order2, ...];  //Orders is an array containing Json object
 
 // To extract all orders in 'Pending' state from the orders array:
 var filteredOrders = orders.Where({status: 'Pending'}); 
-
-// filteredOrders is now a new array which contains all pending orders.
-// {status: 'Pending'} is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:
 ```
+**filteredOrders** is now a new array which contains all pending orders.
+**{status: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:
+
 ####By multiple conditions and deep properties:
 ```
 //To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
