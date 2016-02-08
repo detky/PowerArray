@@ -1,24 +1,29 @@
 # PowerArray
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
 ##Quick examples:
-Suppose that the variable "orders" is an array of objects. Each object has a few properties and sub-properties, as mostly objects collections that are served by a rest service. That being the case:
+Suppose that the variable "orders" is an array of objects. Each object has a few properties and sub-properties, as the most objects collections that are normally served by a rest service. That being the case:
 
 ###"Hello World": Filtering by a first-level property with a single condition:
 ```javascript
 //Extract all orders having status Pending. Sort by code, ascending:
-var filteredOrders = orders.Where({status: 'Pending'}).Sort(code: 'AscendingIgnorecase'); 
+var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: 'AscendingIgnorecase'}); 
 ```
 ###"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
-```
-//To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
+```javascript
+//Extract all orders having status Pending and containing at least one product of Category 'A1', 'B2' or 'C3'. Sort by code ascending and by priority descending:
 var filteredOrders = orders.Where({
 				status: 'Pending'
-				products: { //each order have an array of products 
-					   category: In ('A1', 'B2', 'C3') //and each product a 'category' property
+				products: { //the property "products" contains an array of "Product" objects 
+					   category: In ('A1', 'B2', 'C3') //and each product have a 'category' property
 					  }
+				}).Sort({
+					code: 'AscendingIgnorecase',
+					priority: 'Descending'
 				});
 //				
 //Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3 
+'''
+'''
 var filteredOrders = orders.Where({
 				status: 'Pending'
 				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3'])
