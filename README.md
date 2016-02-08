@@ -1,13 +1,14 @@
 # PowerArray
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
 ##Quick examples:
-###"Hello World": Filtering an objects array by a single condition:
+Suppose that the variable "orders" is an array of objects. Each object has a few properties and sub-properties, as mostly objects collections that are served by a rest service. That being the case:
+
+###"Hello World": Filtering by a first-level property with a single condition:
 ```javascript
-var orders = [order1, order2, ...];  //Orders is an array containing Json objects, as a rest service could serve
-var filteredOrders = orders.Where({status: 'Pending'}); // To extract all orders in 'Pending' state from the orders array:
+//Extract all orders having status Pending. Sort by code, ascending:
+var filteredOrders = orders.Where({status: 'Pending'}).Sort(code: 'AscendingIgnorecase'); 
 ```
-_{STATUS: 'Pending'}** is a basic 'Conditions Object' with just one filter condition. You can use multiple conditions at once:_
-####By multiple conditions and deep properties:
+###"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
 ```
 //To extract all orders in 'Pending' state, containing at least one product of **Category** A1, B2 or C3 
 var filteredOrders = orders.Where({
