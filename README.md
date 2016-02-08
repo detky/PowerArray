@@ -1,14 +1,15 @@
 # PowerArray
 Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
+Everything here is under construction.
 ##Quick examples:
 Suppose that the variable "orders" is an array of objects. Each object has a few properties and sub-properties, as the most objects collections that are normally served by a rest service. That being the case:
 
-###"Hello World": Filtering by a first-level property with a single condition:
+####"Hello World": Filtering by a first-level property with a single condition:
 ```javascript
 //Extract all orders having status Pending. Sort by code, ascending:
 var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: 'AscendingIgnorecase'}); 
 ```
-###"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
+####"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
 ```javascript
 //Extract all orders having status Pending and containing at least one product of Category 'A1', 'B2' or 'C3'. Sort by code ascending and by priority descending:
 var filteredOrders = orders.Where({
@@ -20,21 +21,7 @@ var filteredOrders = orders.Where({
 					code: 'AscendingIgnorecase',
 					priority: 'Descending'
 				});
-//				
-//Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3 
 '''
-'''
-var filteredOrders = orders.Where({
-				status: 'Pending'
-				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3'])
-				});
-//Get Orders in 'Pending' state containing at least one product of **Category** A1, B2 or C3, having a total price between $5000 and $10000. Orders with priority bigger than 3 shoudl be excluded.
-var filteredOrders = orders.Where({
-				status: 'Pending'
-				products: {category: In ('A1', 'B2', 'C3')} //alternatively: In(['A1','B2','C3']),
-				priority: BiggerThan(3)
-				});
-```
 
 ###How is implemented?
 PowerArray is a single javascript file, just include PowerArray.min.js in your html and it's ready to use.<br>
