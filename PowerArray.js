@@ -1,5 +1,16 @@
 window.pa = function (object) {
-    if (object.paIsArray) {
+    if (object.constructor === Array || object.paIsArray) {
+        return new paArray(object);
+    } else {
+        console.warn('PowerArray => The passed object does is not natively an array. Trying to handle it as an array-like object...')
+        if ((window.ol !== undefined && ol.Collection) && object instanceof ol.Collection) {
+            console.log('Compatible openlayers object detected (ol.Collection)');
+            return paArray(object.getArray());
+        }
+        if (object.length === undefined) {
+            throw new Error('PowerArray => The passed object is not an array, or usable as such.')
+        }
+
         return new paArray(object);
     }
 };
@@ -23,6 +34,7 @@ window.pa.utils = {
         }
         l = val.length;
         while (l--) {
+            //TODO: this could fail in collections having objects but one undefined
             if (pa.utils.GetTypeOf(val[l]) !== pa.utils.DataTypes.Object) {
                 return false;
             }
@@ -34,7 +46,6 @@ window.pa.utils = {
      * @param str the string to be evaluated
      * @param throwIfNotMatch Boolean, if true, an exception will be raised if the string does not match. If false, null will be returned
      * @returns {*} boolean value if string matches, null if not
-     * @constructor ??
      */
     parseBoolean: function (str, throwIfNotMatch) {
         if (!pa.utils.isNullEmptyOrUndefined(str)) {
@@ -522,11 +533,21 @@ window.pa.auxiliaryFunctions = {
             return val.indexOf(value2) === 0;
         };
     },
+    GreaterOrEqualThan: function (value) {
+        return function (val) {
+            return val >= value;
+        };
+    },
     GreaterThan: function (value) {
         return function (val) {
             return val > value;
         };
     },
+    SmallerOrEqualThan: function (value) {
+            return function (val) {
+                return val <= value;
+            };
+        },
     SmallerThan: function (value) {
         return function (val) {
             return val < value;
@@ -817,10 +838,16 @@ window.pa.prototypedFunctions_Array = {
         }
         return results;
     },
-    RunEach: function (task, callback) {// jshint ignore:line
-        var l = this.length;
-        while (l--) {
-            task(this[l]);
+    RunEach: function (task, callback, keepOrder) {// jshint ignore:line
+        var l = this.length, i=0;
+        if (!keepOrder) {
+            while (l--) {
+                task(this[l]);
+            }
+        } else {
+            for (; i < l; i++) {
+                task(this[i]);
+            }
         }
         if (callback) {
             callback();
@@ -886,7 +913,7 @@ window.pa.prototypedFunctions_Array = {
         ], { type: 'application/javascript' }));
         var w = new Worker(blobURL);
         w.postMessage({
-            array: this,
+            array: this, //clone the array
             func: task
         });
 
@@ -1023,6 +1050,13 @@ window.pa.prototypedFunctions_Array = {
                 throw new Error("Unknown sortConditions object type (" + conditionType + ")");
         }
     },
+    Exists: function (whereConditions) {
+        if (pa.prototypedFunctions_Array.First.call(this, whereConditions)) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     Where: function (whereConditions, keepOrder, justFirst) {// jshint ignore:line
         var i, l = this.length, item, result = [];
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
@@ -1131,5 +1165,9 @@ paArray.prototype.isArray = true;
 
 
 })();
-
+/*
+TODOS:
+  - write tests for Exists function
+  - write tests for GreaterOrEqualThan and SmallerOrEqualThan
+*/
 //endregion
