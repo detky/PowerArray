@@ -212,7 +212,7 @@ window.pa.paWhereHelper = {
         }
         return true;
     },
-    ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst) {
+    ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst, justIndexes) {
         //to call this function, "this" should be an array!
         var fc = window.pa.paWhereHelper.FillConditions,
             i, w, item, lw, assert, l, result = [];
@@ -222,6 +222,7 @@ window.pa.paWhereHelper = {
             whereConditions = [whereConditions];
         }
 
+        //Where conditions must be processed in order
         for (i = 0, l = whereConditions.length; i < l; i++) {
             var whereConditionObject = whereConditions[i], realConditions = [];
             for (var property in whereConditionObject) {
@@ -247,8 +248,9 @@ window.pa.paWhereHelper = {
             }
             whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
         }
+        //Real conditions stored
         l = this.length;
-        if (keepOrder) {
+        if (keepOrder) { //Anti DRY pattern ;( but as long as it still being small will continue this way to improve performance
             for (i = 0; i < l; i++) {
                 item = this[i];
                 for (w = 0, lw = whereConditions.length; w < lw; w++) {
@@ -258,10 +260,10 @@ window.pa.paWhereHelper = {
                     }
                 }
                 if (assert) {
-                    result.push(item);
                     if (justFirst) {
-                        return item;
+                        return (justIndexes) ? i : item;
                     }
+                    result.push((justIndexes) ? i : item);
                 }
             }
         } else {
@@ -270,10 +272,10 @@ window.pa.paWhereHelper = {
                 for (w = 0, lw = whereConditions.length; w < lw; w++) {
                     assert = fc(item, whereConditions[w].realConditions);
                     if (assert) {
-                        result.push(item);
                         if (justFirst) {
-                            return item;
+                            return (justIndexes) ? l : item;
                         }
+                        result.push((justIndexes) ? l : item);
                         break;
                     }
                 }
@@ -544,10 +546,10 @@ window.pa.auxiliaryFunctions = {
         };
     },
     SmallerOrEqualThan: function (value) {
-            return function (val) {
-                return val <= value;
-            };
-        },
+        return function (val) {
+            return val <= value;
+        };
+    },
     SmallerThan: function (value) {
         return function (val) {
             return val < value;
@@ -839,7 +841,7 @@ window.pa.prototypedFunctions_Array = {
         return results;
     },
     RunEach: function (task, callback, keepOrder) {// jshint ignore:line
-        var l = this.length, i=0;
+        var l = this.length, i = 0;
         if (!keepOrder) {
             while (l--) {
                 task(this[l]);
@@ -1057,11 +1059,15 @@ window.pa.prototypedFunctions_Array = {
             return false;
         }
     },
-    Where: function (whereConditions, keepOrder, justFirst) {// jshint ignore:line
+    WhereIndexes: function (whereConditions, keepOrder, justFirst) {
+        return this.Where(whereConditions, keepOrder, justFirst, true);
+    },
+    Where: function (whereConditions, keepOrder, justFirst, justIndexes) {// jshint ignore:line
         var i, l = this.length, item, result = [];
+        justIndexes = (justIndexes) ? true : false; //just to avoid casting when comparing during loop
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
             //If It's an object, but not an array, it's an explicit object with N filters
-            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst);
+            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst, justIndexes);
         } else {
 
             //At this point, whereConditions could be a:
@@ -1070,7 +1076,7 @@ window.pa.prototypedFunctions_Array = {
             //                                          => an Array of condition-objects
             if (whereConditions.paIsArray) {
                 //It's a conditions array
-                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true, justFirst));
+                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true, justFirst, justIndexes));
             } else {
                 //whereConditions it's a function. It could be a custom function on the pa standard EqualTo (that works
                 //different than any other standard function)
@@ -1162,12 +1168,12 @@ paArray.prototype.isArray = true;
             paArray.prototype[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
         }
     }
-
-
 })();
 /*
 TODOS:
-  - write tests for Exists function
-  - write tests for GreaterOrEqualThan and SmallerOrEqualThan
+Write test and docs for:
+  - Exists function
+  - Standardfunctions: GreaterOrEqualThan and SmallerOrEqualThan
+  - WhereIndexes function
 */
 //endregion
