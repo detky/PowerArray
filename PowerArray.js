@@ -1,4 +1,14 @@
-﻿var exports = module.exports = {};
+var module = module || undefined, isModule = false, isBrowser = true;
+
+if (typeof module !== "undefined") {
+    module.exports = {};
+    isModule = true;
+}
+
+if (typeof process === 'object') {
+    isBrowser = false;
+}
+
 window.pa = function (object) {
     if (object.constructor === Array || object.paIsArray) {
         return new paArray(object);
@@ -15,6 +25,20 @@ window.pa = function (object) {
         return new paArray(object);
     }
 };
+/*
+functions directly bound to the pa object:
+
+ */
+pa.Range =  function(from, to, step) {
+    var result = [], i, l, currVal = from;
+    while (currVal < to) {
+        result.push(currVal);
+        currVal += step;
+    }
+    result.push(to);
+    return result;
+};
+
 window.pa.utils = {}
 window.pa.utils = {
     DataTypes: {
@@ -859,23 +883,23 @@ window.pa.prototypedFunctions_Array = {
     },
     /**
      * Executes a function (task) on each element of the array (this).
-     * @param {} task       A function to execute. It will receive 3 parameters:
-     *                          1) one array item
+     * @param {} task       A function to execute. It will receive 3 parameters: 
+     *                          1) one array item 
      *                          2) index of the passed item (param 1) on the original array.
      *                          3) the complete array. Warning, you should not change it. See it as read-only!
-     *
-     * @param {} callback   A callback function to be executed after processing all array items.
-     *                      It will get as first parameter the results-array (that lately will be
+     *                      
+     * @param {} callback   A callback function to be executed after processing all array items. 
+     *                      It will get as first parameter the results-array (that lately will be 
      *                      returned as result of this function).
      *                       *****************************PLEASE READ**********************************
      *                      *** If the callback function returns something different than undefined, ***
      *                      ***      the results-array will be replaced with that return value       ***
      *                       **************************************************************************
-     * @param {} keepOrder
-     * @returns             array of the result of each executed task (keeping same position as on original
+     * @param {} keepOrder 
+     * @returns             array of the result of each executed task (keeping same position as on original 
      *                      array, regardless order). Excepion: when the execution of the callback function
-     *                      returns something different than undefined, that will be returned instead of the
-     *                      . If not,
+     *                      returns something different than undefined, that will be returned instead of the 
+     *                      . If not, 
      */
     RunEach: function (task, callback, keepOrder) {// jshint ignore:line
         var l = this.length, i = 0, result = new Array(this.length), tmp;
@@ -889,14 +913,14 @@ window.pa.prototypedFunctions_Array = {
             }
         }
         if (callback) {
-            //if the callback function returns something,
+            //if the callback function returns something, 
             //the result will be overrided with that result.
             result = callback(result) || result;
         }
         return result;
     },
     RunEachParalell: function (task, callback, keepOrder, quantProcesses, requiredScripts) {// jshint ignore:line
-        if (!self.Worker//if no workers supported,
+        if (!self.Worker//if no workers supported, 
             || this.length < 2) //or there is no enough data
         {
             return this.RunEach.call(this, task, callback);
@@ -938,7 +962,7 @@ window.pa.prototypedFunctions_Array = {
                     window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
                     if (window.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
                         if (callback) {
-                            //if the callback function returns something,
+                            //if the callback function returns something, 
                             //the result will be overrided with that result.
                             result = callback(result) || result;
                         }
@@ -1022,6 +1046,7 @@ window.pa.prototypedFunctions_Array = {
 
 
     },
+   
     Sort: function (sortConditions) { // jshint ignore:line
         var realConditions = [];
         var conditionType = typeof sortConditions;
@@ -1178,8 +1203,8 @@ window.pa.prototypedFunctions_Array = {
         } else {
 
             //At this point, whereConditions could be a:
-            //                                          => function (a custom function),
-            //                                          => an pa.EqualTo,
+            //                                          => function (a custom function), 
+            //                                          => an pa.EqualTo, 
             //                                          => an Array of condition-objects
             if (whereConditions.paIsArray) {
                 //It's a conditions array
@@ -1223,8 +1248,7 @@ window.pa.prototypedFunctions_Array = {
           return (this.length > 0) ? 0 : undefined;
       }
       return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true, true);
-  }
-    
+    }
 };
 
 // ReSharper disable once WrongExpressionStatement
@@ -1238,13 +1262,13 @@ window.pa.Sort = {
     DescendingIgnoringCase : 'DESCENDINGIGNORINGCASE',
     DescIgnoringCase : 'DESCIGNORINGCASE',
 }
-window.Sort = window.Sort || window.pa.Sort;
+window.Sort = window.Sort || window.pa.Sort; 
 
 
 //this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
 if (false) {
     Array.prototype.Where = function(WhereConditions, fuck) {
-
+        
     };
 }
 
@@ -1305,6 +1329,9 @@ paArray.prototype.isArray = true;
         }
     }
 })();
+if (isModule) {
+    module.exports = window.pa;
+}
 /*
 TODOS:
 Write test and docs for:
@@ -1313,7 +1340,7 @@ Write test and docs for:
   - WhereIndexes function
   - FirstIndex function
   - Remove  function
-  - new excludeExactMatches parameter in Between function
+  - new excludeExactMatches parameter in Between function 
 
 */
 //endregion
