@@ -7,7 +7,7 @@ Suppose that the variable "orders" is an array of objects. Each object has a few
 ####"Hello World": Filtering by a first-level property with a single condition:
 ```javascript
 //Extract all orders having status Pending. Sort by code, ascending:
-var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: 'AscendingIgnorecase'}); 
+var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: Sort.AscendingIgnoringCase}); 
 ```
 ####"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
 ```javascript
@@ -18,7 +18,7 @@ var filteredOrders = orders.Where({
 					   category: In ('A1', 'B2', 'C3') //and each product have a 'category' property
 					  }
 				}).Sort({
-					code: 'AscendingIgnorecase',
+					code: Sort.AscendingIgnoringCase,
 					priority: 'Descending'
 				});
 '''
