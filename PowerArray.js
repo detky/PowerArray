@@ -1262,7 +1262,11 @@ window.pa.Sort = {
     DescendingIgnoringCase : 'DESCENDINGIGNORINGCASE',
     DescIgnoringCase : 'DESCIGNORINGCASE',
 }
-window.Sort = window.Sort || window.pa.Sort; 
+if (window.Sort == undefined) {
+    window.Sort = window.Sort || window.pa.Sort;
+} else {
+    console.warn('PowerArray warning! => property "Sort" already exists on parent scope. However, you can still using it but calling "pa.Sort" instead of only "Sort" on your conde."');
+}
 
 
 //this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
