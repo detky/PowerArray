@@ -6,11 +6,9 @@ if (typeof module !== "undefined") {
 
 if (typeof window === 'object') {
   mainContainer = window;
-  console.log('is browser !!!')
 } else {
   isBrowser = false;
   mainContainer = global;
-  console.log('is node!!!')
 }
 
 mainContainer.pa = function (object) {
