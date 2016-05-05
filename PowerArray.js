@@ -1,4 +1,4 @@
-﻿var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
+var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
 if (typeof module !== "undefined") {
     module.exports = {};
     isModule = true;
@@ -357,7 +357,6 @@ mainContainer.pa.paWhereHelper = {
         for (i = 0, l = whereConditions.length; i < l; i++) {
             var whereConditionObject = whereConditions[i], realConditions = [];
             if(typeof whereConditionObject === 'function'){
-              console.log('function detected');
               realConditions.push({
                   column: property,
                   condition: whereConditionObject
@@ -1271,16 +1270,8 @@ mainContainer.pa.prototypedFunctions_Array = {
                         //transform the keys into a better object with properties Column and SortOrder
                         var value = sortConditions[property].toUpperCase();
 
-                        switch (value) {
-                            case "ASC":
-                            case "ASCENDING":
-                            case "ASCENDINGIGNORECASE":
-                            case "DESC":
-                            case "DESCENDING":
-                            case "DESCENDINGIGNORECASE":
-                                break;
-                            default:
-                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC, ASCENDING, ASCENDINGIGNORECASE, DESC, DESCENDING or DESCIGNORECASE");
+                        if(!mainContainer.pa.Sort._validSortConfigStrings.indexOf(sortConditions[property]) === -1) {
+                          throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "'");
                         }
 
                         realConditions.push({
@@ -1296,19 +1287,21 @@ mainContainer.pa.prototypedFunctions_Array = {
                         cycleValue = 10 - i;
                         currentColumn = realConditions[i].column;
                         switch (realConditions[i].sortDirection) {
-                            case "ASC":
-                            case "ASCENDING":
-                            case "ASCENDINGIGNORECASE":
-                                if (a[currentColumn] < b[currentColumn]) {
+                            case mainContainer.pa.Sort.Ascending:
+                            case mainContainer.pa.Sort.Asc:
+                            case mainContainer.pa.Sort.AscendingIgnoringCase:
+                            case mainContainer.pa.Sort.AscIgnoringCase:
+                              if (a[currentColumn] < b[currentColumn]) {
                                     result -= cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
                                     result += cycleValue;
                                 }
                                 break;
-                            case "DESC":
-                            case "DESCENDING":
-                            case "DESCENDINGIGNORECASE":
-                                if (a[currentColumn] < b[currentColumn]) {
+                            case mainContainer.pa.Sort.Descending:
+                            case mainContainer.pa.Sort.Desc:
+                            case mainContainer.pa.Sort.DescendingIgnoringCase:
+                            case mainContainer.pa.Sort.DescIgnoringCase:
+                              if (a[currentColumn] < b[currentColumn]) {
                                     result += cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
                                     result -= cycleValue;
@@ -1387,7 +1380,7 @@ mainContainer.pa.prototypedFunctions_Array = {
                         item = this[i];
                         if (whereConditions(item)) {
                             if (justFirst) {
-                                return item;
+                                 return (justIndexes) ? i : item;
                             }
                             result.push(item);
                         }
@@ -1397,7 +1390,7 @@ mainContainer.pa.prototypedFunctions_Array = {
                         item = this[l];
                         if (whereConditions(item)) {
                             if (justFirst) {
-                                return item;
+                              return (justIndexes) ? l : item;
                             }
                             result.push(item);
                         }
@@ -1422,6 +1415,34 @@ mainContainer.pa.prototypedFunctions_Array = {
     Average: function() {
         //TODO: the same way to work as Max()
     },
+    /*Return an object containing min and max values of one or more propeties in an objects array */
+    Bounds: function() {
+      var l = this.length, alc, al = arguments.length, maxVal, result = {}, arrayItemValue, currentArgName='';
+      if(al===0){
+          throw new Error("PowerArray => Max => invalid params, please provide one or more target parameters");
+      }
+      alc = al;
+      while (alc--) {
+          currentArgName = arguments[alc];
+          result[currentArgName] = { min: undefined, max: undefined};
+      }
+      while (l--) {
+          alc = al;
+          while (alc--) {
+              currentArgName = arguments[alc];
+              arrayItemValue = this[l][currentArgName];
+              if (result[currentArgName].max === undefined || (arrayItemValue !== undefined && arrayItemValue > result[currentArgName].max)) {
+                  result[currentArgName].max= arrayItemValue;
+              }
+              if (result[currentArgName].min === undefined || (arrayItemValue !== undefined && arrayItemValue < result[currentArgName].min)) {
+                  result[currentArgName].min= arrayItemValue;
+              }
+          }
+      }
+
+      return result;
+
+    },
     /**
      * Return max values of specified properties
      * @param {} target
@@ -1439,7 +1460,7 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
         while (l--) {
             alc = al;
-            while (alc) {
+            while (alc--) {
                 currentArgName = arguments[alc];
                 arrayItemValue = this[l][currentArgName];
                 if (result[currentArgName] === undefined || (arrayItemValue !== undefined && arrayItemValue > result[currentArgName])) {
@@ -1469,7 +1490,16 @@ mainContainer.pa.Sort = {
 }
 if (mainContainer.Sort == undefined) {
     mainContainer.Sort = mainContainer.Sort || mainContainer.pa.Sort;
-} else {
+    mainContainer.pa.Sort._validSortConfigStrings = [
+      mainContainer.pa.Sort.Ascending,
+                mainContainer.pa.Sort.Asc,
+                mainContainer.pa.Sort.AscendingIgnoringCase,
+                mainContainer.pa.Sort.AscIgnoringCase,
+                mainContainer.pa.Sort.Descending,
+                mainContainer.pa.Sort.Desc,
+                mainContainer.pa.Sort.DescendingIgnoringCase,
+                mainContainer.pa.Sort.DescIgnoringCase];
+    } else {
     console.warn('PowerArray warning! => property "Sort" already exists on parent scope. However, you can still using it but calling "pa.Sort" instead of only "Sort" on your conde."');
 }
 
