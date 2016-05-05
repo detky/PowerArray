@@ -1,9 +1,51 @@
-window.pa = function (object) {
-    if (object.paIsArray) {
+﻿var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
+if (typeof module !== "undefined") {
+    module.exports = {};
+    isModule = true;
+}
+
+if (typeof window === 'object') {
+  mainContainer = window;
+} else {
+  isBrowser = false;
+  mainContainer = global;
+}
+
+mainContainer.pa = function (object) {
+    if (object.constructor === Array || object.paIsArray) {
+        return new paArray(object);
+    } else {
+        console.warn('PowerArray => The passed object does is not natively an array. Trying to handle it as an array-like object...')
+        if ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) {
+            console.log('Compatible openlayers object detected (ol.Collection)');
+            return paArray(object.getArray());
+        }
+        if (object.length === undefined) {
+            throw new Error('PowerArray => The passed object is not an array, or usable as such.');
+        }
         return new paArray(object);
     }
 };
-window.pa.utils = {
+/*
+functions directly bound to the pa object:
+
+ */
+pa.Range =  function(from, to, step) {
+    var result = [], i, l, currVal = from;
+    while (currVal < to) {
+        result.push(currVal);
+        currVal += step;
+    }
+    result.push(to);
+    return result;
+};
+mainContainer.pa.config = {
+  defaults : {
+    defaultPromiseTimeout : 10000
+  }
+};
+mainContainer.pa.utils = {}
+mainContainer.pa.utils = {
     DataTypes: {
         String: 'String',
         Number: 'Number',
@@ -23,6 +65,7 @@ window.pa.utils = {
         }
         l = val.length;
         while (l--) {
+            //TODO: this could fail in collections having objects but one undefined
             if (pa.utils.GetTypeOf(val[l]) !== pa.utils.DataTypes.Object) {
                 return false;
             }
@@ -34,7 +77,6 @@ window.pa.utils = {
      * @param str the string to be evaluated
      * @param throwIfNotMatch Boolean, if true, an exception will be raised if the string does not match. If false, null will be returned
      * @returns {*} boolean value if string matches, null if not
-     * @constructor ??
      */
     parseBoolean: function (str, throwIfNotMatch) {
         if (!pa.utils.isNullEmptyOrUndefined(str)) {
@@ -129,19 +171,41 @@ window.pa.utils = {
                 throw new Error("PowerArray Error : Unknown Datatype!");
         }
     },
+    /**
+      * Determines whether a supplied value is a number.
+      * @param number Any numeric value.
+      */
     IsNumeric: function (num) {
         return !isNaN(parseFloat(num)) && isFinite(num);
+    },
+    IsInteger: function(num) {
+        return num === parseInt(num, 10);
+    },
+    ArgumentsToArray: function (args, from, to) {
+        var i = from | 0, l = to || args.length, result = [];
+        for (; i < l; i++) {
+            result.push(args[i]);
+        }
+        return result;
+    },
+    generateUid: function(prefix, sufix) {
+        function getRandom4Chars() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return ((prefix !== undefined) ? prefix +'-'   : '') +
+                  getRandom4Chars() + '-' +
+                  getRandom4Chars() + '-' +
+                  getRandom4Chars() +
+                  getRandom4Chars() + ((sufix !== undefined) ? '-' + sufix : '');
     }
 };
 
-window.pa.paEachParalellsHelper = {
+mainContainer.pa.paEachParalellsHelper = {
     CheckParalellTaskStates: function (paralellId) {
-        var paralell = window.pa.paEachParalellsHelper.currentParalellIds[paralellId];
-        if (paralell.CompletedTasks === paralell.TotalProcesses) {
-            return true;
-        }
-        console.info('not yet');
-        return false;
+        var paralell = mainContainer.pa.paEachParalellsHelper.currentParalellIds[paralellId];
+        return paralell.CompletedTasks === paralell.TotalProcesses;
     },
     currentParalellIds: {},
     actionKeys: {
@@ -153,8 +217,86 @@ window.pa.paEachParalellsHelper = {
         TaskState: 'TaskStateResponse'
     }
 };
+mainContainer.pa.paEachInPartsHelper = {
+    partsStates : {
+      Initial : 0,
+      Processing: 1,
+      Done: 2
+    },
+    //returns true if the task is done
+    checkPartsStateById: function (inPartsId) {
+        var paralell = pa.paEachInPartsHelper.currentEachInPartsIds[inPartsId];
+        return paralell.CompletedTasks === paralell.parts.length;
+    },
+    currentEachInPartsIds: {},
+    getNewInPartsId : function() {
+      var newPartsId = pa.utils.generateUid("RunEachInParts");
+      pa.paEachInPartsHelper.currentEachInPartsIds[newPartsId] = { parts: [], CompletedTasks : 0 };
+      return newPartsId;
+    },
+    registerPart: function(partsId, partialArray, task, partialArrayOrderInOriginalArray, keepOrder) {
+      pa.paEachInPartsHelper.currentEachInPartsIds[partsId].parts.push({
+        state: pa.paEachInPartsHelper.partsStates.Initial,
+        partialArray : partialArray,
+        task: task,
+        partialArrayOrderInOriginalArray : partialArrayOrderInOriginalArray,
+        result : undefined
+      });
+    },
+    getNextPartToProcess: function(partsId) {
+      return pa.paEachInPartsHelper.currentEachInPartsIds[partsId].parts.First({
+          state : pa.paEachInPartsHelper.partsStates.Initial
+      });
+    },
+    buildInPartsResult : function(partsId, keepOrder)  {
+        var result =[], parts = pa.paEachInPartsHelper
+                              .currentEachInPartsIds[partsId]
+                              .parts
+                              .Sort({
+                                partialArrayOrderInOriginalArray: Sort.Ascending
+                              });
+        parts.RunEach(function(part) {
+          result = result.concat.apply(result,part.result);
+        }, undefined, keepOrder);
+        return result;
+    },
+    execute : function(partsId, keepOrder, partsCallback, promise, delayBetweenParts) {
+      var result;
+      var nextPartToProcess = pa.paEachInPartsHelper.getNextPartToProcess(partsId);
+      var somethingWrongTimeout = setTimeout(function() {
+          promise.reject("Promise has timed out");
+        },
+        pa.config.defaults.defaultPromiseTimeout
+      );
 
-window.pa.paWhereHelper = {
+      nextPartToProcess.state = pa.paEachInPartsHelper.partsStates.Processing;
+      nextPartToProcess.result = nextPartToProcess.partialArray.RunEach(nextPartToProcess.task, function(lastResult) {
+        console.log("Starting to process part "+ nextPartToProcess.partialArrayOrderInOriginalArray);
+        nextPartToProcess.state = pa.paEachInPartsHelper.partsStates.Done;
+        pa.paEachInPartsHelper.currentEachInPartsIds[partsId].CompletedTasks++;
+
+          if(pa.paEachInPartsHelper.checkPartsStateById(partsId)) {
+            nextPartToProcess.result = lastResult; //this is because how the RunEach method works.
+            console.log('task ' + partsId + ' is done!');
+            result = pa.paEachInPartsHelper.buildInPartsResult(partsId, keepOrder);
+            //if(promise)  {
+              clearTimeout(somethingWrongTimeout);
+              console.debug('AAAAAAAAAAAAAAAAAAAAAAAAAAA');
+              promise.resolve(result);
+            //}
+          } else {
+            if(partsCallback) {
+                partsCallback();
+            }
+            setTimeout(function(){
+              pa.paEachInPartsHelper.execute(partsId, keepOrder, partsCallback, promise, delayBetweenParts);
+            }, delayBetweenParts);
+          }
+
+        }, keepOrder);
+      }
+};
+mainContainer.pa.paWhereHelper = {
     FillConditions: function (item, conditions) {
         var l = conditions.length, condition, result, subArray;
         while (l--) {
@@ -165,12 +307,12 @@ window.pa.paWhereHelper = {
                 //if the condition is an object, it's necessary to handle it different.
                 //If that's the case we start internally another Where() call, but we know that we are
                 //evaluating pro Where call just ONE item and it could be very expensive. TODO: optimize this somehow!
-                if (window.pa.utils.GetTypeOf(condition.condition) === window.pa.utils.DataTypes.Object) {
-                    var itemType = window.pa.utils.GetTypeOf(item[condition.column], true);
+                if (mainContainer.pa.utils.GetTypeOf(condition.condition) === mainContainer.pa.utils.DataTypes.Object) {
+                    var itemType = mainContainer.pa.utils.GetTypeOf(item[condition.column], true);
 
                     switch (itemType) {
-                        case window.pa.utils.DataTypes.ArrayOfObjects:
-                        case window.pa.utils.DataTypes.ArrayOfPrimitives:
+                        case mainContainer.pa.utils.DataTypes.ArrayOfObjects:
+                        case mainContainer.pa.utils.DataTypes.ArrayOfPrimitives:
 
                             result = item[condition.column].Where.call(item[condition.column], condition.condition, false, true);
                             //when sending true als "justFirst", Where() will return the first found element, not an array,
@@ -182,7 +324,7 @@ window.pa.paWhereHelper = {
                                 return false;
                             }
                             break;
-                        case window.pa.utils.DataTypes.Object:
+                        case mainContainer.pa.utils.DataTypes.Object:
                             subArray = pa([item[condition.column]]);
                             result = subArray.Where.call(subArray, condition.condition, false, true);
                             if (result !== undefined) {//See previous comment about justFirst param
@@ -195,15 +337,15 @@ window.pa.paWhereHelper = {
                 condition.condition = pa.EqualTo3(condition.condition); //transforms an explicit value into an === evaluation
             }
 
-            if (!condition.condition(item[condition.column])) { //if one condition is not fulfilled, just return false;
+            if (!item || !condition.condition(item[condition.column])) { //if one condition is not fulfilled, just return false;
                 return false;
             }
         }
         return true;
     },
-    ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst) {
+    ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst, justIndexes) {
         //to call this function, "this" should be an array!
-        var fc = window.pa.paWhereHelper.FillConditions,
+        var fc = mainContainer.pa.paWhereHelper.FillConditions,
             i, w, item, lw, assert, l, result = [];
 
         if (!isArrayOfConditions) {
@@ -211,33 +353,43 @@ window.pa.paWhereHelper = {
             whereConditions = [whereConditions];
         }
 
+        //Where conditions must be processed in order
         for (i = 0, l = whereConditions.length; i < l; i++) {
             var whereConditionObject = whereConditions[i], realConditions = [];
-            for (var property in whereConditionObject) {
-                if (property !== 'realConditions' && whereConditionObject.hasOwnProperty(property)) {
-                    //transform the keys into a better object with properties Column and Condition
+            if(typeof whereConditionObject === 'function'){
+              realConditions.push({
+                  column: property,
+                  condition: whereConditionObject
+              });
+            } else {
+              for (var property in whereConditionObject) {
+                  if (property !== 'realConditions' && whereConditionObject.hasOwnProperty(property)) {
+                      //transform the keys into a better object with properties Column and Condition
 
-                    //if whereConditionObject[property] is an array, that means that its a multi filter for a single column, for example: array.Where({age : [GreatherThan(33), BiggerThan(21)], otherField : '33'   });
-                    if (whereConditionObject[property].paIsArray) {
-                        /** MULTIPLE CONDITIONS FOR A SINGLE PROPERTY. Pushed on the realconditions as an AND **/
-                        whereConditionObject[property].RunEach(function (subCondition) {
-                            realConditions.push({
-                                column: property,
-                                condition: subCondition
-                            });
-                        });
-                    } else {
-                        realConditions.push({
-                            column: property,
-                            condition: whereConditionObject[property]
-                        });
-                    }
-                }
-            }
+                      //if whereConditionObject[property] is an array, that means that its a multi filter for a single column, for example: array.Where({age : [GreatherThan(33), BiggerThan(21)], otherField : '33'   });
+                      if (whereConditionObject[property] && whereConditionObject[property].paIsArray) {
+                          /** MULTIPLE CONDITIONS FOR A SINGLE PROPERTY. Pushed on the realconditions as an AND **/
+                          whereConditionObject[property].RunEach(function (subCondition) {
+                              realConditions.push({
+                                  column: property,
+                                  condition: subCondition
+                              });
+                          });
+                      } else {
+                          realConditions.push({
+                              column: property,
+                              condition: whereConditionObject[property]
+                          });
+                      }
+                  }
+              }
+          }
+
             whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
         }
+        //Real conditions stored
         l = this.length;
-        if (keepOrder) {
+        if (keepOrder) { //Anti DRY pattern ;( but as long as it still being small will continue this way to improve performance
             for (i = 0; i < l; i++) {
                 item = this[i];
                 for (w = 0, lw = whereConditions.length; w < lw; w++) {
@@ -247,10 +399,10 @@ window.pa.paWhereHelper = {
                     }
                 }
                 if (assert) {
-                    result.push(item);
                     if (justFirst) {
-                        return item;
+                        return (justIndexes) ? i : item;
                     }
+                    result.push((justIndexes) ? i : item);
                 }
             }
         } else {
@@ -259,10 +411,10 @@ window.pa.paWhereHelper = {
                 for (w = 0, lw = whereConditions.length; w < lw; w++) {
                     assert = fc(item, whereConditions[w].realConditions);
                     if (assert) {
-                        result.push(item);
                         if (justFirst) {
-                            return item;
+                            return (justIndexes) ? l : item;
                         }
+                        result.push((justIndexes) ? l : item);
                         break;
                     }
                 }
@@ -462,7 +614,7 @@ window.pa.paWhereHelper = {
 };
 
 
-window.pa.auxiliaryFunctions = {
+mainContainer.pa.auxiliaryFunctions = {
     Contains: function (value, enforcePropsOrder, cyclic) {
         return function (val) {
             if (!val.paIsArray) {
@@ -499,13 +651,19 @@ window.pa.auxiliaryFunctions = {
 
         };
     },
-    Between: function (from, to) {
+    Between: function (from, to, excludeExactMatches) {
         if (to < from) {
-            throw new Error("PowerArray error => parameters 'from' and 'to' passed to function Between are not valid. Parameter 'to' should be greater than from!");
+            console.warn("PowerArray warn => Parameters 'from' and 'to' passed to function Between() makes no sense: Parameter 'to' (" + to + ") should be greater than from (" + from + ")");
         }
-        return function (val) {
-            return val >= from && val <= to;
-        };
+        if (!excludeExactMatches) {
+            return function (val) {
+                return val >= from && val <= to;
+            };
+        } else {
+            return function (val) {
+                return val > from && val < to;
+            };
+        }
     },
     EndsWith: function (value) {
         var value2 = value + '';
@@ -522,9 +680,19 @@ window.pa.auxiliaryFunctions = {
             return val.indexOf(value2) === 0;
         };
     },
+    GreaterOrEqualThan: function (value) {
+        return function (val) {
+            return val >= value;
+        };
+    },
     GreaterThan: function (value) {
         return function (val) {
             return val > value;
+        };
+    },
+    SmallerOrEqualThan: function (value) {
+        return function (val) {
+            return val <= value;
         };
     },
     SmallerThan: function (value) {
@@ -537,9 +705,19 @@ window.pa.auxiliaryFunctions = {
             return val === value;
         };
     },
+    NotEqualTo3: function (value) {
+        return function (val) {
+            return val !== value;
+        };
+    },
     EqualTo2: function (value) {
         return function (val) {
             return val == value; // jshint ignore:line
+        };
+    },
+    NotEqualTo2: function (value) {
+        return function (val) {
+            return val != value; // jshint ignore:line
         };
     },
     IsUndefined: function () {
@@ -554,7 +732,7 @@ window.pa.auxiliaryFunctions = {
     },
     In: function (list) {
         //TODO: investigar si esta function pierde performance al no estar devolviendo una
-        //funci�n como todo el resto.
+        //funciï¿½n como todo el resto.
 
         if (arguments.length > 1) {
             list = Array.prototype.slice.call(arguments);
@@ -715,7 +893,7 @@ window.pa.auxiliaryFunctions = {
     }
 };
 
-window.pa.prototypedFunctions_Array = {
+mainContainer.pa.prototypedFunctions_Array = {
     getIndexByProperty: function (valueToSearchFor) {// jshint ignore:line
         /**
          * This function, evaluates properties (or function results) over each object on an array, and answers with an
@@ -817,84 +995,208 @@ window.pa.prototypedFunctions_Array = {
         }
         return results;
     },
-    RunEach: function (task, callback) {// jshint ignore:line
-        var l = this.length;
-        while (l--) {
-            task(this[l]);
+    /**
+     * Executes a function (task) on each element of the array (this).
+     * @param {} task       A function to execute. It will receive 3 parameters:
+     *                          1) one array item
+     *                          2) index of the passed item (param 1) on the original array.
+     *                          3) the complete array. Warning, you should not change it. See it as read-only!
+     *
+     * @param {} callback   A callback function to be executed after processing all array items.
+     *                      It will get as first parameter the results-array (that lately will be
+     *                      returned as result of this function).
+     *                       *****************************PLEASE READ**********************************
+     *                      *** If the callback function returns something different than undefined, ***
+     *                      ***      the results-array will be replaced with that return value       ***
+     *                       **************************************************************************
+     * @param {} keepOrder
+     * @returns             array of the result of each executed task (keeping same position as on original
+     *                      array, regardless order). Excepion: when the execution of the callback function
+     *                      returns something different than undefined, that will be returned instead of the
+     *                      . If not,
+     */
+
+      RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
+        var l = this.length, i = 0, result = new Array(this.length), tmp;
+        if (!keepOrder) {
+            while (l--) {
+                result[l] = task(this[l], l, this);
+            }
+        } else {
+            for (; i < l; i++) {
+                result[i] = task(this[i], i, this);
+            }
         }
         if (callback) {
-            callback();
+            //if the callback function returns something,
+            //the result will be overrided with that result.
+            result = callback(result) || result;
         }
-        return this;
+        return result;
     },
-    RunEachParalell: function (task, quantProcesses, callback) {// jshint ignore:line
-        if (!self.Worker) { //if no workers supported, switch to normal RunEach
-            return this.RunEach(task, this, callback);
+    RunEachInParts: function (task, keepOrder, partsCallback,  partsLength) {// jshint ignore:line
+      var deferred = Q.defer();
+      var that = this;
+      setTimeout(function() {
+                  if(!partsLength) {
+                    deferred.reject('PowerArray => RunEachInParts => parameter partsLength is required.');
+                  }
+                  if(that.paIsArray === undefined) {
+                    deferred.reject('PowerArray => RunEachInParts => this function should be executed by an array, but got something different:', this);
+                    throw new Error('PowerArray => RunEachInParts => this function should be executed by an array, but got something different:');
+                    return;
+                  }
+                  var myLength = that.length, result =[],
+                  partsId = pa.paEachInPartsHelper.getNewInPartsId(),
+                  partsQantDecimal = (myLength / partsLength),
+                  partsQantInt = parseInt(partsQantDecimal),
+                  partsQuantity = (partsQantInt === partsQantDecimal) ? partsQantInt : partsQantInt + 1 , l = partsQuantity,
+                  partialArrays = [], startFrom, partialResults = new Array(partsQuantity),
+                  executionsCounter = 0;
+
+                  while (l--) {
+                    startFrom = (l < 1) ? 0 : (l) * partsLength;
+                    partialArrays.push(that.slice(startFrom, startFrom + partsLength));//one "portion" of the array to process
+                  }
+                  partialArrays.reverse();//bring it again to initial order.
+
+                  partialArrays.RunEach(function(partialArray, i) {
+                    pa.paEachInPartsHelper.registerPart(partsId, partialArray, task, i);
+                  }, function(){
+                    pa.paEachInPartsHelper.execute(partsId, keepOrder, partsCallback, deferred, 100);
+                  });
+
+      },0);
+      return deferred.promise
+    },
+    RunEachParalell: function (task, callback, keepOrder, quantProcesses, requiredScripts) {// jshint ignore:line
+        if (!self.Worker//if no workers supported,
+            || this.length < 2) //or there is no enough data
+        {
+            return this.RunEach.call(this, task, callback);
         }
+
+        try {
+            /*var serializedTask = task.toString();
+            if (!serializedTask) {
+                console.warn("PowerArray => RunEachParalell => The passed task cannot be paralelized because it cannot be serialized. The process will continue, but will not run in paralell mode");
+                return this.RunEach.call(this, task, callback);
+            }*/
+            JSON.stringify(task);
+        } catch (e) {
+            console.error("PowerArray => RunEachParalell => Unexpected error trying to serialize the passed task. Task aborted. Error => " +
+                ((e.number) ? e.number : '') + " " + ((e.message) ? e.message : '')
+                );
+            return;
+        }
+
+        quantProcesses = quantProcesses || 3;
         var that = this, startFrom;
         var paralellId = "RunEachParalell_" + Math.floor((Math.random() * 1000000000) + 1);
-        window.pa.paEachParalellsHelper.currentParalellIds[paralellId] = {
+        mainContainer.pa.paEachParalellsHelper.currentParalellIds[paralellId] = {
             CompletedTasks: 0,
             TotalProcesses: quantProcesses
         };
-
-        var partsLength = parseInt(this.length / quantProcesses);
-        var bkpQuantProcesses = quantProcesses;
+        var myLength = this.length;
+        var partsLength = parseInt(myLength / quantProcesses);
+        var result = new Array(myLength);
         while (quantProcesses--) {
-            startFrom = bkpQuantProcesses - quantProcesses * partsLength;
-            setTimeout(function () {
-                that.slice(startFrom, startFrom + partsLength).RunInWorker(task, function () {
-                    window.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
-                    if (window.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
+            startFrom = (quantProcesses < 1) ? 0 : (quantProcesses) * partsLength;
+            //console.log('starting from ', startFrom);
+            var partialArray = that.slice(startFrom, startFrom + partsLength); //one "portion" of the array to process
+            partialArray.RunTaskForSubsetInWorker(task, keepOrder, startFrom, partsLength, requiredScripts,
+                function (partialResult, startIndexOnOriginalArray) {
+                    //with the splice we add the first two parameters to use the partialResult as argument for following splice
+                    partialResult.splice(0, 0, startIndexOnOriginalArray, partialResult.length);
+                    result.splice.apply(result, partialResult);
+                    mainContainer.pa.paEachParalellsHelper.currentParalellIds[paralellId].CompletedTasks++;
+                    if (mainContainer.pa.paEachParalellsHelper.CheckParalellTaskStates(paralellId)) {
                         if (callback) {
-                            callback();
+                            //if the callback function returns something,
+                            //the result will be overrided with that result.
+                            result = callback(result) || result;
                         }
+                        return result;
                     }
                 });
-            }, 0); // jshint ignore:line
         }
-    }, RunInWorker: function (task, callback) {
-        var blobURL = URL.createObjectURL(new Blob([
-            '(',
-            function () {
-                var _array, _func, _len, l;
-                //...puede q self en la siguiente linea este mal
-                self.onmessage = function (paMessage) {
-                    switch (paMessage.action) {
-                        case pa.paEachParalellsHelper.actionKeys.Runeach:
-                            _array = paMessage.array;
-                            _func = paMessage.func;
-                            _len = _array.length;
-                            l = _len;
-                            while (l--) {
-                                _func(this._array[l]);
-                            }
-                            self.postMessage({
-                                event: pa.paEachParalellsHelper.eventKeys.RuneachDone
-                            });
-                            break;
-                        case pa.paEachParalellsHelper.actionKeys.TaskState:
-                            self.postMessage({
-                                event: pa.paEachParalellsHelper.eventKeys.TaskState,
-                                value: l * _len / 100
-                            });
-                            break;
-                    }
-                };
-            }.toString(),
-            ')()'
-        ], { type: 'application/javascript' }));
-        var w = new Worker(blobURL);
-        w.postMessage({
-            array: this,
-            func: task
-        });
-
-        if (callback) {
-            callback();
-        }
-        return this;
     },
+    /*
+    task => the function to run
+    startIndexOnOriginalArray => which portion of the big array we are processing? this is the index of the first
+                                 position of the sub-array (that we are getting as a part from a bigger array toprocess)
+                                 on the original.
+    partsLength => how big is each sub-array (we can't look at the .length here)
+    requiredScripts => array with a list of the urls of the scripts that have to be loaded
+    callback => as usual
+    */
+    RunTaskForSubsetInWorker: function (task, keepOrder, startIndexOnOriginalArray, partsLength, requiredScripts, callback) {
+        var blobUrl = URL.createObjectURL(new Blob([
+            'var _array, _func, _len, l; actionKeys, _result = [], indexInOriginalArray = -1;\
+        var actionKeys = ' + JSON.stringify(pa.paEachParalellsHelper.actionKeys) + ';                                            \r\n\
+        var eventKeys = ' + JSON.stringify(pa.paEachParalellsHelper.eventKeys) + ';                                            \r\n\
+        var keepOrder = ' + keepOrder + ';                                            \r\n\
+        var startIndexOnOriginalArray = ' + startIndexOnOriginalArray + ';\r\n' +
+        ((requiredScripts) ? '//self.importScripts("' + requiredScripts.join('","') + '");' : '') + '                                            \r\n\
+        var _func = ' + task.toString() + ';                                            \r\n\                                                                               \r\n\
+                self.onmessage = function (msg) {                                            \r\n\
+                   // console.info("worker got message ");\r\n\
+                    var paMessage = msg.data, i=0;                                            \r\n\
+                    switch (paMessage.action) {                                            \r\n\
+                        case actionKeys.Runeach:                                            \r\n\
+                            _array = paMessage.array;                                            \r\n\
+                            _len = _array.length;                                            \r\n\
+                            l = _len;                                            \r\n\
+                            //console.log("startIndexOnOriginalArray:",startIndexOnOriginalArray, "length:",_len);                                                              \r\n\                                                                               \r\n\
+                            //debugger; \r\n\
+                            if(keepOrder) {                                                                \r\n\
+                                    for(i=0;i<l;i++) {                                            \r\n\
+                                        indexInOriginalArray = i + startIndexOnOriginalArray;                                            \r\n\
+                                        _result.push(_func(_array[i], indexInOriginalArray));                                            \r\n\
+                                    }                                                         \r\n\
+                            } else {                                                                \r\n\
+                                while (l--) {                                            \r\n\
+                                    indexInOriginalArray = l + startIndexOnOriginalArray;                                            \r\n\
+                                    _result.push(_func(_array[l], indexInOriginalArray));                                            \r\n\
+                                }                                            \r\n\
+                            }                                            \r\n\
+                            self.postMessage({                                            \r\n\
+                                event: eventKeys.RuneachDone,                                            \r\n\
+                                result: _result,                                            \r\n\
+                                startIndexOnOriginalArray: startIndexOnOriginalArray                                            \r\n\
+                            });                                            \r\n\
+                            break;                                            \r\n\
+                        case actionKeys.TaskState:                                            \r\n\
+                            self.postMessage({                                            \r\n\
+                                event: eventKeys.TaskState,                                            \r\n\
+                                value: l * _len / 100                                            \r\n\
+                            });                                            \r\n\
+                            break;                                            \r\n\
+                    }                                            \r\n\
+                };\r\n'
+        ], { type: 'application/javascript' }));
+        var w = new Worker(blobUrl);
+        w.postMessage({
+            action: pa.paEachParalellsHelper.actionKeys.Runeach,
+            array: this
+        });
+        w.onmessage = function (e) {
+            var msg = e.data;
+            switch (msg.event) {
+                case pa.paEachParalellsHelper.eventKeys.RuneachDone:
+                    callback(msg.result, msg.startIndexOnOriginalArray);
+                    w.terminate();
+                    break;
+                default:
+                    console.error('PowerArray => RunTaskForSubsetInWorker => Unknown message received!');
+            }
+
+        };
+
+
+
+    },
+
     Sort: function (sortConditions) { // jshint ignore:line
         var realConditions = [];
         var conditionType = typeof sortConditions;
@@ -904,8 +1206,8 @@ window.pa.prototypedFunctions_Array = {
                 //This call, with a first parameter of type string, should be "ASC" or "DESC"
                 var condition = sortConditions.toUpperCase();
                 switch (condition) {
-                    case "ASCENDING":
-                    case "ASC":
+                    case pa.Sort.Ascending:
+                    case pa.Sort.Asc:
                         return this.sort(function (a, b) {
                             if (a < b) {
                                 return -1;
@@ -914,22 +1216,8 @@ window.pa.prototypedFunctions_Array = {
                             }
                             return 0;
                         });
-                    case "DESCENDING":
-                    case "DESC":
-                        return this.sort(function (a, b) {
-                            if (a > b) {
-                                return -1;
-                            } else if (a < b) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                    case "DESCENDINGIGNORECASE":
-                    case "DESCIGNORECASE":
-                        return this.sort(function (a, b) {
-                            return (a.toLowerCase().localeCompare(b.toLowerCase())) * -1;
-                        });
-                    case "ASCENDINGIGNORECASE":
+                    case pa.Sort.AscendingIgnoringCase:
+                    case pa.Sort.AscIgnoringCase:
                         return this.sort(function (a, b) {
                             try {
                                 return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -942,9 +1230,24 @@ window.pa.prototypedFunctions_Array = {
                                 }
                             }
                         });
+                    case pa.Sort.Descending:
+                    case pa.Sort.Desc:
+                        return this.sort(function (a, b) {
+                            if (a > b) {
+                                return -1;
+                            } else if (a < b) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    case pa.Sort.DescendingIgnoringCase:
+                    case pa.Sort.DescIgnoringCase:
+                        return this.sort(function (a, b) {
+                            return (a.toLowerCase().localeCompare(b.toLowerCase())) * -1;
+                        });
                     default:
                         throw new Error("PowerArray Error: Invalid sort condition. If you pass a first parameter of type String to the Sort function," +
-                        "' PoserArray assumes that you have a simple array on your hand (one dimension of primitives). Possible parameter values for function Sort " +
+                        " PowerArray assumes that you have a simple array on your hand (one dimension of primitives). Possible parameter values for function Sort " +
                         " in that situation, are: 1) To sort Ascending: 'Asc' and 'AscIgnoreCase' (aliases: 'Ascending', 'AscendingIgnoreCase'), and 2)" +
                         " To sort Descending: 'Desc','Descending' (aliases: 'Descending', 'DescendingIgnoreCase') ");
                 }
@@ -967,16 +1270,8 @@ window.pa.prototypedFunctions_Array = {
                         //transform the keys into a better object with properties Column and SortOrder
                         var value = sortConditions[property].toUpperCase();
 
-                        switch (value) {
-                            case "ASC":
-                            case "ASCENDING":
-                            case "ASCENDINGIGNORECASE":
-                            case "DESC":
-                            case "DESCENDING":
-                            case "DESCENDINGIGNORECASE":
-                                break;
-                            default:
-                                throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "', it should be ASC, ASCENDING, ASCENDINGIGNORECASE, DESC, DESCENDING or DESCIGNORECASE");
+                        if(!mainContainer.pa.Sort._validSortConfigStrings.indexOf(sortConditions[property]) === -1) {
+                          throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "'");
                         }
 
                         realConditions.push({
@@ -992,19 +1287,21 @@ window.pa.prototypedFunctions_Array = {
                         cycleValue = 10 - i;
                         currentColumn = realConditions[i].column;
                         switch (realConditions[i].sortDirection) {
-                            case "ASC":
-                            case "ASCENDING":
-                            case "ASCENDINGIGNORECASE":
-                                if (a[currentColumn] < b[currentColumn]) {
+                            case mainContainer.pa.Sort.Ascending:
+                            case mainContainer.pa.Sort.Asc:
+                            case mainContainer.pa.Sort.AscendingIgnoringCase:
+                            case mainContainer.pa.Sort.AscIgnoringCase:
+                              if (a[currentColumn] < b[currentColumn]) {
                                     result -= cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
                                     result += cycleValue;
                                 }
                                 break;
-                            case "DESC":
-                            case "DESCENDING":
-                            case "DESCENDINGIGNORECASE":
-                                if (a[currentColumn] < b[currentColumn]) {
+                            case mainContainer.pa.Sort.Descending:
+                            case mainContainer.pa.Sort.Desc:
+                            case mainContainer.pa.Sort.DescendingIgnoringCase:
+                            case mainContainer.pa.Sort.DescIgnoringCase:
+                              if (a[currentColumn] < b[currentColumn]) {
                                     result += cycleValue;
                                 } else if (a[currentColumn] > b[currentColumn]) {
                                     result -= cycleValue;
@@ -1023,20 +1320,58 @@ window.pa.prototypedFunctions_Array = {
                 throw new Error("Unknown sortConditions object type (" + conditionType + ")");
         }
     },
-    Where: function (whereConditions, keepOrder, justFirst) {// jshint ignore:line
+    Exists: function (whereConditions) {
+        if (pa.prototypedFunctions_Array.First.call(this, whereConditions)) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    Remove: function(whereConditions) {
+        var first = this.FirstIndex(whereConditions);
+        while(first !== undefined) {
+            this.splice(first,1);
+            first = this.FirstIndex(whereConditions);
+        }
+        return this;
+    },
+    //this primitive distinct version works only for array of primitives.
+    Distinct: function() {
+        var val, l = this.length, results = [];
+        if (pa.utils.GetTypeOf(this) !== pa.utils.DataTypes.ArrayOfPrimitives) {
+            throw new Error("PowerArray => Distinct => Currently, the distinct function works only for arrays of primitive data.");
+        }
+        while (l--) {
+            val = this[l];
+            if (results.indexOf(val) === -1 && val !== undefined) {
+                results.push(val);
+            }
+        }
+        return results;
+    },
+    WhereIndexes: function (whereConditions, keepOrder, justFirst) {
+        return this.Where(whereConditions, keepOrder, justFirst, true);
+    },
+    Where: function (whereConditions, keepOrder, justFirst, justIndexes) {// jshint ignore:line
         var i, l = this.length, item, result = [];
+        justIndexes = (justIndexes) ? true : false; //just to avoid casting when comparing during loop
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
             //If It's an object, but not an array, it's an explicit object with N filters
-            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst);
+            result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst, justIndexes);
         } else {
 
             //At this point, whereConditions could be a:
-            //                                          => function (a custom function), 
-            //                                          => an pa.EqualTo, 
+            //                                          => function (a custom function),
+            //                                          => an pa.EqualTo,
             //                                          => an Array of condition-objects
-            if (whereConditions.paIsArray) {
+
+            if (typeof whereConditions === 'undefined') {
+                var a = new Error("PowerArray => Where function => No condition object provided to function 'Where(whereConditions, keepOrder)'");
+                a.message = "InvalidWhereCondition";
+                throw a;
+            } else if (whereConditions.paIsArray) {
                 //It's a conditions array
-                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true, justFirst));
+                result.push.apply(result, pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, true, justFirst, justIndexes));
             } else {
                 //whereConditions it's a function. It could be a custom function on the pa standard EqualTo (that works
                 //different than any other standard function)
@@ -1045,7 +1380,7 @@ window.pa.prototypedFunctions_Array = {
                         item = this[i];
                         if (whereConditions(item)) {
                             if (justFirst) {
-                                return item;
+                                 return (justIndexes) ? i : item;
                             }
                             result.push(item);
                         }
@@ -1055,7 +1390,7 @@ window.pa.prototypedFunctions_Array = {
                         item = this[l];
                         if (whereConditions(item)) {
                             if (justFirst) {
-                                return item;
+                              return (justIndexes) ? l : item;
                             }
                             result.push(item);
                         }
@@ -1070,8 +1405,111 @@ window.pa.prototypedFunctions_Array = {
             return (this.length > 0) ? this[0] : undefined;
         }
         return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true);
+    },
+    FirstIndex: function (whereConditions) {// jshint ignore:line
+        if (arguments.length === 0) {
+            return (this.length > 0) ? 0 : undefined;
+        }
+        return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true, true);
+    },
+    Average: function() {
+        //TODO: the same way to work as Max()
+    },
+    /*Return an object containing min and max values of one or more propeties in an objects array */
+    Bounds: function() {
+      var l = this.length, alc, al = arguments.length, maxVal, result = {}, arrayItemValue, currentArgName='';
+      if(al===0){
+          throw new Error("PowerArray => Max => invalid params, please provide one or more target parameters");
+      }
+      alc = al;
+      while (alc--) {
+          currentArgName = arguments[alc];
+          result[currentArgName] = { min: undefined, max: undefined};
+      }
+      while (l--) {
+          alc = al;
+          while (alc--) {
+              currentArgName = arguments[alc];
+              arrayItemValue = this[l][currentArgName];
+              if (result[currentArgName].max === undefined || (arrayItemValue !== undefined && arrayItemValue > result[currentArgName].max)) {
+                  result[currentArgName].max= arrayItemValue;
+              }
+              if (result[currentArgName].min === undefined || (arrayItemValue !== undefined && arrayItemValue < result[currentArgName].min)) {
+                  result[currentArgName].min= arrayItemValue;
+              }
+          }
+      }
+
+      return result;
+
+    },
+    /**
+     * Return max values of specified properties
+     * @param {} target
+     * @returns {}
+     */
+    Max: function() {
+        var l = this.length, alc, al = arguments.length, maxVal, result = {}, arrayItemValue, currentArgName='';
+        if(al===0){
+            throw new Error("PowerArray => Max => invalid params, please provide one or more target parameters");
+        }
+        alc = al;
+        while (alc) {
+            //evaluate if the passed arguments are integers. this means that the collection has indexable objects (arrays or array like objects)
+
+        }
+        while (l--) {
+            alc = al;
+            while (alc--) {
+                currentArgName = arguments[alc];
+                arrayItemValue = this[l][currentArgName];
+                if (result[currentArgName] === undefined || (arrayItemValue !== undefined && arrayItemValue > result[currentArgName])) {
+                    result[currentArgName]= arrayItemValue;
+                }
+            }
+        }
+
+        if (al === 1) { //if only one max is expected, just return it
+            return result[currentArgName];
+        } else if (al > 1) {
+
+        }
     }
 };
+
+// ReSharper disable once WrongExpressionStatement
+mainContainer.pa.Sort = {
+    Ascending : 'ASCENDING',
+    Asc : 'ASC',
+    AscendingIgnoringCase : 'ASCENDINGIGNORINGCASE',
+    AscIgnoringCase : 'ASCIGNORINGCASE',
+    Descending : 'DESCENDING',
+    Desc : 'DESC',
+    DescendingIgnoringCase : 'DESCENDINGIGNORINGCASE',
+    DescIgnoringCase : 'DESCIGNORINGCASE',
+}
+if (mainContainer.Sort == undefined) {
+    mainContainer.Sort = mainContainer.Sort || mainContainer.pa.Sort;
+    mainContainer.pa.Sort._validSortConfigStrings = [
+      mainContainer.pa.Sort.Ascending,
+                mainContainer.pa.Sort.Asc,
+                mainContainer.pa.Sort.AscendingIgnoringCase,
+                mainContainer.pa.Sort.AscIgnoringCase,
+                mainContainer.pa.Sort.Descending,
+                mainContainer.pa.Sort.Desc,
+                mainContainer.pa.Sort.DescendingIgnoringCase,
+                mainContainer.pa.Sort.DescIgnoringCase];
+    } else {
+    console.warn('PowerArray warning! => property "Sort" already exists on parent scope. However, you can still using it but calling "pa.Sort" instead of only "Sort" on your conde."');
+}
+
+
+//this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
+if (false) {
+    Array.prototype.Where = function(WhereConditions, fuck) {
+
+    };
+}
 
 var paArray = function (array) {
     if (!array.paIsArray) {
@@ -1079,7 +1517,7 @@ var paArray = function (array) {
     }
     var newArray = array.slice(0);
 
-    var functionsToAttach = window.pa.prototypedFunctions_Array;
+    var functionsToAttach = mainContainer.pa.prototypedFunctions_Array;
     for (var currentFunctionName in functionsToAttach) {
         if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
             newArray[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
@@ -1092,27 +1530,28 @@ paArray.prototype.isArray = true;
 
 //region "Initialization"
 (function () {
-    //Register all Pa auxiliary functions to make them accessible through the window object and window.pa object
-    //If a window accessor is already taken and cannot be set, warn the user.
-    var obj = window.pa.auxiliaryFunctions;
+    //Register all Pa auxiliary functions to make them accessible through the mainContainer object and mainContainer.pa object
+    //If a mainContainer accessor is already taken and cannot be set, warn the user.
+    var obj = mainContainer.pa.auxiliaryFunctions;
     for (var p in obj) {
         if (obj.hasOwnProperty(p)) {
-            window.pa[p] = obj[p];
-            if (!window[p]) {
-                window[p] = obj[p];
+            mainContainer.pa[p] = obj[p];
+            if (!mainContainer[p]) {
+                mainContainer[p] = obj[p];
             } else {
-                console.warn('PowerArray warning! => property window.' + p + ' already exists. PowerArrayFunction pa.' + p + ' cannot register this function on window scope. However, you can still using it by calling "pa.' + p + '"');
+                console.warn('PowerArray warning! => property mainContainer.' + p + ' already exists. PowerArrayFunction pa.' + p + ' cannot register this function on mainContainer scope. However, you can still using it by calling "pa.' + p + '"');
             }
         }
     }
 
     if (!Array.prototype.paIsArray) {
+        //TODO: this cannot stay like that ;(
         Array.prototype.paIsArray = true;// jshint ignore:line
     }
 
     //Register all Array prototype functions to make them accessible to each array.
     //If function name is already is already taken, warn the user and describe alternative usage way.
-    var functionsToAttach = window.pa.prototypedFunctions_Array;
+    var functionsToAttach = mainContainer.pa.prototypedFunctions_Array;
     for (var currentFunctionName in functionsToAttach) {
         if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
             if (Array.prototype.hasOwnProperty(currentFunctionName)) {
@@ -1128,8 +1567,26 @@ paArray.prototype.isArray = true;
             paArray.prototype[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
         }
     }
-
-
 })();
-
+if (isModule) {
+    module.exports = mainContainer.pa;
+}
+/*
+TODOS:
+Write test and docs for:
+  - Exists function
+  - Standardfunctions: GreaterOrEqualThan and SmallerOrEqualThan
+  - WhereIndexes function
+  - FirstIndex function
+  - Remove  function
+  - new excludeExactMatches parameter in Between function
+  - Distinct function. only implemented for array of primitives. document. tests.
+*/
 //endregion
+
+/**TODO: hacer una funcion donde se haga una descripciÃ³n de las funciones prototipeadas para que cualquier IDE lo pueda
+ * reconocer facilmente. La funciiÃ³n tiene que tener en la primera lÃ­nea unt throw que impida su ejecuciÃ³n por si cualquier cosa.
+ * el objetivo del prototipo es solo que las ides puedan leer en texto plano y explÃ­cito la descripciÃ³n que queramos de la funciÃ³n
+ *
+      * /
+      */
