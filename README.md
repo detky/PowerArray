@@ -1,5 +1,5 @@
 # PowerArray
-Power Array extends the native Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays. 
+Power Array extends the Javascript Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays in a compact and intuitive way. 
 Everything here is under construction.
 ##Quick examples:
 Suppose that the variable "orders" is an array of objects. Each object has a few properties and sub-properties, as the most objects collections that are normally served by a rest service. That being the case:
@@ -12,14 +12,14 @@ var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: Sort.Ascendin
 ####"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
 ```javascript
 //Extract all orders having status Pending and containing at least one product of Category 'A1', 'B2' or 'C3'. Sort by code ascending and by priority descending:
-var filteredOrders = orders.Where({
+var filteredOrders = orders.Where({//Sort (case sensitive!) is a Power Array extension
 				status: 'Pending'
 				products: { //the property "products" contains an array of "Product" objects 
 					   category: In ('A1', 'B2', 'C3') //and each product have a 'category' property
 					  }
-				}).Sort({
-					code: Sort.AscendingIgnoringCase,
-					priority: 'Descending'
+				}).Sort({//Sort (case sensitive!) is also an extension
+					code: Sort.AscendingIgnoringCase, //Sort is also an enum with different sorting strategies
+					priority: Sort.Descending
 				});
 '''
 
