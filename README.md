@@ -11,11 +11,12 @@ var filteredOrders = orders.Where({status: 'Pending'}).Sort({code: Sort.Ascendin
 ```
 ####"Filtering by multiple conditions on first and second level properties, using auxiliar function "In":
 ```javascript
-//Extract all orders having status Pending and containing at least one product of Category 'A1', 'B2' or 'C3'. Sort by code ascending and by priority descending:
-var filteredOrders = orders.Where({//Sort (case sensitive!) is a Power Array extension
-				status: 'Pending'
-				products: { //the property "products" contains an array of "Product" objects 
-					   category: In ('A1', 'B2', 'C3') //and each product have a 'category' property
+//Extract all orders having status Pending and containing at least one product of Category 'A1', 'B2' or 'C3'. 
+Sort by code ascending and by priority descending:
+var filteredOrders = orders.Where({//'Where' is a Power Array function, that was automatically added to the orders array
+				status: 'Pending', //the key name, specifies the property we want to filter. The value, indicates how to do it
+				products: { //each order property "products", contains an array of "Product" objects. 
+					   category: In ('A1', 'B2', 'C3') // each product have a 'category' property. In is also an auxiliar funcion
 					  }
 				}).Sort({//Sort (case sensitive!) is also an extension
 					code: Sort.AscendingIgnoringCase, //Sort is also an enum with different sorting strategies
