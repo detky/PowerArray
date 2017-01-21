@@ -30,7 +30,21 @@ mainContainer.pa = function (object) {
 functions directly bound to the pa object:
 
  */
-pa.Range =  function(from, to, step) {
+mainContainer.pa.Range = function (from, to, step) {
+    if (!pa.IsNumeric(from)) {
+        throw new Error('PowerArray => Range fuction => The parameter "from" must be numeric. Wrong value is "' + from + '"');
+    }
+    if (!pa.IsNumeric(to)) {
+        throw new Error('PowerArray => Range fuction => The parameter "to" must be numeric. Received value is "' + to + '"');
+    }
+    if (!pa.IsNumeric(step)) {
+        throw new Error('PowerArray => Range fuction => The parameter "step" must be numeric. Received value is "' + step + '"');
+    }
+
+    from = parseFloat(from);
+    to = parseFloat(to);
+    step = parseFloat(step);
+
     var result = [], i, l, currVal = from;
     while (currVal < to) {
         result.push(currVal);
@@ -172,16 +186,6 @@ mainContainer.pa.utils = {
                 //any others
                 throw new Error("PowerArray Error : Unknown Datatype!");
         }
-    },
-    /**
-      * Determines whether a supplied value is a number.
-      * @param number Any numeric value.
-      */
-    IsNumeric: function (num) {
-        return !isNaN(parseFloat(num)) && isFinite(num);
-    },
-    IsInteger: function(num) {
-        return num === parseInt(num, 10);
     },
     ArgumentsToArray: function (args, from, to) {
         var i = from | 0, l = to || args.length, result = [];
@@ -883,7 +887,14 @@ mainContainer.pa.auxiliaryFunctions = {
         return function (val) {
             return !isNaN(val);
         }
+    },
+    IsNumeric: function (num) {
+        return !isNaN(parseFloat(num)) && isFinite(num);
+    },
+    IsInteger: function (num) {
+        return num === parseInt(num, 10);
     }
+
 };
 
 mainContainer.pa.prototypedFunctions_Array = {
@@ -1597,9 +1608,9 @@ Write test and docs for:
 */
 //endregion
 
-/**TODO: hacer una funcion donde se haga una descripciÃ³n de las funciones prototipeadas para que cualquier IDE lo pueda
- * reconocer facilmente. La funciiÃ³n tiene que tener en la primera lÃ­nea unt throw que impida su ejecuciÃ³n por si cualquier cosa.
- * el objetivo del prototipo es solo que las ides puedan leer en texto plano y explÃ­cito la descripciÃ³n que queramos de la funciÃ³n
+/**TODO: hacer una funcion donde se haga una descripción de las funciones prototipeadas para que cualquier IDE lo pueda
+ * reconocer facilmente. La funciión tiene que tener en la primera línea unt throw que impida su ejecución por si cualquier cosa.
+ * el objetivo del prototipo es solo que las ides puedan leer en texto plano y explícito la descripción que queramos de la función
  *
       * /
       */
