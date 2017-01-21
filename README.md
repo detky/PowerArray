@@ -4,7 +4,7 @@ Working with Arrays in Javascript requires manual iteration, is error-prone, dif
 
 **What can PowerArray do for you?**
 
-How many time you need to find out what is doing this code?
+To see it by yourself, please check how many time you need to find out what is doing this code:
 
 ```javascript
 var result = [];
@@ -31,7 +31,7 @@ Both codes extract from **peopleArray** all men between 18 and 70 years of age.
 
 That's what this library does: it simplifies your code. Makes it intuitive, more readable. Functional.
 
-Power Array extends the Javascript Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays in a compact and intuitive way. 
+**PowerArray** extends the Javascript Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays in a compact and intuitive way. 
 
 
 
