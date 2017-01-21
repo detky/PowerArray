@@ -32,9 +32,7 @@ Both codes extract from **peopleArray** all men between 18 and 70 years of age.
 That's what this library does: it simplifies your code. Makes it intuitive, more readable. Functional.
 
 **PowerArray** extends the Javascript Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays in a compact and intuitive way. 
-
-
-
+ 
 ## License
 The MIT License (MIT)
 
