@@ -15,9 +15,9 @@ mainContainer.pa = function (object) {
     if (object.constructor === Array || object.paIsArray) {
         return new paArray(object);
     } else {
-        console.warn('PowerArray => The passed object is not natively an array. Trying to handle it as an array-like object...')
+        //console.warn('PowerArray => The passed object is not natively an array. Trying to handle it as an array-like object...')
         if ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) {
-            console.log('Compatible openlayers object detected (ol.Collection)');
+          //  console.log('Compatible openlayers object detected (ol.Collection)');
             return paArray(object.getArray());
         }
         if (object.length === undefined) {
@@ -230,85 +230,6 @@ mainContainer.pa.paEachParalellsHelper = {
     eventKeys: {
         RuneachDone: 'RuneachDone',
         TaskState: 'TaskStateResponse'
-    }
-};
-mainContainer.pa.paEachInPartsHelper = {
-    partsStates: {
-        Initial: 0,
-        Processing: 1,
-        Done: 2
-    },
-    //returns true if the task is done
-    checkPartsStateById: function (inPartsId) {
-        var paralell = pa.paEachInPartsHelper.currentEachInPartsIds[inPartsId];
-        return paralell.CompletedTasks === paralell.parts.length;
-    },
-    currentEachInPartsIds: {},
-    getNewInPartsId: function () {
-        var newPartsId = pa.utils.generateUid("RunEachInParts");
-        pa.paEachInPartsHelper.currentEachInPartsIds[newPartsId] = { parts: [], CompletedTasks: 0 };
-        return newPartsId;
-    },
-    registerPart: function (partsId, partialArray, task, partialArrayOrderInOriginalArray, keepOrder) {
-        pa.paEachInPartsHelper.currentEachInPartsIds[partsId].parts.push({
-            state: pa.paEachInPartsHelper.partsStates.Initial,
-            partialArray: partialArray,
-            task: task,
-            partialArrayOrderInOriginalArray: partialArrayOrderInOriginalArray,
-            result: undefined
-        });
-    },
-    getNextPartToProcess: function (partsId) {
-        return pa.paEachInPartsHelper.currentEachInPartsIds[partsId].parts.First({
-            state: pa.paEachInPartsHelper.partsStates.Initial
-        });
-    },
-    buildInPartsResult: function (partsId, keepOrder) {
-        var result = [], parts = pa.paEachInPartsHelper
-            .currentEachInPartsIds[partsId]
-            .parts
-            .Sort({
-                partialArrayOrderInOriginalArray: Sort.Ascending
-            });
-        parts.RunEach(function (part) {
-            result = result.concat.apply(result, part.result);
-        }, undefined, keepOrder);
-        return result;
-    },
-    execute: function (partsId, keepOrder, partsCallback, promise, delayBetweenParts) {
-        var result;
-        var nextPartToProcess = pa.paEachInPartsHelper.getNextPartToProcess(partsId);
-        var somethingWrongTimeout = setTimeout(function () {
-            promise.reject("Promise has timed out");
-        },
-            pa.config.defaults.defaultPromiseTimeout
-        );
-
-        nextPartToProcess.state = pa.paEachInPartsHelper.partsStates.Processing;
-        nextPartToProcess.result = nextPartToProcess.partialArray.RunEach(nextPartToProcess.task, function (lastResult) {
-            console.log("Starting to process part " + nextPartToProcess.partialArrayOrderInOriginalArray);
-            nextPartToProcess.state = pa.paEachInPartsHelper.partsStates.Done;
-            pa.paEachInPartsHelper.currentEachInPartsIds[partsId].CompletedTasks++;
-
-            if (pa.paEachInPartsHelper.checkPartsStateById(partsId)) {
-                nextPartToProcess.result = lastResult; //this is because how the RunEach method works.
-                console.log('task ' + partsId + ' is done!');
-                result = pa.paEachInPartsHelper.buildInPartsResult(partsId, keepOrder);
-                //if(promise)  {
-                clearTimeout(somethingWrongTimeout);
-                console.debug('AAAAAAAAAAAAAAAAAAAAAAAAAAA');
-                promise.resolve(result);
-                //}
-            } else {
-                if (partsCallback) {
-                    partsCallback();
-                }
-                setTimeout(function () {
-                    pa.paEachInPartsHelper.execute(partsId, keepOrder, partsCallback, promise, delayBetweenParts);
-                }, delayBetweenParts);
-            }
-
-        }, keepOrder);
     }
 };
 mainContainer.pa.paWhereHelper = {
@@ -1037,41 +958,6 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
         return result;
     },
-    RunEachInParts: function (task, keepOrder, partsCallback, partsLength) {// jshint ignore:line
-        var deferred = Q.defer();
-        var that = this;
-        setTimeout(function () {
-            if (!partsLength) {
-                deferred.reject('PowerArray => RunEachInParts => parameter partsLength is required.');
-            }
-            if (that.paIsArray === undefined) {
-                deferred.reject('PowerArray => RunEachInParts => this function should be executed by an array, but got something different:', this);
-                throw new Error('PowerArray => RunEachInParts => this function should be executed by an array, but got something different:');
-                return;
-            }
-            var myLength = that.length, result = [],
-                partsId = pa.paEachInPartsHelper.getNewInPartsId(),
-                partsQantDecimal = (myLength / partsLength),
-                partsQantInt = parseInt(partsQantDecimal),
-                partsQuantity = (partsQantInt === partsQantDecimal) ? partsQantInt : partsQantInt + 1, l = partsQuantity,
-                partialArrays = [], startFrom, partialResults = new Array(partsQuantity),
-                executionsCounter = 0;
-
-            while (l--) {
-                startFrom = (l < 1) ? 0 : (l) * partsLength;
-                partialArrays.push(that.slice(startFrom, startFrom + partsLength));//one "portion" of the array to process
-            }
-            partialArrays.reverse();//bring it again to initial order.
-
-            partialArrays.RunEach(function (partialArray, i) {
-                pa.paEachInPartsHelper.registerPart(partsId, partialArray, task, i);
-            }, function () {
-                pa.paEachInPartsHelper.execute(partsId, keepOrder, partsCallback, deferred, 100);
-            });
-
-        }, 0);
-        return deferred.promise
-    },
     Sort: function (sortConditions) { // jshint ignore:line
         var realConditions = [];
         var conditionType = typeof sortConditions;
@@ -1231,7 +1117,7 @@ mainContainer.pa.prototypedFunctions_Array = {
         var i, l = this.length, item, result = [], tmp;
         justIndexes = (justIndexes) ? true : false; //just to avoid casting when comparing during loop
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
-            //If It's an object, but not an array, it's an explicit object with N filters
+            //If It's an object, but not an array, it is a conditions object
             result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst, justIndexes);
         } else {
 
@@ -1396,7 +1282,7 @@ if (mainContainer.Sort == undefined) {
         mainContainer.pa.Sort.DescendingIgnoringCase,
         mainContainer.pa.Sort.DescIgnoringCase];
 } else {
-    console.warn('PowerArray warning! => property "Sort" already exists on parent scope. However, you can still using it but calling "pa.Sort" instead of only "Sort" on your code."');
+    if(console && console.warn) console.warn('PowerArray warning! => prop "Sort" already exists on parent scope. You have to use "pa.Sort" instead of "Sort" on your code."');
 }
 
 

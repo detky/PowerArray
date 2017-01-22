@@ -1,12 +1,13 @@
 PowerArray
 ===================
-Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read and time-consuming. 
+Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
 
 **What can PowerArray do for you?**
 
 To see it by yourself, please check how many time you need to find out what is doing this code:
 
 ```javascript
+//plain js 
 var result = [];
 for(var i = 0, l = peopleArray.length; i < l; i++) {
 	var item = peopleArray[i];
@@ -22,17 +23,24 @@ result.sort(function (a, b) {
 And how long for this one? 
 
 ```javascript
+//using PowerArray
 var result = peopleArray
 	.Where({ age: Between(18,70), gender: 'M'})
 	.Sort({ lastName: Sort.AscendingIgnoringCase});
 ```
 
-Both codes extract from **peopleArray** all men between 18 and 70 years of age.
+Both codes do exactly the same thing, but the second ist just much easier (at least for me :). It uses the **Where** and **Sort** PowerArray methods.
 
-That's what this library does: it simplifies your code. Makes it intuitive, more readable. Functional.
+That's what this library does: it simplifies your code. Makes it intuitive, more readable. Functional. 
 
-**PowerArray** extends the Javascript Array prototype by adding many additional features to <b>[Filter](#filtering),</b><b> [Sort](#sorting) </b> and  <b>[Manipulate](#manipulation)</b> arrays in a compact and intuitive way. 
+**PowerArray** extends the Array prototype by adding additional features to work with arrays in a compact and intuitive way.  
  
+ The main functions are **Where** (for filtering), **Sort** and **RunEach** (for iterative tasks), which are available on any array after loading this library. 
+ Everything else is available throw the "pa" global variable.
+
+ *Under Construction (the readme file, the library works fine  :)*
+
+
 ## License
 The MIT License (MIT)
 
