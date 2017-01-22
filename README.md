@@ -29,9 +29,8 @@ var result = peopleArray
 	.Sort({ lastName: Sort.AscendingIgnoringCase});
 ```
 
-Both codes do exactly the same thing, but the second ist just much easier (at least for me :). It uses the **Where** and **Sort** PowerArray methods.
-
-That's what this library does: it simplifies your code. Makes it intuitive, more readable. Functional. 
+Both codes do exactly the same thing, but the second ist just much easier (at least for me :). It uses the **Where** and **Sort** PowerArray methods, 
+and is just a small example of what this library does: it simplifies your code. Makes it intuitive, more readable. Functional. 
 
 **PowerArray** extends the Array prototype by adding additional features to work with arrays in a compact and intuitive way.  
  
