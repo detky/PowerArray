@@ -1,5 +1,4 @@
-PowerArray
-===================
+# PowerArray
 Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
 
 **What can PowerArray do for you?**
@@ -30,14 +29,122 @@ var result = peopleArray
 ```
 
 Both codes do exactly the same thing, but the second ist just much easier (at least for me :). It uses the **Where** and **Sort** PowerArray methods, 
-and is just a small example of what this library does: it simplifies your code. Makes it intuitive, more readable. Functional. 
+and is just a small example of what this library does: **it simplifies your code. Makes it intuitive, more readable. Functional.**
 
-**PowerArray** extends the Array prototype by adding additional features to work with arrays in a compact and intuitive way.  
+**PowerArray** extends the Array prototype by adding additional features to work with any array in a compact and intuitive way.  
  
- The main functions are **Where** (for filtering), **Sort** and **RunEach** (for iterative tasks), which are available on any array after loading this library. 
- Everything else is available throw the "pa" global variable.
+ The principal functions attached to the Array prototype are **Where** (for filtering), **Sort** (for sorting) and **RunEach** (for iterative tasks), 
+ which are available on any array after loading this library. Everything else is available throw the "pa" global variable.
 
- *Under Construction (the readme file, the library works fine  :)*
+## Filtering with the **Where** function
+ 
+To simplify filtering tasks, PowerArray relies mainly on the **<a name="#WhereFunction">Where</a>** function, which offers a standard way to formulate 
+filtering conditions by using **Conditions-objects**. 
+
+### Signatures:
+> **.Where**(conditionsObject ,*keepOrder*)
+* **conditionsObject** => type `Object` (a Conditions-Object)
+* **keepOrder** => type `boolean`, indicating if the original order should be kept or not. Optional, default false.
+
+Examples:
+```Javascript
+    //given an Array of objects called 'peopleArray' 
+
+    //Filtering by first level properties 'name' and 'lastname'
+    var result = peopleArray.Where({ name: 'John', lastName: 'Lennon' }); 
+
+    //Filtering by first level property 'name' and by second level property 'partner' 
+    var result = peopleArray.Where({ 
+        name: 'John', 
+        partner: { name: 'Yoko'}  // 'partner' is an object, and it's expected to have a property name 
+    }); 
+
+    //Multiple conditions and auxiliar functions 
+    var result = peopleArray.Where({ 
+        age: Between( 40, 50) , 
+        hobbies: Contains('Swimming'), // 'hobbies' is an array of strings. Auxiliar function 'Contains' used
+        favoriteColor: In('Black','Blue') // 'favoriteColor' is a string. Auxiliar function 'In' used       
+    }); 
+``` 
+
+> **.Where**([conditionsObjects] ,*keepOrder*)
+* **conditionsObject** => type `Array` (of Conditions-Objects)
+* **keepOrder** => type `boolean`, indicating if the original order should be kept or not. Optional, default false.
+
+This signature accepts an array of Conditions-Objects. If an item fulfill all conditions of at least one 
+Condition-Object, it will be included in the results (and other Condition-Objects will not be evaluated for that item). 
+This Signature is ideal to build (a kind of) `OR` statements that cannot be expressed in a single Conditions-Object. 
+Examples:
+```Javascript
+    // Given an Array of persons called 'peopleArray' 
+    // Task: find all single men between 20 and 30 years old and all married woman between 25 and 35 years old   
+    var result = peopleArray.Where([
+        { gender : 'M', age : Between(20,30), status: 'Single' }, // Auxiliar function 'Between' used
+        { gender : 'W', age : Between(25,35), status: 'Married' } 
+    ]); 
+    
+    // Given an array of orders called 'ordersArray'
+    // Task: find all invoices from location "Sydney" having an amount <= 1000, or with an amount > 50000 (location independent)
+    var result = ordersArray.Where(
+        { amount : SmallerOrEqualThan(1000), location : 'Sydney' }, // Auxiliar function 'SmallerOrEqualThan' used
+        { amoung : GreatherThan(50000) } // Auxiliar function 'GreatherThan' used
+    );
+
+    // In this two exmaples, we have multiple criterions that overlap each oder (age on the first example, amount on the second). 
+    // This overlap makes impossible to formulate both criterions on a single Conditions-Object, and that's why it's neccesary to use this signature.
+``` 
+
+> **.Where**(func ,*keepOrder*)
+* **func** type Function.  
+* **keepOrder** type boolean, indicating if the original order should be kept or not. Optional, default false.
+
+This signature can be used when filtering arrays of any type. Pass a function which will receive the item to evaluate,
+the index of that item on the original array, and the array self as parameters in that order. 
+
+The first parameter of the Where function is always a conditions object, or an array of them. 
+
+The result of a *where* function call, is always an array of references to each item (of the original array) that fulfilled the conditions expressed
+on the passed **Conditions-object**. 
+
+It is very important to understand **conditions-object** before you start using the **Where** function: 
+
+### What is a **Conditions-Object**?
+It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. To define a criterion on  
+
+ To define a criterion Each property present on a given Conditions-Object, represents a filtering criteria for a property that should 
+be present on each item of the array in which the filtering is applied.
+
+
+In the following code:
+```Javascript
+var result = peopleArray.Where({favoriteColor: 'Red'});
+```
+the **Conditions-Object** is `{favoriteColor: 'Red'}`. It's expected that peopleArray be an array of objects, each having a property called 'favoriteColor'.
+
+
+Within a single Conditions-Object, you can can also target items sub-properties if they have (mostly on objects-arrays), for Example:
+```Javascript
+var result = peopleArray.Where({ //peopleArray is an array of objects representing persons
+    favoriteColor: 'Red', //each person has a first-level String property called "FavoriteColor". We pass the value we are searching for as explicit primitive
+    Childs: { // to another first-level property called "childs", which contains an array of objects, we pass a new Contdition-object.
+        name: In('John','Juan', 'Joan') //on the new condition object, we can filter by property name. In this case by using the auxiliar function 'In'
+    }
+});
+```
+
+ 
+
+
+ *Under Construction (the readme file, the library works fine  :)*n
+
+
+The Where function
+-----------------
+This function returns a subset of an existing array by filtering it based on conditions that the array items must satisfy. 
+There are multiple ways to describe the data you are searching for, but the usage of Conditions-Object is by far the most comfortable. 
+A Conditions-Object is a JSON object that describes which conditions must satisfy an item of an array to be included on the results. <br>
+Using **Where()** you can reduce complex operations into a single, readable, and intuitive statement.<br><br>
+
 
 
 ## License

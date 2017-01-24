@@ -554,7 +554,7 @@ mainContainer.pa.auxiliaryFunctions = {
     Contains: function (value, enforcePropsOrder, cyclic) {
         return function (val) {
             if (!val.paIsArray) {
-                throw new Error("PowerArray error => parameter val passed to Contains function should be an array, only they can 'contain' something.");
+                throw new Error("PowerArray error => parameter val passed to Contains function should be an array.");
             }
             var l = val.length, isIndexable = false;
             var typeToEvaluate = typeof value;
@@ -1189,7 +1189,7 @@ mainContainer.pa.prototypedFunctions_Array = {
     Bounds: function () {
         var l = this.length, alc, al = arguments.length, maxVal, result = {}, arrayItemValue, currentArgName = '';
         if (al === 0) {
-            throw new Error("PowerArray => Max => invalid params, please provide one or more target parameters");
+            throw new Error("PowerArray => bounds => invalid params, please provide one or more target parameters");
         }
         alc = al;
         while (alc--) {
