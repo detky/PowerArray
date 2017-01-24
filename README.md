@@ -29,18 +29,15 @@ var result = peopleArray
 	.Sort({ lastName: Sort.AscendingIgnoringCase});
 ```
 
-Both codes do exactly the same thing, but the second is (at least for me ;), much easier to understand. 
-`Just one line, if you want to see it that way.`
-It uses the **Where** and **Sort** PowerArray methods, 
-and is just a small example of what this library does: **it simplifies your code. Makes it intuitive, more readable. Functional.**
+Both codes do exactly the same thing, but the second is much easier to understand. It uses the **Where** and **Sort** PowerArray methods.
+
+This small example  express what this library does: **it simplifies your code. Makes it intuitive, more readable. Functional.**
 
 **PowerArray** extends the Array prototype by adding additional features to work with any array in a compact and intuitive way.  
  
  The principal functions attached to the Array prototype are **Where** (for filtering), **Sort** (for sorting) and **RunEach** (for iterative tasks), 
  which are available on any array after loading this library. Everything else is available throw the "pa" global variable.
-
- <a name=''>Worried about changes on the prototype?</a>
-
+ <a name='#ArrayPrototypeChanges'>Worried about changes on the Array Prototype or Global variables?</a>
 
 ## Filtering with the **Where** function
  
@@ -140,16 +137,52 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 
  
 
+####<a name="ArrayPrototypeChanges">What does this script changes on the Array prototype?</a>
+
+Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. Inside of this pa object there 
+are many functions, some of them designed to work attached to objects with Array prototype, and others designed to operate globally.
+
+#### This script don't change any behaviour on the Array prototype
+
+It just add a few functions to it, and only if the desired names are not already taken.
+
+During the initialization process, checks if the name of each of such functions is in use before modifying anything. Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. If any was already occupated by other framework, library or whatever, PowerArray do not change anything, just sends a warning to the console.
+The only consequence will be a change on the syntax when using that specific PowerArray function:
+
+<ul>
+	<li>
+		For global functions (as all auxiliary functions GreaterThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
+		<table>
+			<tr>
+				<td>use</td>
+				<td><code>var result = someArray.Where({ priority: <font color=red>pa.</font>SmallerThan(5)});</code></td>
+			</tr>
+			<tr>
+				<td>instead of</td>
+				<td><code>var result = someArray.Where({ priority: SmallerThan(5)});</code></td>
+			</tr>
+		</table>
+	</li>
+	
+	<li>
+		For prototype functions (Where, Sort, findByProperty, findIndexByProperty, etc.), you have to envolve the array in which you want to make an operation with a function call. For Example:<br>
+		<table>
+			<tr>
+				<td>use</td>
+				<td><code>var result = <font color=red>pa(</font>someArray<font color=red>)</font>.Where({ categoryId : 33});</code></td>
+			</tr>
+			<tr>
+				<td>instead of</td>
+				<td><code>var result = someArray.Where({ categoryId : 33});</code></td>
+			</tr>
+		</table>
+	</li>
+</ul>
+
+Considering all that, if you load the PowerArray library as last in your html, the risk is strongly reduced. If there is any problem the solution will be always the same: add "pa." as prefix, or surround your array with function "pa()" before use it. 
+
 
  *Under Construction (the readme file, the library works fine  :)*n
-
-
-The Where function
------------------
-This function returns a subset of an existing array by filtering it based on conditions that the array items must satisfy. 
-There are multiple ways to describe the data you are searching for, but the usage of Conditions-Object is by far the most comfortable. 
-A Conditions-Object is a JSON object that describes which conditions must satisfy an item of an array to be included on the results. <br>
-Using **Where()** you can reduce complex operations into a single, readable, and intuitive statement.<br><br>
 
 
 
