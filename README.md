@@ -37,7 +37,8 @@ This small example  express what this library does: **it simplifies your code. M
  
  The principal functions attached to the Array prototype are **Where** (for filtering), **Sort** (for sorting) and **RunEach** (for iterative tasks), 
  which are available on any array after loading this library. Everything else is available throw the "pa" global variable.
- <a name='#ArrayPrototypeChanges'>Worried about changes on the Array Prototype or Global variables?</a>
+
+[Worried about changes on the Array Prototype?](#ArrayPrototypeChanges)
 
 ## Filtering with the **Where** function
  
