@@ -6,7 +6,8 @@ Working with Arrays in Javascript requires manual iteration, is error-prone, dif
 To see it by yourself, please check how many time you need to find out what is doing this code:
 
 ```javascript
-//plain js 
+// Given an Array of objects representing persons, called 'peopleArray' 
+// Plain js 
 var result = [];
 for(var i = 0, l = peopleArray.length; i < l; i++) {
 	var item = peopleArray[i];
@@ -76,7 +77,7 @@ Condition-Object, it will be included in the results (and other Condition-Object
 This Signature is ideal to build (a kind of) `OR` statements that cannot be expressed in a single Conditions-Object. 
 Examples:
 ```Javascript
-    // Given an Array of persons called 'peopleArray' 
+    // Given an Array of objects representing persons, called 'peopleArray' 
     // Task: find all single men between 20 and 30 years old and all married woman between 25 and 35 years old   
     var result = peopleArray.Where([
         { gender : 'M', age : Between(20,30), status: 'Single' }, // Auxiliar function 'Between' used
