@@ -29,13 +29,18 @@ var result = peopleArray
 	.Sort({ lastName: Sort.AscendingIgnoringCase});
 ```
 
-Both codes do exactly the same thing, but the second is, at least for me, just much easier. It uses the **Where** and **Sort** PowerArray methods, 
+Both codes do exactly the same thing, but the second is (at least for me ;), much easier to understand. 
+`Just one line, if you want to see it that way.`
+It uses the **Where** and **Sort** PowerArray methods, 
 and is just a small example of what this library does: **it simplifies your code. Makes it intuitive, more readable. Functional.**
 
 **PowerArray** extends the Array prototype by adding additional features to work with any array in a compact and intuitive way.  
  
  The principal functions attached to the Array prototype are **Where** (for filtering), **Sort** (for sorting) and **RunEach** (for iterative tasks), 
  which are available on any array after loading this library. Everything else is available throw the "pa" global variable.
+
+ <a name=''>Worried about changes on the prototype?</a>
+
 
 ## Filtering with the **Where** function
  
