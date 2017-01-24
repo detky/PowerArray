@@ -35,13 +35,9 @@ This small example  express what this library does: **it simplifies your code. M
 
 **PowerArray** extends the Array prototype by adding additional features to work with any array in a compact and intuitive way.  
  
- The principal functions attached to the Array prototype are **Where** (for filtering), **Sort** (for sorting) and **RunEach** (for iterative tasks), 
- which are available on any array after loading this library. Everything else is available throw the "pa" global variable.
-
 [Worried about changes on the Array Prototype?](#ArrayPrototypeChanges)
 
 ## Filtering with the **Where** function
- 
 To simplify filtering tasks, PowerArray relies mainly on the **<a name="#WhereFunction">Where</a>** function, which offers a standard way to formulate 
 filtering conditions by using **Conditions-objects**. 
 
@@ -136,18 +132,18 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 });
 ```
 
- 
+<a name="ArrayPrototypeChanges"></a>
+#### What does this script changes on the Array prototype? 
 
-####<a name="ArrayPrototypeChanges">What does this script changes on the Array prototype?</a>
+It just adds new functions, and only if the desired names (or pointers) are not already taken.
 
-Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. Inside of this pa object there 
-are many functions, some of them designed to work attached to objects with Array prototype, and others designed to operate globally.
-
-#### This script don't change any behaviour on the Array prototype
-
-It just add a few functions to it, and only if the desired names are not already taken.
-
-During the initialization process, checks if the name of each of such functions is in use before modifying anything. Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. If any was already occupated by other framework, library or whatever, PowerArray do not change anything, just sends a warning to the console.
+##### how does it works:
+Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
+in which there are multiple functions. Some are designed to work with any Array-prototyped object (defined at pa.prototypedFunctions_Array), and others 
+designed to operate globally (defined at pa.auxiliaryFunctions). 
+During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
+Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
+If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
 The only consequence will be a change on the syntax when using that specific PowerArray function:
 
 <ul>
@@ -183,8 +179,7 @@ The only consequence will be a change on the syntax when using that specific Pow
 Considering all that, if you load the PowerArray library as last in your html, the risk is strongly reduced. If there is any problem the solution will be always the same: add "pa." as prefix, or surround your array with function "pa()" before use it. 
 
 
- *Under Construction (the readme file, the library works fine  :)*n
-
+*Under Construction (the readme file, the library works fine  :)*n
 
 
 ## License

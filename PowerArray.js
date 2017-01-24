@@ -1295,7 +1295,7 @@ if (false) {
 
 var paArray = function (array) {
     if (!array.paIsArray) {
-        throw new Error('PowerArray warning! => Invalid array passed to pa function"');
+        throw new Error('PowerArray => paArray warning => Invalid array passed to pa() function"');
     }
     var newArray = array.slice(0);
 
@@ -1327,7 +1327,7 @@ paArray.prototype.isArray = true;
     }
 
     if (!Array.prototype.paIsArray) {
-        //TODO: this cannot stay like that ;(
+        //TODO: this cannot stay fix like that ;(
         Array.prototype.paIsArray = true;// jshint ignore:line
     }
 
