@@ -101,6 +101,30 @@ Examples:
 This signature can be used when filtering arrays of any type. Pass a function which will receive the item to evaluate,
 the index of that item on the original array, and the array self as parameters in that order. 
 
+Examples:
+```Javascript
+    //Filtering arrays of primitives
+    [1, 2, 3, 4, 5, 6, 7].Where(BiggerThan(4))); 
+    // returns [5,6,7]
+
+    ["Red","Green", "Black", "Blue"].Where(Like('e')); //using auxiliary function Like
+    //returns ["Blue", "Green", "Red"]
+
+    // Given an Array of objects representing persons, called 'peopleArray'  
+    var somePeople = peopleArray.Where(function (person, index, array) {
+        //parameter person => an item of people array 
+        //parameter Index => the index of the current person item in the original array
+        //array => a reference to the array we are filtering (array[index] is always equal to person)
+        if(/*conditions*/) 
+            return true; //returning true (or any truthy value), the item will be included on the result.
+        return false; //return false to exclude it.
+    });
+    
+``` 
+
+
+
+
 The first parameter of the Where function is always a conditions object, or an array of them. 
 
 The result of a *where* function call, is always an array of references to each item (of the original array) that fulfilled the conditions expressed
