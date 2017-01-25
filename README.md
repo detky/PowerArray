@@ -129,18 +129,14 @@ Examples:
 
 <a name="ConditionsObjectDescription"></a>
 ### What is a **Conditions-Object**?
-It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. To define a criterion on  
-
- To define a criterion Each property present on a given Conditions-Object, represents a filtering criteria for a property that should 
-be present on each item of the array in which the filtering is applied.
-
+It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. Each property present on a given Conditions-Object, 
+represents a filtering criteria for a property that should be present on each array item in which the filtering is applied.
 
 In the following code:
 ```Javascript
 var result = peopleArray.Where({favoriteColor: 'Red'});
 ```
 the **Conditions-Object** is `{favoriteColor: 'Red'}`. It's expected that peopleArray be an array of objects, each having a property called 'favoriteColor'.
-
 
 Within a single Conditions-Object, you can can also target items sub-properties if they have (mostly on objects-arrays), for Example:
 ```Javascript
