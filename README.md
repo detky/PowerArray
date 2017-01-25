@@ -149,11 +149,11 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 ```
 
 <a name="ArrayPrototypeChanges"></a>
-#### What does this script changes on the Array prototype? 
+### What does this script changes on the Array prototype? 
 
 It just adds new functions, and only if the desired names (or pointers) are not already taken.
 
-##### how does it works:
+#### how does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
 in which there are multiple functions. Some are designed to work with any Array-prototyped object (defined at pa.prototypedFunctions_Array), and others 
 designed to operate globally (defined at pa.auxiliaryFunctions). 
