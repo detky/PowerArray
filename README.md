@@ -7,47 +7,58 @@ To see it by yourself, please check how many time you need to find out what is d
 
 ```javascript
 // Given an Array of objects representing persons, called 'peopleArray' 
-// Plain js 
-var result = [];
-for(var i = 0, l = peopleArray.length; i < l; i++) {
-	var item = peopleArray[i];
+var result = peopleArray
+    .Where({ age: Between(18,70), gender: 'M'})
+    .Sort({ lastName: Sort.AscendingIgnoringCase})
+    .RunEach(function(item, i) {
+        console.debug(i + ' ' + item.name); //do something 
+    });
+```
+
+And how long for this one? 
+
+```javascript
+// Given an Array of objects representing persons, called 'peopleArray' 
+var result = [], i = 0, l, item;
+for(l = peopleArray.length; i < l; i++) {
+	item = peopleArray[i];
 	if(item.age > 18 && item.age < 70 && item.gender === 'M') {
 		result.push(item);
 	}
 }
 result.sort(function (a, b) {
     return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
-})
+});
+for(i = 0, l = result.length; i < l; i++) {
+    console.debug(i + ' ' + result[i].name); //do something 
+}
 ```
 
-And how long for this one? 
+**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. It uses the **Where**, **Sort** and **RunEach** PowerArray methods. 
 
-```javascript
-//using PowerArray
-var result = peopleArray
-	.Where({ age: Between(18,70), gender: 'M'})
-	.Sort({ lastName: Sort.AscendingIgnoringCase});
-```
+This library helps to simplify code, to make it intuitive and readable.
 
-Both codes do exactly the same thing, but the second is much easier to understand. It uses the **Where** and **Sort** PowerArray methods.
-
-This small example  express what this library does: **it simplifies your code. Makes it intuitive, more readable. Functional.**
-
-**PowerArray** extends the Array prototype by adding additional features to work with any array in a compact and intuitive way.  
+**PowerArray** extends the Array prototype by adding additional features to work with **any** array. 
  
 [Worried about changes on the Array Prototype?](#ArrayPrototypeChanges)
 
-## Filtering with the **Where** function
-To simplify filtering tasks, PowerArray relies mainly on the **<a name="#WhereFunction">Where</a>** function, which offers a standard way to formulate 
-filtering conditions by using **Conditions-objects**. 
+<a name="#usage"></a>
+# Usage
 
-The return value of a *where* function call, is always an array of references to all items (of the original array) that fulfilled the given conditions. 
-Filter conditions can be expressed in form of functions or by using Conditions-Object (by far the most comfortable way).
+//TODO
 
-It is very important to [understand **conditions-object**](#ConditionsObjectDescription) before you start using the **Where** function! 
+PowerArray adds also some auxiliary functions to avoid writing the same snippets over and over again. All they are accesible after loading the library, [click here for a complete list](#WherePAStandardFunction).
 
-### Where function Signatures:
-> **.Where**(conditionsObject ,*keepOrder*)
+<a name="#WhereFunction"></a>
+## Filtering - The **.Where()** function
+To simplify filtering tasks, PowerArray relies mainly on the **Where** function, which offers a standard mechanism to formulate filtering conditions.
+
+> The return value of a **where** function call, ***is ALWAYS a new array***, in which each position is a reference to an item on your original array that fulfilled the conditions. The *Where* function doesn't change anything on the original array, it just creates a new array of references to all matching elements. Because it returns an array, it's also chainable with other PowerArray functions like <a href="#SortDescription">Sort</a> or <a href="#RunEachDescription">RunEach</a>.  
+
+You can pass conditions to the *Where* function (first argument in all signatures) as functions or by using [**Conditions-objects**](#ConditionsObjectDescription)</a>. It is necessary to understand [**Conditions-objects**](#ConditionsObjectDescription) before you start using the **Where** function. 
+
+### Signatures:
+> **anyArray.Where**(conditionsObject ,*keepOrder*)
 * **conditionsObject** => type `Object` (a Conditions-Object)
 * **keepOrder** => type `boolean`, indicating if the original order should be kept or not. Optional, default false.
 
@@ -89,14 +100,14 @@ Examples:
     ]); 
     
     // Given an array of orders called 'ordersArray'
-    // Task: find all invoices from location "Sydney" having an amount <= 1000, or with an amount > 50000 (location independent)
+    // Task: find all invoices "from location "Sydney" having an amount <= 1000" or "having amount > 50000, regardless location"
     var result = ordersArray.Where(
         { amount : SmallerOrEqualThan(1000), location : 'Sydney' }, // Auxiliar function 'SmallerOrEqualThan' used
         { amoung : GreatherThan(50000) } // Auxiliar function 'GreatherThan' used
     );
 
     // In this two exmaples, we have multiple criterions that overlap each oder (age on the first example, amount on the second). 
-    // This overlap makes impossible to formulate both criterions on a single Conditions-Object, and that's why it's neccesary to use this signature.
+    // This overlap makes impossible to formulate both criteria on a single Conditions-Object, and that's why it's neccesary to use this signature in such cases.
 ``` 
 
 > **.Where**(func ,*keepOrder*)
@@ -155,7 +166,7 @@ It just adds new functions, and only if the desired names (or pointers) are not 
 
 #### how does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
-in which there are multiple functions. Some are designed to work with any Array-prototyped object (defined at pa.prototypedFunctions_Array), and others 
+in which there are multiple functions. Some of this functions, are designed to work with any object with having Array as prototype or (array like object) object, and others 
 designed to operate globally (defined at pa.auxiliaryFunctions). 
 During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
 Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
