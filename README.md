@@ -41,7 +41,12 @@ This small example  express what this library does: **it simplifies your code. M
 To simplify filtering tasks, PowerArray relies mainly on the **<a name="#WhereFunction">Where</a>** function, which offers a standard way to formulate 
 filtering conditions by using **Conditions-objects**. 
 
-### Signatures:
+The return value of a *where* function call, is always an array of references to all items (of the original array) that fulfilled the given conditions. 
+Filter conditions can be expressed in form of functions or by using Conditions-Object (by far the most comfortable way).
+
+It is very important to [understand **conditions-object**](#ConditionsObjectDescription) before you start using the **Where** function! 
+
+### Where function Signatures:
 > **.Where**(conditionsObject ,*keepOrder*)
 * **conditionsObject** => type `Object` (a Conditions-Object)
 * **keepOrder** => type `boolean`, indicating if the original order should be kept or not. Optional, default false.
@@ -122,16 +127,7 @@ Examples:
     
 ``` 
 
-
-
-
-The first parameter of the Where function is always a conditions object, or an array of them. 
-
-The result of a *where* function call, is always an array of references to each item (of the original array) that fulfilled the conditions expressed
-on the passed **Conditions-object**. 
-
-It is very important to understand **conditions-object** before you start using the **Where** function: 
-
+<a name="ConditionsObjectDescription"></a>
 ### What is a **Conditions-Object**?
 It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. To define a criterion on  
 
