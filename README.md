@@ -7,7 +7,7 @@ To see it by yourself, please check how many time you need to find out what is d
 
 ```javascript
 // Given an Array of objects representing persons, called 'peopleArray' 
-var result = peopleArray
+peopleArray
     .Where({ age: Between(18,70), gender: 'M'})
     .Sort({ lastName: Sort.AscendingIgnoringCase})
     .RunEach(function(item, i) {
