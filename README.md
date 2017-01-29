@@ -2,18 +2,20 @@
 Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. PowerArray simplifies almost everything that has to do with that bads. 
 
 ## Simple example
-The following example filters an array, sort the results and iterates the first 10 matches. It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
+The following example filters an array, sorts the results and iterates the first 10 matches to make some stuff. It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions and utilities (Between).
 
 >Given an array of objects (representing persons), called 'peopleArray' 
 ```javascript
-// With PowerArray:
 peopleArray
     .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort({ lastName: Sort.AscendingIgnoringCase })                              // sort
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // sort
     .Take(10)                                                                   
-    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // do stuff
+    .RunEach(function(item, i) { 
+        console.debug(i + ' ' + item.name);                                     // do stuff
+    });      
+```
 
-// In plain Javascript
+```javascript
 var result = [], i = 0, l, item;
 for(l = peopleArray.length; i < l; i++) {
 	item = peopleArray[i];
