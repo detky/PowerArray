@@ -9,7 +9,7 @@ The following example filters an array, sort the results and iterates the first 
 // With PowerArray:
 peopleArray
     .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort{ lastName: Sort.AscendingIgnoringCase })                              // sort
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                              // sort
     .Take(10)                                                                   
     .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // do stuff
 
