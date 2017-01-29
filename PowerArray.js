@@ -1245,7 +1245,8 @@ mainContainer.pa.prototypedFunctions_Array = {
 
         }
     },
-    Take: function (skip, count) {
+    Take: function (count, skip) {
+        skip = skip || 0;
         var i = 0 + skip, l = this.length, result = [], added = 0;
         for (; i < l && added < count; i++) {
             result.push(this[i]);

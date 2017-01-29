@@ -1,40 +1,37 @@
 # PowerArray
-Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
+Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. PowerArray simplifies almost everything that has to do with that bads. 
 
-**What can PowerArray do for you?**
+## Simple example
+The following example filters an array, sort the results and iterates the first 10 matches. It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
 
-To see it by yourself, please check how many time you need to find out what is doing this code:
-
+>Given an array of objects (representing persons), called 'peopleArray' 
 ```javascript
-// Given an Array of objects representing persons, called 'peopleArray' 
+// With PowerArray:
 peopleArray
-    .Where({ age: Between(18,70), gender: 'M'})
-    .Sort({ lastName: Sort.AscendingIgnoringCase})
-    .RunEach(function(item, i) {
-        console.debug(i + ' ' + item.name); //do something 
-    });
-```
+    .Where({ age: Between(18,70), gender: 'M' })                                // filter
+    .Sort{ lastName: Sort.AscendingIgnoringCase })                              // sort
+    .Take(10)                                                                   
+    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // do stuff
 
-And how long for this one? 
-
-```javascript
-// Given an Array of objects representing persons, called 'peopleArray' 
+// In plain Javascript
 var result = [], i = 0, l, item;
 for(l = peopleArray.length; i < l; i++) {
 	item = peopleArray[i];
-	if(item.age > 18 && item.age < 70 && item.gender === 'M') {
+	if(item.age > 18 && item.age < 70 && item.gender === 'M') {             // filtering
 		result.push(item);
 	}
 }
+
 result.sort(function (a, b) {
-    return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
+    return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());    // sorting
 });
-for(i = 0, l = result.length; i < l; i++) {
-    console.debug(i + ' ' + result[i].name); //do something 
+
+for(i = 0, l = result.length; i < l && i < 10; i++) {
+    console.debug(i + ' ' + result[i].name);                                    // do stuff
 }
 ```
 
-**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. It uses the **Where**, **Sort** and **RunEach** PowerArray methods. 
+**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. Power array adds also global auxiliar functions, that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
 
 This library helps to simplify code, to make it intuitive and readable.
 
@@ -91,6 +88,7 @@ This signature accepts an array of Conditions-Objects. If an item fulfill all co
 Condition-Object, it will be included in the results (and other Condition-Objects will not be evaluated for that item). 
 This Signature is ideal to build (a kind of) `OR` statements that cannot be expressed in a single Conditions-Object. 
 Examples:
+
 ```Javascript
     // Given an Array of objects representing persons, called 'peopleArray' 
     // Task: find all single men between 20 and 30 years old and all married woman between 25 and 35 years old   
