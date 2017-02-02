@@ -2,18 +2,19 @@
 Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. PowerArray simplifies almost everything that has to do with that bads. 
 
 ## Simple example
-The following example filters an array, sorts the results and iterates the first 10 matches to make some stuff. It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions and utilities (Between).
+The following example filters an array, sorts the results and iterates the first 10 matches to make some stuff.
 
 >Given an array of objects (representing persons), called 'peopleArray' 
 ```javascript
 peopleArray
     .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // sort
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                            // sort
     .Take(10)                                                                   
     .RunEach(function(item, i) { 
         console.debug(i + ' ' + item.name);                                     // do stuff
     });      
 ```
+
 
 ```javascript
 var result = [], i = 0, l, item;
@@ -33,7 +34,7 @@ for(i = 0, l = result.length; i < l && i < 10; i++) {
 }
 ```
 
-**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. Power array adds also global auxiliar functions, that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
+**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. It uses the **Where**, **Sort**, **Take** and **RunEach** PowerArray functions. 
 
 This library helps to simplify code, to make it intuitive and readable.
 
@@ -140,7 +141,7 @@ Examples:
 
 <a name="ConditionsObjectDescription"></a>
 ### What is a **Conditions-Object**?
-It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. Each property present on a given Conditions-Object, 
+It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. Each property present on a <<<<<<<<<<<<<<<<<<given Conditions-Object, 
 represents a filtering criteria for a property that should be present on each array item in which the filtering is applied.
 
 In the following code:
