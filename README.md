@@ -9,26 +9,10 @@ The following example filters an array, sort the results and iterates the first 
 // With PowerArray:
 peopleArray
     .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort({ lastName: Sort.AscendingIgnoringCase })                              // sort
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // sort
     .Take(10)                                                                   
     .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // do stuff
 
-// In plain Javascript
-var result = [], i = 0, l, item;
-for(l = peopleArray.length; i < l; i++) {
-	item = peopleArray[i];
-	if(item.age > 18 && item.age < 70 && item.gender === 'M') {             // filtering
-		result.push(item);
-	}
-}
-
-result.sort(function (a, b) {
-    return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());    // sorting
-});
-
-for(i = 0, l = result.length; i < l && i < 10; i++) {
-    console.debug(i + ' ' + result[i].name);                                    // do stuff
-}
 ```
 
 **Both codes do exactly the same**, but the first is (at least for me), much easier to understand. Power array adds also global auxiliar functions, that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
