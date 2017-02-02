@@ -1,42 +1,30 @@
 # PowerArray
-Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. PowerArray simplifies almost everything that has to do with that bads. 
+Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
+PowerArray simplifies almost everything that has to do with that bads. 
 
-## Simple example
-The following example filters an array, sorts the results and iterates the first 10 matches to make some stuff.
+## Simple examples
+The following example filters an array, sort the results and iterates the first 10 matches and make some stuff with them. 
+It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
 
->Given an array of objects (representing persons), called 'peopleArray' 
-```javascript
-peopleArray
-    .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort({ lastName: Sort.AscendingIgnoringCase })                            // sort
-    .Take(10)                                                                   
-    .RunEach(function(item, i) { 
-        console.debug(i + ' ' + item.name);                                     // do stuff
-    });      
-```
-
+### Given an array of objects (representing persons), called 'peopleArray':
+>Filtering people between 18 and 70 years old, sorting by last name ascending (case insensitive), and making stuff over the 10 first:
 
 ```javascript
-var result = [], i = 0, l, item;
-for(l = peopleArray.length; i < l; i++) {
-	item = peopleArray[i];
-	if(item.age > 18 && item.age < 70 && item.gender === 'M') {             // filtering
-		result.push(item);
-	}
-}
-
-result.sort(function (a, b) {
-    return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());    // sorting
-});
-
-for(i = 0, l = result.length; i < l && i < 10; i++) {
-    console.debug(i + ' ' + result[i].name);                                    // do stuff
-}
+peopleArray 
+    .Where({ age: Between(18,70), gender: 'M' })                                // Filter: 1 condition-object with two criterions
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // Sort: simple sorting
+    .Take(10)                                                                   // Take only the first 10 results
+    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // Do stuff...
+```
+>Remove any person without  :
+```javascript
+// With PowerArray:
+peopleArray.Remove({ lastName: IsEmpty()});        // IsEmpty covers "", null, undefined, []
 ```
 
-**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. It uses the **Where**, **Sort**, **Take** and **RunEach** PowerArray functions. 
 
 This library helps to simplify code, to make it intuitive and readable.
+It also adds global auxiliar functions (like 'Between' on the example), that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
 
 **PowerArray** extends the Array prototype by adding additional features to work with **any** array. 
  
@@ -121,7 +109,7 @@ the index of that item on the original array, and the array self as parameters i
 Examples:
 ```Javascript
     //Filtering arrays of primitives
-    [1, 2, 3, 4, 5, 6, 7].Where(BiggerThan(4))); 
+    [1, 2, 3, 4, 5, 6, 7].Where(GreaterThan(4))); 
     // returns [5,6,7]
 
     ["Red","Green", "Black", "Blue"].Where(Like('e')); //using auxiliary function Like
@@ -141,7 +129,7 @@ Examples:
 
 <a name="ConditionsObjectDescription"></a>
 ### What is a **Conditions-Object**?
-It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. Each property present on a <<<<<<<<<<<<<<<<<<given Conditions-Object, 
+It's a plain Javscript object containing N filtering criteria, that can be used to filter objects arrays. Each property present on a given Conditions-Object, 
 represents a filtering criteria for a property that should be present on each array item in which the filtering is applied.
 
 In the following code:
