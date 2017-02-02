@@ -1,23 +1,31 @@
 # PowerArray
-Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. PowerArray simplifies almost everything that has to do with that bads. 
+Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
+PowerArray simplifies almost everything that has to do with that bads. 
 
-## Simple example
-The following example filters an array, sort the results and iterates the first 10 matches. It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
+## Simple examples
+The following example filters an array, sort the results and iterates the first 10 matches and make some stuff with them. 
+It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
 
->Given an array of objects (representing persons), called 'peopleArray' 
+### Given an array of objects (representing persons), called 'peopleArray':
+>Filtering people between 18 and 70 years old, sorting by last name ascending (case insensitive), and making stuff over the 10 first:
 ```javascript
 // With PowerArray:
 peopleArray
-    .Where({ age: Between(18,70), gender: 'M' })                                // filter
-    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // sort
-    .Take(10)                                                                   
-    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // do stuff
+    .Where({ age: Between(18,70), gender: 'M' })                                // Filter: 1 condition-object with two criterions
+    .Sort({ lastName: Sort.AscendingIgnoringCase })                             // Sort: simple sorting
+    .Take(10)                                                                   // Take only the first 10 results
+    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // Do stuff...
 
 ```
+>Remove any person without lastname :
+```javascript
+// With PowerArray:
+peopleArray.Remove({ lastName: IsEmpty()});        // IsEmpty covers "", null, undefined, []
+```
 
-**Both codes do exactly the same**, but the first is (at least for me), much easier to understand. Power array adds also global auxiliar functions, that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
 
 This library helps to simplify code, to make it intuitive and readable.
+It also adds global auxiliar functions (like 'Between' on the example), that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
 
 **PowerArray** extends the Array prototype by adding additional features to work with **any** array. 
  
@@ -102,7 +110,7 @@ the index of that item on the original array, and the array self as parameters i
 Examples:
 ```Javascript
     //Filtering arrays of primitives
-    [1, 2, 3, 4, 5, 6, 7].Where(BiggerThan(4))); 
+    [1, 2, 3, 4, 5, 6, 7].Where(GreaterThan(4))); 
     // returns [5,6,7]
 
     ["Red","Green", "Black", "Blue"].Where(Like('e')); //using auxiliary function Like
