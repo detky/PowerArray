@@ -861,7 +861,7 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
         return -1;
     },
-    getPropertyFlat: function (property, keepOrder, includeDuplicates, includeUndefineds) { // jshint ignore:line
+    GetPropertyFlat: function (property, keepOrder, includeDuplicates, includeUndefineds) { // jshint ignore:line
         var array = this;
         var result = [], t = array.length;
         if (keepOrder === true) {
