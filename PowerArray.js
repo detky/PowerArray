@@ -151,7 +151,7 @@ mainContainer.pa.utils = {
             case 'string':
                 return pa.utils.DataTypes.String;
             case 'function':
-                return pa.utils.DataTypes.function;
+                return pa.utils.DataTypes.Function;
             case 'number':
                 return pa.utils.DataTypes.Number;
             case 'boolean':
