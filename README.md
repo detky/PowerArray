@@ -6,21 +6,17 @@ PowerArray simplifies that bads by expanding the Array prototype, adding simple 
 [Worried about changes on the Array Prototype?](#ArrayPrototypeChanges) 
 
 ## Example
-The following example filters an array of tournament participants, sort the results and iterates the first 10 matches and gives the
-prizes in order of make some stuff with them. 
-It uses the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
-
->Filtering people between 18 and 70 years old, sorting by last name ascending (case insensitive), and making stuff over the 10 first:
+>Different filtering examples by using the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
 
 ```javascript
-var participants = [/*...many tournament participant-objects with lots of properties (name, age, category, score, etc.)...*/];
-var prizes = [{ category: 1, name: 'gold prize'}, {category: 2 , name: 'silver prize'}, { category: 3, name: 'bronze prize' }];
-
-var winersCat1 = participants
-    .Where({ category: 1}).             // Where => to filter: 1 condition-object with two criterions
-    .Sort({ score: Sort.Ascending })                             // Sort: simple sorting
-    .Take(10)                                                    // Take only the first 10 results
-    .RunEach(function(item, i) { console.debug(i + ' ' + item.name); } );       // Do stuff...
+//participants = [ {name : 'Alex', age: 20, categories: [ {categoriId: 10, score: 3.1}, {categoryId: 11, score: 5} ], {...}];
+participants
+    .Where({ age : Between(20, 30), categories: {categoryId : 1}})       // Where => to filter. 1 condition-object with 2 conditions
+    .Sort({ categories : {  score: Sort.Ascending })                     // Sort => Sort ascending by category score from categories array
+    .Take(10)                                                            // Take only the first 3 results
+    .RunEach(function(participant, i) {                                  
+        console.debug(i + ' ' + participant.name); 
+    });
 ```
 >Remove any person without  :
 ```javascript
@@ -34,7 +30,15 @@ It also adds global auxiliar functions (like 'Between' on the example), that are
 <a name="#usage"></a>
 # Usage
 
-//TODO
+The PowerArray functionalities are mainly functions designed for the different use cases.  
+
+ - Functions attached to the Array prototype
+ - Auxiliar global filtering functions
+ - Functions hosted on the pa global object (pa.utils)
+
+```Javascript
+var myArray = [1,2,3,4];
+```
 
 PowerArray adds also some auxiliary functions to avoid writing the same snippets over and over again. All they are accesible after loading the library, [click here for a complete list](#WherePAStandardFunction).
 
@@ -154,15 +158,16 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 
 It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
 But i see also that the vast majority of times, i can determine which code will live in my javascript ecosystem and which not, and that the advantages 
-far outweigh the hypothetical disadvantages. 
+far outweigh the potential disadvantages. I save a lot of programming time,  
 
-This library do not make any changes to standard properties/functions of the Array prototype, it just adds new things, and 'only if the desired names 
-are not already taken'. 
+This library do not make any changes to standard properties/functions of the Array objects, it just adds new things, and 'only if the desired names 
+are not already taken'.
 
 #### how does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
-in which there are multiple functions. Some of this functions, are designed to work with any object with having Array as prototype or (array like object) object, and others 
-designed to operate globally (defined at pa.auxiliaryFunctions). 
+in which there are multiple functions. Some of this functions, are designed to work with any object with Array prototype (or array like objects), and others 
+designed to operate globally (internal pa.auxiliaryFunctions).
+
 During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
 Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
 If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
