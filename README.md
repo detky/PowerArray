@@ -152,15 +152,19 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 <a name="ArrayPrototypeChanges"></a>
 ### What does this script changes on the Array prototype? 
 
-It just adds new functions, and only if the desired names (or pointers) are not already taken.
+It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
+But i see also that the vast majority of times, i can determine which code will live in my javascript ecosystem and which not, and that the advantages 
+far outweigh the hypothetical disadvantages. 
+
+This library do not make any changes to standard properties/functions of the Array prototype, it just adds new things, and 'only if the desired names 
+are not already taken'. 
 
 #### how does it works:
-PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
-in which there are multiple functions. Some of them, are designed to work with any object with Array prototype (or array-like objects), and others 
-designed to operate globally (pa.auxiliaryFunctions). 
-During the initialization process, each possible names collision is previously checked. Only if there are no conflicts, a pointer to the corresponding 
-function on the pa object is attached to the prototype array (or the global scope for auxiliar functions).
-
+Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
+in which there are multiple functions. Some of this functions, are designed to work with any object with having Array as prototype or (array like object) object, and others 
+designed to operate globally (defined at pa.auxiliaryFunctions). 
+During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
+Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
 If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
 The only consequence will be a change on the syntax when using that specific PowerArray function:
 
@@ -370,59 +374,7 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 });
 ```
 
-<a name="ArrayPrototypeChanges"></a>
-### What does this script changes on the Array prototype? 
-
-It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
-But i see also that the vast majority of times, i can determine which code will live in my javascript ecosystem and which not, and that the advantages 
-far outweigh the hypothetical disadvantages. 
-
-This library do not make any changes to standard properties/functions of the Array prototype, it just adds new things, and 'only if the desired names 
-are not already taken'. 
-
-#### how does it works:
-Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
-in which there are multiple functions. Some of this functions, are designed to work with any object with having Array as prototype or (array like object) object, and others 
-designed to operate globally (defined at pa.auxiliaryFunctions). 
-During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
-Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
-If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
-The only consequence will be a change on the syntax when using that specific PowerArray function:
-
-<ul>
-	<li>
-		For global functions (as all auxiliary functions GreaterThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
-		<table>
-			<tr>
-				<td>use</td>
-				<td><code>var result = someArray.Where({ priority: <font color=red>pa.</font>SmallerThan(5)});</code></td>
-			</tr>
-			<tr>
-				<td>instead of</td>
-				<td><code>var result = someArray.Where({ priority: SmallerThan(5)});</code></td>
-			</tr>
-		</table>
-	</li>
-	
-	<li>
-		For prototype functions (Where, Sort, findByProperty, findIndexByProperty, etc.), you have to envolve the array in which you want to make an operation with a function call. For Example:<br>
-		<table>
-			<tr>
-				<td>use</td>
-				<td><code>var result = <font color=red>pa(</font>someArray<font color=red>)</font>.Where({ categoryId : 33});</code></td>
-			</tr>
-			<tr>
-				<td>instead of</td>
-				<td><code>var result = someArray.Where({ categoryId : 33});</code></td>
-			</tr>
-		</table>
-	</li>
-</ul>
-
-Considering all that, if you load the PowerArray library as last in your html, the risk is strongly reduced. If there is any problem the solution will be always the same: add "pa." as prefix, or surround your array with function "pa()" before use it. 
-
-
-*Under Construction (the readme file, the library works fine  :)*n
+*Under Construction*
 
 
 ## License
