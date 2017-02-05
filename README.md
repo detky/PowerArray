@@ -373,7 +373,12 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 <a name="ArrayPrototypeChanges"></a>
 ### What does this script changes on the Array prototype? 
 
-It just adds new functions, and only if the desired names (or pointers) are not already taken.
+It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
+But i see also that the vast majority of times, i can determine which code will live in my javascript ecosystem and which not, and that the advantages 
+far outweigh the hypothetical disadvantages. 
+
+This library do not make any changes to standard properties/functions of the Array prototype, it just adds new things, and 'only if the desired names 
+are not already taken'. 
 
 #### how does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
