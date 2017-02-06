@@ -28,17 +28,46 @@ This library helps to simplify code, to make it intuitive and readable.
 It also adds global auxiliar functions (like 'Between' on the example), that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
 
 <a name="#usage"></a>
-# Usage
-
-The PowerArray functionalities are mainly functions designed for the different use cases.  
+## Usage
+PowerArray have different types of functions. Each function type is designed for a different scenario and have a different usage.
+There are mainly three functions types:  
 
  - Functions attached to the Array prototype
- - Auxiliar global filtering functions
- - Functions hosted on the pa global object (pa.utils)
+   This kind of functions are those that can be directly invoked on your own Array. The most used are the functions 
+   **Where**, **First**, **Last**, **Sort**, **RunEach**, **Take**, **Remove**, etc. This kind of functions returns always a new array, 
+   making all this functions types chainable which each other: After filtering an array by using the Where functions, 
+   the resulting array cann immediately be used for another prototyped function like for example **Sort**.
+   ### Usage: on your own array:
+   ```Javascript
+   someArray
+        .Where({...conditions-object...})       // Prototyped function Where used
+        .Sort({...sort criteria....})           // Prototyped function Sort used
+        .RunEach(() => { ...do stuff...});      
+   ```
+   
+ - Auxiliar global filtering Functions
+   This kind of functions are those that can be used as values on an Object-Condition. We call this functions "Auxiliar" functions, like 
+   **In**, **Contains**, **Between**, **GreaterThan**, etc. [complete list here](#AuxiliarFunctionsDescription) 
+   ### Usage: as a part of an Conditions object!
+   ```Javascript
+   someArray
+        .Where({
+            someProp: GreaterThan(24)               //Auxiliar global function GreaterThan used
+            otherProp: Between(10,20)               //Auxiliar global function Between used
+        });
+   ```
+   
+ - Utilities - Functions hosted on the pa global object (pa.utils)
+   The functions that are stored on the pa object can be invoked as usual:
+   ### Usage: as normal functions hosted on pa.utils!
+   ```Javascript
+   pa.utils.GetTypeOf([1,2,3]);                     //Utility function pa.utils.GetTypeOf used
+   pa.utils.GetTypeOf("hello");                 
+   var r = pa.utils.parseBoolean("true");           //Utility function pa.utils.parseBoolean used 
+   pa.utils.isNullEmptyOrUndefined(null);           //Utility function pa.utils.isNullEmptyOrUndefined used 
+   var args = pa.utils.ArgumentsToArray(arguments); //Utility function pa.utils.ArgumentsToArray used
+   ```
 
-```Javascript
-var myArray = [1,2,3,4];
-```
 
 PowerArray adds also some auxiliary functions to avoid writing the same snippets over and over again. All they are accesible after loading the library, [click here for a complete list](#WherePAStandardFunction).
 
