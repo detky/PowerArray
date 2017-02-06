@@ -32,23 +32,23 @@ It also adds global auxiliar functions (like 'Between' on the example), that are
 PowerArray have different types of functions. Each function type is designed for a different scenario and have a different usage.
 There are mainly three functions types:  
 
- - Functions attached to the Array prototype
+ ### Prototyped Functions (Attached to the Array prototype)
    This kind of functions are those that can be directly invoked on your own Array. The most used are the functions 
    **Where**, **First**, **Last**, **Sort**, **RunEach**, **Take**, **Remove**, etc. This kind of functions returns always a new array, 
    making all this functions types chainable which each other: After filtering an array by using the Where functions, 
    the resulting array cann immediately be used for another prototyped function like for example **Sort**.
-   ### Usage: on your own array:
+   #### Usage: on your own array:
    ```Javascript
    someArray
         .Where({...conditions-object...})       // Prototyped function Where used
         .Sort({...sort criteria....})           // Prototyped function Sort used
-        .RunEach(() => { ...do stuff...});      
+        .RunEach(() => { ...do stuff...});      // Prototyped function RunEach used
    ```
    
- - Auxiliar global filtering Functions
+ ### Auxiliar global filtering Functions
    This kind of functions are those that can be used as values on an Object-Condition. We call this functions "Auxiliar" functions, like 
    **In**, **Contains**, **Between**, **GreaterThan**, etc. [complete list here](#AuxiliarFunctionsDescription) 
-   ### Usage: as a part of an Conditions object!
+   #### Usage: as a part of an Conditions object!
    ```Javascript
    someArray
         .Where({
@@ -57,9 +57,9 @@ There are mainly three functions types:
         });
    ```
    
- - Utilities - Functions hosted on the pa global object (pa.utils)
+ ### Utilities - Functions hosted on the pa global object (pa.utils)
    The functions that are stored on the pa object can be invoked as usual:
-   ### Usage: as normal functions hosted on pa.utils!
+   #### Usage: as normal functions hosted on pa.utils!
    ```Javascript
    pa.utils.GetTypeOf([1,2,3]);                     //Utility function pa.utils.GetTypeOf used
    pa.utils.GetTypeOf("hello");                 
@@ -68,8 +68,11 @@ There are mainly three functions types:
    var args = pa.utils.ArgumentsToArray(arguments); //Utility function pa.utils.ArgumentsToArray used
    ```
 
+### Auxiliar global filtering Functions
 
 PowerArray adds also some auxiliary functions to avoid writing the same snippets over and over again. All they are accesible after loading the library, [click here for a complete list](#WherePAStandardFunction).
+#AuxiliarFunctionsDescription
+
 
 <a name="#WhereFunction"></a>
 ## Filtering - The **.Where()** function
