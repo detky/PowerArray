@@ -2,14 +2,13 @@
 Working with Arrays in Javascript requires manual iteration, is error-prone, difficult to read, repetitive and time-consuming. 
 
 PowerArray simplifies that bads by expanding the Array prototype, adding simple but powerfull capabilities to `any Array`.  
-
 [Worried about changes on the Array Prototype?](#ArrayPrototypeChanges) 
 
 ## Example
 >Different filtering examples by using the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
 
 ```javascript
-//participants = [ {name : 'Alex', age: 20, categories: [ {categoriId: 10, score: 3.1}, {categoryId: 11, score: 5} ], {...}];
+//participants = [ {name : 'Alex', age: 20, categories: [ {categoriId: 10, score: 3.1}, {categoryId: 11, score: 5} ], {...}, ...];
 participants
     .Where({ age : Between(20, 30), categories: {categoryId : 1}})       // Where => to filter. 1 condition-object with 2 conditions
     .Sort({ categories : {  score: Sort.Ascending })                     // Sort => Sort ascending by category score from categories array
@@ -189,25 +188,33 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 ### What does this script changes on the Array prototype? 
 
 It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
-But i see also that the vast majority of times, i can determine which code will live in my javascript ecosystem and which not, and that the advantages 
-far outweigh the potential disadvantages. I save a lot of programming time,  
 
-This library do not make any changes to standard properties/functions of the Array objects, it just adds new things, and 'only if the desired names 
-are not already taken'.
+But in my programming live, i saw also that the vast majority of times, we (programmers, architects, etc.) *can control which libraries and modules will 
+live in our javascript ecosystem and which not*. 
 
-#### how does it works:
+So far, there are no known issues, and the advantages far outweigh the potential disadvantages.
+
+#### Does this library change any of the standard functions of the Array prototype?:
+
+No, it just adds new things, and only if the desired names are not already taken. If you add this library to a project, your existing code will 
+definitively not be influenced. The extra functionalities have to be explicitly called, if not nothing happens!
+
+#### How does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
 in which there are multiple functions. Some of this functions, are designed to work with any object with Array prototype (or array like objects), and others 
 designed to operate globally (internal pa.auxiliaryFunctions).
 
 During the initialization process, each of such functions is is evaluated, to check if the name is already in use before modifying anything. 
-Only if they are free, a pointer to the corresponding pa function is set on the prototype array, or the global scope. 
+Only if they are free, a pointer to the corresponding pa functions is set on the prototype array, or the global scope. 
+
+#### And what can i do if i have a conflict?:
 If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
-The only consequence will be a change on the syntax when using that specific PowerArray function:
+The 'only consequence' will be a change on the syntax you have to use to run the specific PowerArray function:
 
 <ul>
 	<li>
-		For global functions (as all auxiliary functions GreaterThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
+		For global functions (as all auxiliary functions GreaterThan, SmallerThan, In, InIgnoreCase, Like, NotLike, etc.) you have to use the prefix "pa.". 
+        For example by using the pa standard function <a href="#functionSmallerThan">SmallerThan</a>: <br>
 		<table>
 			<tr>
 				<td>use</td>
