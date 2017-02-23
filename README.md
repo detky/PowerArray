@@ -5,26 +5,39 @@ PowerArray simplifies that bads by expanding the Array prototype, adding simple 
 [Worried about changes on the Array Prototype?](#ArrayPrototypeChanges) 
 
 ## Example
->Different filtering examples by using the **Where**, **Sort**, **Take** and  **RunEach** PowerArray functions.
+>Different filtering examples by using the **Where**, **Sort**, **Take**, **Remove** and  **RunEach** PowerArray functions.
 
 ```javascript
 //participants = [ {name : 'Alex', age: 20, categories: [ {categoriId: 10, score: 3.1}, {categoryId: 11, score: 5} ], {...}, ...];
 participants
     .Where({ age : Between(20, 30), categories: {categoryId : 1}})       // Where => to filter. 1 condition-object with 2 conditions
-    .Sort({ categories : {  score: Sort.Ascending })                     // Sort => Sort ascending by category score from categories array
-    .Take(10)                                                            // Take only the first 3 results
+    .Sort({ categories : {  score: Sort.Ascending })                     // Sort => Sort ascending by category score from categories (an array of objects)
+    .Take(10)                                                            // Take only the first 10 results
     .RunEach(function(participant, i) {                                  
         console.debug(i + ' ' + participant.name); 
     });
+
+//programmatically generated Conditions object: 
+var conditions = {};
+if(have_to_check_age) 
+    conditions.age = Between(20, 30);
+
+if(have_to_check_fav_colors) // colors_to_check = ["red", "green","yellow"]
+    conditions.favoriteColor = In(colors_to_check);
+
+results = participants.Where(coditions); 
 ```
->Remove any person without  :
+
+>Removing data:
 ```javascript
-// With PowerArray:
 peopleArray.Remove({ lastName: IsEmpty()});        // IsEmpty covers "", null, undefined, []
+peopleArray.Remove({ address: IsDefined()});       
+
 ```
 
 This library helps to simplify code, to make it intuitive and readable.
-It also adds global auxiliar functions (like 'Between' on the example), that are ready to be embedded on [Conditions-Object](#ConditionsObjectDescription).
+It also adds global auxiliar functions (like 'Between', 'IsEmpty' from the previous examples), that are ready to be embedded on 
+[Conditions-Object](#ConditionsObjectDescription).
 
 <a name="#usage"></a>
 ## Usage
@@ -189,15 +202,14 @@ var result = peopleArray.Where({ //peopleArray is an array of objects representi
 
 It is known that changing prototypes or working with global functions is not really wanted, because horrible things could happen. I agree with that.
 
-But in my programming live, i saw also that the vast majority of times, we (programmers, architects, etc.) *can control which libraries and modules will 
-live in our javascript ecosystem and which not*. 
-
-So far, there are no known issues, and the advantages far outweigh the potential disadvantages.
+But in my Javascript-programming live (> 10 years), i saw also that the vast majority of times, we (programmers, architects, etc.) *can control which libraries 
+and modules will live in our javascript ecosystem and which not*, strongly reducing the collision risks. Until now, there are not known issues, and the advantages
+far outweigh the potential disadvantages: write less code that is much easier to understand: simply save time and money ;)
 
 #### Does this library change any of the standard functions of the Array prototype?:
 
 No, it just adds new things, and only if the desired names are not already taken. If you add this library to a project, your existing code will 
-definitively not be influenced. The extra functionalities have to be explicitly called, if not nothing happens!
+definitively not be influenced. The extra functionalities that PowerArray adds to Javascript have to be explicitly called to work.
 
 #### How does it works:
 Basically, PowerArray loads everything he needs to work on his own global object called "pa", as many frameworks do. The "pa" object is a container, 
@@ -208,7 +220,9 @@ During the initialization process, each of such functions is is evaluated, to ch
 Only if they are free, a pointer to the corresponding pa functions is set on the prototype array, or the global scope. 
 
 #### And what can i do if i have a conflict?:
-If any name is already occupated by other framework, library or whatever, PowerArray don't change anything, just sends a warning to the console.
+If a name that a PowerArray function wants to use is already occupated by other framework, library or whatever, PowerArray don't change anything, 
+just sends a warning to the console. 
+
 The 'only consequence' will be a change on the syntax you have to use to run the specific PowerArray function:
 
 <ul>
