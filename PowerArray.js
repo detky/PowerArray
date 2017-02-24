@@ -1110,6 +1110,15 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
         return results;
     },
+    /** Iterates an array and executes the function on each item as runeach does, but always returns the original array  */
+    Iterate: function(func, keepOrder){
+        this.RunEach(func, undefined, keepOrder);
+        return this;
+    },
+    /**returns a collection of the results of the execution of "func" in a given order */
+    Collect: function(func, keepOrder) {
+        return this.RunEach(func, undefined, keepOrder);
+    },
     WhereIndexes: function (whereConditions, keepOrder, justFirst) {
         return this.Where(whereConditions, keepOrder, justFirst, true);
     },
