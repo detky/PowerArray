@@ -1,0 +1,28 @@
+{
+    "name": "PowerArray",
+    "version": "0.0.1",
+    "description": "Power Array extends the native Array prototype by adding many additional features to Filter, Sort and Manipulate any array. ",
+    "scripts": {
+        "deploy": "webpack -p --define --config --progress --colors"
+    },
+    "repository": {
+        "type": "git",
+        "url": "www.none.com"
+    },
+    "author": "Sebastian Menendez",
+    "license": "MIT",
+    "dependencies": {
+    },
+	"bugs": {
+		"url": "https://github.com/detky/powerarray/issues"
+	},
+    "devDependencies": {
+        "jasmine": "^2.5.2",
+        "json-loader": "^0.5.4",
+        "webpack": "^1.13.3"
+    },
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/detky/powerarray.git"
+	}
+}
