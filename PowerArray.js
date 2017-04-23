@@ -1,4 +1,4 @@
-var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
+var mainContainer, module = module, isModule = false, isBrowser = true;
 if (typeof module !== "undefined") {
     module.exports = {};
     isModule = true;
@@ -10,8 +10,10 @@ if (typeof window === 'object') {
     isBrowser = false;
     mainContainer = global;
 }
-
-mainContainer.pa = function (object) {
+if(mainContainer.pa) {
+	throw new Error('PowerArray => Cannot load, global variable "pa" already exists. Loading twice?');
+}
+mainContainer.PowerArray = mainContainer.pa = function (object) {
     if (object.constructor === Array || object.paIsArray) {
         return new paArray(object);
     } else {
@@ -53,11 +55,6 @@ mainContainer.pa.Range = function (from, to, step) {
     result.push(to);
     return result;
 };
-mainContainer.pa.config = {
-    defaults: {
-        defaultPromiseTimeout: 10000
-    }
-};
 mainContainer.pa.utils = {}
 mainContainer.pa.utils = {
     DataTypes: {
@@ -72,7 +69,11 @@ mainContainer.pa.utils = {
         Function: 'Function',
         Null: 'Null',
         Undefined: 'Undefined'
-    }, IsArrayOfObjects: function (val) {
+    },
+    IsStringDate(str) {
+        return (str.length === 20 && str.substr(19, 1) === 'Z' && str.substr(10, 1) === 'T');
+    },
+    IsArrayOfObjects: function (val) {
         var l;
         if (!val.paIsArray || val.length === undefined) {
             return false;
@@ -136,6 +137,26 @@ mainContainer.pa.utils = {
             return true;
         }
         return (what + "").length === 0;
+    },
+/**
+ * Copy properties from a source object to a destination object
+ * @param {Object} source source object
+ * @param {Object} dest destination object
+ * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
+ * @returns {} 
+ */
+    CopyObjectProps : function(source, dest, propsList) {
+        if (!propsList) {
+            for (var prop in source) {
+                if (source.hasOwnProperty(prop)) {
+                    dest[prop] = source[prop];
+                }
+            }
+        } else {
+            propsList.RunEach(function(prop) {
+                dest[prop] = source[prop];
+            });
+        }
     },
     GetTypeOf: function (element, analyzeData) {
 
@@ -675,6 +696,7 @@ mainContainer.pa.auxiliaryFunctions = {
         if (arguments.length > 1) {
             list = Array.prototype.slice.call(arguments);
         }
+        //TODO: Esto es muy propenso a errores, evaluar mejor los parametros [{},etc]
         return function (val) {
             return list.indexOf(val) !== -1; // jshint ignore:line
         };
@@ -940,7 +962,7 @@ mainContainer.pa.prototypedFunctions_Array = {
      *                      returns something different than undefined, that will be returned instead of the
      *                      . If not,
      */
-    RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
+RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
         var l = this.length, i = 0, result = new Array(this.length), tmp;
         if (!keepOrder) {
             while (l--) {
@@ -1280,7 +1302,7 @@ mainContainer.pa.Sort = {
     DescendingIgnoringCase: 'DESCENDINGIGNORINGCASE',
     DescIgnoringCase: 'DESCIGNORINGCASE',
 }
-if (mainContainer.Sort == undefined) {
+if (mainContainer.Sort === undefined) {
     mainContainer.Sort = mainContainer.Sort || mainContainer.pa.Sort;
     mainContainer.pa.Sort._validSortConfigStrings = [
         mainContainer.pa.Sort.Ascending,
@@ -1298,8 +1320,8 @@ if (mainContainer.Sort == undefined) {
 
 //this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
 if (false) {
-    Array.prototype.Where = function (WhereConditions, fuck) {
-
+    Array.prototype.Where = function (WhereConditions) {
+	
     };
 }
 
@@ -1347,9 +1369,9 @@ paArray.prototype.isArray = true;
     for (var currentFunctionName in functionsToAttach) {
         if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
             if (Array.prototype.hasOwnProperty(currentFunctionName)) {
-                console.warn('PowerArray warning! => Array Prototype was modified by other library, and the function name ' + currentFunctionName +
-                    ' is already in use. PowerArray will NOT override the prototype method. However, you can still using the function ' + currentFunctionName +
-                    ' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
+                console.warn('PowerArray warning! => Array Prototype was modified by other library: the function name "' + currentFunctionName +
+                    '" is already in use. PowerArray will NOT override the prototype method. However, you can still using the function' + 
+					' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
             } else {
                 //function name is free, go on:
                 Array.prototype[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
