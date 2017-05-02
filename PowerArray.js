@@ -10,8 +10,8 @@ if (typeof window === 'object') {
     isBrowser = false;
     mainContainer = global;
 }
-if(mainContainer.pa) {
-	throw new Error('PowerArray => Cannot load, global variable "pa" already exists. Loading twice?');
+if (mainContainer.pa) {
+    throw new Error('PowerArray => Cannot load, global variable "pa" already exists. Loading twice?');
 }
 mainContainer.PowerArray = mainContainer.pa = function (object) {
     if (object.constructor === Array || object.paIsArray) {
@@ -19,7 +19,7 @@ mainContainer.PowerArray = mainContainer.pa = function (object) {
     } else {
         //console.warn('PowerArray => The passed object is not natively an array. Trying to handle it as an array-like object...')
         if ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) {
-          //  console.log('Compatible openlayers object detected (ol.Collection)');
+            //  console.log('Compatible openlayers object detected (ol.Collection)');
             return paArray(object.getArray());
         }
         if (object.length === undefined) {
@@ -138,22 +138,29 @@ mainContainer.pa.utils = {
         }
         return (what + "").length === 0;
     },
-/**
- * Copy properties from a source object to a destination object
- * @param {Object} source source object
- * @param {Object} dest destination object
- * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
- * @returns {} 
- */
-    CopyObjectProps : function(source, dest, propsList) {
+    /**
+     * Copy properties from a source object to a destination object
+     * @param {Object} source source object
+     * @param {Object} dest destination object
+     * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
+     * @param {boolean} ignoreEmptyProps 
+     * @returns {} 
+     */
+    CopyObjectProps: function (source, dest, propsList, ignoreEmptyProps) {
         if (!propsList) {
             for (var prop in source) {
                 if (source.hasOwnProperty(prop)) {
+                    if (ignoreEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
+                        continue;
+                    }
                     dest[prop] = source[prop];
                 }
             }
         } else {
-            propsList.RunEach(function(prop) {
+            propsList.RunEach(function (prop) {
+                if (ignoreEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
+                    return;
+                }
                 dest[prop] = source[prop];
             });
         }
@@ -962,7 +969,7 @@ mainContainer.pa.prototypedFunctions_Array = {
      *                      returns something different than undefined, that will be returned instead of the
      *                      . If not,
      */
-RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
+    RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
         var l = this.length, i = 0, result = new Array(this.length), tmp;
         if (!keepOrder) {
             while (l--) {
@@ -1133,12 +1140,12 @@ RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
         return results;
     },
     /** Iterates an array and executes the function on each item as runeach does, but always returns the original array  */
-    Iterate: function(func, keepOrder){
+    Iterate: function (func, keepOrder) {
         this.RunEach(func, undefined, keepOrder);
         return this;
     },
     /**returns a collection of the results of the execution of "func" in a given order */
-    Collect: function(func, keepOrder) {
+    Collect: function (func, keepOrder) {
         return this.RunEach(func, undefined, keepOrder);
     },
     WhereIndexes: function (whereConditions, keepOrder, justFirst) {
@@ -1314,14 +1321,14 @@ if (mainContainer.Sort === undefined) {
         mainContainer.pa.Sort.DescendingIgnoringCase,
         mainContainer.pa.Sort.DescIgnoringCase];
 } else {
-    if(console && console.warn) console.warn('PowerArray warning! => prop "Sort" already exists on parent scope. You have to use "pa.Sort" instead of "Sort" on your code."');
+    if (console && console.warn) console.warn('PowerArray warning! => prop "Sort" already exists on parent scope. You have to use "pa.Sort" instead of "Sort" on your code."');
 }
 
 
 //this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
 if (false) {
     Array.prototype.Where = function (WhereConditions) {
-	
+
     };
 }
 
@@ -1370,8 +1377,8 @@ paArray.prototype.isArray = true;
         if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
             if (Array.prototype.hasOwnProperty(currentFunctionName)) {
                 console.warn('PowerArray warning! => Array Prototype was modified by other library: the function name "' + currentFunctionName +
-                    '" is already in use. PowerArray will NOT override the prototype method. However, you can still using the function' + 
-					' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
+                    '" is already in use. PowerArray will NOT override the prototype method. However, you can still using the function' +
+                    ' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
             } else {
                 //function name is free, go on:
                 Array.prototype[currentFunctionName] = functionsToAttach[currentFunctionName]; // jshint ignore:line
