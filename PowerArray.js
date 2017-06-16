@@ -1,4 +1,4 @@
-var mainContainer, module = module, isModule = false, isBrowser = true;
+var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
 if (typeof module !== "undefined") {
     module.exports = {};
     isModule = true;
@@ -28,10 +28,9 @@ mainContainer.PowerArray = mainContainer.pa = function (object) {
         return new paArray(object);
     }
 };
-/*
-functions directly bound to the pa object:
+pa.mainContainer = mainContainer; //pa.mainContainer is a reference to the top element containing the application (window by browsers, global by Node);
 
- */
+/*functions directly bound to the pa object: */
 mainContainer.pa.Range = function (from, to, step) {
     if (!pa.IsNumeric(from)) {
         throw new Error('PowerArray => Range fuction => The parameter "from" must be numeric. Wrong value is "' + from + '"');
@@ -55,6 +54,11 @@ mainContainer.pa.Range = function (from, to, step) {
     result.push(to);
     return result;
 };
+mainContainer.pa.config = {
+    defaults: {
+        defaultPromiseTimeout: 10000
+    }
+};
 mainContainer.pa.utils = {}
 mainContainer.pa.utils = {
     DataTypes: {
@@ -70,7 +74,7 @@ mainContainer.pa.utils = {
         Null: 'Null',
         Undefined: 'Undefined'
     },
-    IsStringDate(str) {
+    IsStringDate: function(str) {
         return (str.length === 20 && str.substr(19, 1) === 'Z' && str.substr(10, 1) === 'T');
     },
     IsArrayOfObjects: function (val) {
@@ -137,33 +141,6 @@ mainContainer.pa.utils = {
             return true;
         }
         return (what + "").length === 0;
-    },
-    /**
-     * Copy properties from a source object to a destination object
-     * @param {Object} source source object
-     * @param {Object} dest destination object
-     * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
-     * @param {boolean} ignoreEmptyProps 
-     * @returns {} 
-     */
-    CopyObjectProps: function (source, dest, propsList, ignoreEmptyProps) {
-        if (!propsList) {
-            for (var prop in source) {
-                if (source.hasOwnProperty(prop)) {
-                    if (ignoreEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
-                        continue;
-                    }
-                    dest[prop] = source[prop];
-                }
-            }
-        } else {
-            propsList.RunEach(function (prop) {
-                if (ignoreEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
-                    return;
-                }
-                dest[prop] = source[prop];
-            });
-        }
     },
     GetTypeOf: function (element, analyzeData) {
 
@@ -234,7 +211,7 @@ mainContainer.pa.utils = {
             getRandom4Chars() +
             getRandom4Chars() + ((sufix !== undefined) ? '-' + sufix : '');
     },
-    propsToArray: function (obj, valueProcessor) {
+    PropsToArray: function (obj, valueProcessor) {
         var result = [];
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop)) {
@@ -1125,18 +1102,33 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
         return this;
     },
-    //this primitive distinct version works only for array of primitives.
     Distinct: function () {
-        var val, l = this.length, results = [];
-        if (pa.utils.GetTypeOf(this) !== pa.utils.DataTypes.ArrayOfPrimitives) {
+        var val, l = this.length, results = [], item, cache = [],
+            type = pa.utils.GetTypeOf(this, true),
+            types = pa.utils.DataTypes;
+        if (type !== types.ArrayOfPrimitives && type !== types.ArrayOfObjects) {
             throw new Error("PowerArray => Distinct => Currently, the distinct function works only for arrays of primitive data.");
         }
-        while (l--) {
-            val = this[l];
-            if (results.indexOf(val) === -1 && val !== undefined) {
-                results.push(val);
+        if (type !== types.ArrayOfObjects) {
+            //it's a primitive
+            while (l--) {
+                val = this[l];
+                if (results.indexOf(val) === -1 && val !== undefined) {
+                    results.push(val);
+                }
+            }
+        } else {
+            //TODO: this is very slow!
+            while (l--) {
+                item = this[l];
+                val = JSON.stringify(item);
+                if (cache.indexOf(val) === -1 && val !== undefined) {
+                    cache.push(val);
+                    results.push(item);
+                }
             }
         }
+
         return results;
     },
     /** Iterates an array and executes the function on each item as runeach does, but always returns the original array  */
@@ -1155,6 +1147,9 @@ mainContainer.pa.prototypedFunctions_Array = {
         var i, l = this.length, item, result = [], tmp;
         justIndexes = (justIndexes) ? true : false; //just to avoid casting when comparing during loop
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
+            if (!Object.keys(whereConditions).length) // when the conditions-object is empty (no properties), then exit returning the same array
+                return this;
+            
             //If It's an object, but not an array, it is a conditions object
             result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst, justIndexes);
         } else {
@@ -1309,27 +1304,24 @@ mainContainer.pa.Sort = {
     DescendingIgnoringCase: 'DESCENDINGIGNORINGCASE',
     DescIgnoringCase: 'DESCIGNORINGCASE',
 }
-if (mainContainer.Sort === undefined) {
-    mainContainer.Sort = mainContainer.Sort || mainContainer.pa.Sort;
-    mainContainer.pa.Sort._validSortConfigStrings = [
-        mainContainer.pa.Sort.Ascending,
-        mainContainer.pa.Sort.Asc,
-        mainContainer.pa.Sort.AscendingIgnoringCase,
-        mainContainer.pa.Sort.AscIgnoringCase,
-        mainContainer.pa.Sort.Descending,
-        mainContainer.pa.Sort.Desc,
-        mainContainer.pa.Sort.DescendingIgnoringCase,
-        mainContainer.pa.Sort.DescIgnoringCase];
-} else {
-    if (console && console.warn) console.warn('PowerArray warning! => prop "Sort" already exists on parent scope. You have to use "pa.Sort" instead of "Sort" on your code."');
-}
+var validSortingConf = [
+    mainContainer.pa.Sort.Ascending,
+    mainContainer.pa.Sort.Asc,
+    mainContainer.pa.Sort.AscendingIgnoringCase,
+    mainContainer.pa.Sort.AscIgnoringCase,
+    mainContainer.pa.Sort.Descending,
+    mainContainer.pa.Sort.Desc,
+    mainContainer.pa.Sort.DescendingIgnoringCase,
+    mainContainer.pa.Sort.DescIgnoringCase];
 
+mainContainer.pa.Sort._validSortConfigStrings = validSortingConf;
+mainContainer.Sort = mainContainer.pa.Sort;
 
 //this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
 if (false) {
-    Array.prototype.Where = function (WhereConditions) {
-
-    };
+    Array.prototype.Where = function (WhereConditions, keepOrder) { };
+    Array.prototype.RunEach = function (task, callback, keepOrder, progress) { };
+    //TODO: 
 }
 
 var paArray = function (array) {
@@ -1376,8 +1368,8 @@ paArray.prototype.isArray = true;
     for (var currentFunctionName in functionsToAttach) {
         if (functionsToAttach.hasOwnProperty(currentFunctionName)) {
             if (Array.prototype.hasOwnProperty(currentFunctionName)) {
-                console.warn('PowerArray warning! => Array Prototype was modified by other library: the function name "' + currentFunctionName +
-                    '" is already in use. PowerArray will NOT override the prototype method. However, you can still using the function' +
+                console.warn('PowerArray warning! => Array Prototype was modified by other library, and the function name ' + currentFunctionName +
+                    ' is already in use. PowerArray will NOT override the prototype method. However, you can still using the function ' + currentFunctionName +
                     ' by surrounding your array with a pa constructor call, as following: pa(yourArrayName).' + currentFunctionName + "(...)");
             } else {
                 //function name is free, go on:
