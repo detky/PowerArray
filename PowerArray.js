@@ -1,3 +1,4 @@
+'use strict';
 var mainContainer, module = module || undefined, isModule = false, isBrowser = true;
 if (typeof module !== "undefined") {
     module.exports = {};
@@ -74,7 +75,7 @@ mainContainer.pa.utils = {
         Null: 'Null',
         Undefined: 'Undefined'
     },
-    IsStringDate: function(str) {
+    IsStringDate: function (str) {
         return (str.length === 20 && str.substr(19, 1) === 'Z' && str.substr(10, 1) === 'T');
     },
     IsArrayOfObjects: function (val) {
@@ -114,19 +115,37 @@ mainContainer.pa.utils = {
 
         return null;
     }, /**
-     * evaluate if a number or a string is undefined "" or null and return true or false
+     * evaluate if something is empty. Deppending on the passed object what it exactly search for:
+     *      Numbers and Strings are evaluated against "", undefined and Null
+     *      Objects having at least one own property returns false (also if the property is empty!)
+     *      Arrays returns false if his length is > 0
+     *
      * @param what the element to evaluate
      * @returns {boolean}
-     * @constructor
      */
     isNullEmptyOrUndefined: function (what) {
         // null has to be evaluated before checking typeof
-        if (what === null) {
+
+        if (what === null || what === undefined) {
             return true;
         }
         var t = typeof what;
         if (t === "boolean") {
             return false;
+        }
+
+        //Array        
+        if (what.paIsArray && what.length > 0)
+            return false;
+
+        //Object
+        if (t === 'object') {
+            var count = 0;
+            for (var p in what) {
+                if (what.hasOwnProperty(p))
+                    return false;
+            }
+            return true;
         }
 
         if (t !== "number" && t !== "string" && t !== "undefined") {
@@ -141,6 +160,45 @@ mainContainer.pa.utils = {
             return true;
         }
         return (what + "").length === 0;
+    },
+    /**
+     * Copy properties from a source object to a destination object
+     * @param {Object} source source object
+     * @param {Object} dest destination object
+     * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
+     * @param {boolean} ignoreEmptyProps 
+     * @returns {} 
+     */
+    CopyObjectProps: function (source, dest, propsList, excludeEmptyProps, nullOrEmptyAsUndefined) {
+        if (!propsList) {
+            for (var prop in source) {
+                if (source.hasOwnProperty(prop)) {
+                    if (nullOrEmptyAsUndefined) {
+                        let sourceProp = source[prop]
+                        dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
+                    } else {
+                        if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
+                            continue;
+                        }
+                        dest[prop] = source[prop];
+                    }
+                }
+            }
+
+        } else {
+
+            propsList.RunEach(function (prop) {
+                if (nullOrEmptyAsUndefined) {
+                    let sourceProp = source[prop]
+                    dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
+                } else {
+                    if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
+                        return;
+                    }
+                    dest[prop] = source[prop];
+                }
+            });
+        }
     },
     GetTypeOf: function (element, analyzeData) {
 
@@ -264,7 +322,6 @@ mainContainer.pa.paWhereHelper = {
                             } else {
                                 return false;
                             }
-                            break;
                         case mainContainer.pa.utils.DataTypes.Object:
                             subArray = pa([item[condition.column]]);
                             result = subArray.Where.call(subArray, condition.condition, false, true);
@@ -736,6 +793,8 @@ mainContainer.pa.auxiliaryFunctions = {
             value = Array.prototype.slice.call(arguments);
         }
         return function (val) {
+            if (val === null || val === undefined)
+                return false;
             var l = value.length;
             while (l--) {
                 valueCaseInsensitive = value[l].toUpperCase();
@@ -990,7 +1049,7 @@ mainContainer.pa.prototypedFunctions_Array = {
                                 return a.toLowerCase().localeCompare(b.toLowerCase());
                             } catch (e) {
                                 if (console && console.warn) {
-                                    console.warn('PowerArray => Error trying to sort by ' + condition + '. When sorting by ' + condition + ', all values has to be strings. Probably it\'s not the case!. Now casting to string, performance may be affected.');
+                                    console.warn('PowerArray => Error by sorting by ' + condition + ', all values has to be strings. Probably it\'s not the case!. Now casting to string, performance may be affected.');
                                     a = a + '';
                                     b = b + '';
                                     return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -1018,7 +1077,6 @@ mainContainer.pa.prototypedFunctions_Array = {
                             " in that situation, are: 1) To sort Ascending: 'Asc' and 'AscIgnoreCase' (aliases: 'Ascending', 'AscendingIgnoreCase'), and 2)" +
                             " To sort Descending: 'Desc','Descending' (aliases: 'Descending', 'DescendingIgnoreCase') ");
                 }
-                break;
             case "object":
 
                 if (sortConditions instanceof RegExp) {
@@ -1049,34 +1107,28 @@ mainContainer.pa.prototypedFunctions_Array = {
                 }
 
                 return this.sort(function (a, b) {
+
                     var result = 0, currentColumn, cycleValue;
+
                     for (var i = 0, l = realConditions.length; i < l; i++) {
-                        cycleValue = 10 - i;
                         currentColumn = realConditions[i].column;
                         switch (realConditions[i].sortDirection) {
                             case mainContainer.pa.Sort.Ascending:
                             case mainContainer.pa.Sort.Asc:
                             case mainContainer.pa.Sort.AscendingIgnoringCase:
                             case mainContainer.pa.Sort.AscIgnoringCase:
-                                if (a[currentColumn] < b[currentColumn]) {
-                                    result -= cycleValue;
-                                } else if (a[currentColumn] > b[currentColumn]) {
-                                    result += cycleValue;
-                                }
-                                break;
+                                if (a[currentColumn] < b[currentColumn]) return 1;
+                                if (a[currentColumn] > b[currentColumn]) return -1;
                             case mainContainer.pa.Sort.Descending:
                             case mainContainer.pa.Sort.Desc:
                             case mainContainer.pa.Sort.DescendingIgnoringCase:
                             case mainContainer.pa.Sort.DescIgnoringCase:
-                                if (a[currentColumn] < b[currentColumn]) {
-                                    result += cycleValue;
-                                } else if (a[currentColumn] > b[currentColumn]) {
-                                    result -= cycleValue;
-                                }
-                                break;
+                                if (a[currentColumn] < b[currentColumn]) return -1;
+                                if (a[currentColumn] > b[currentColumn]) return 1;
                         }
                     }
-                    return result;
+                    return 0;
+                  
                 });
             case "undefined":
                 //No parameters passed, sorting by default
@@ -1149,7 +1201,7 @@ mainContainer.pa.prototypedFunctions_Array = {
         if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
             if (!Object.keys(whereConditions).length) // when the conditions-object is empty (no properties), then exit returning the same array
                 return this;
-            
+
             //If It's an object, but not an array, it is a conditions object
             result = pa.paWhereHelper.ProcessConditionObject.call(this, whereConditions, keepOrder, false, justFirst, justIndexes);
         } else {
@@ -1316,13 +1368,6 @@ var validSortingConf = [
 
 mainContainer.pa.Sort._validSortConfigStrings = validSortingConf;
 mainContainer.Sort = mainContainer.pa.Sort;
-
-//this is intended to help IDE'S to understand the working way of powerarray. This will never be executed!
-if (false) {
-    Array.prototype.Where = function (WhereConditions, keepOrder) { };
-    Array.prototype.RunEach = function (task, callback, keepOrder, progress) { };
-    //TODO: 
-}
 
 var paArray = function (array) {
     if (!array.paIsArray) {
