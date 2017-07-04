@@ -174,7 +174,7 @@ mainContainer.pa.utils = {
             for (var prop in source) {
                 if (source.hasOwnProperty(prop)) {
                     if (nullOrEmptyAsUndefined) {
-                        let sourceProp = source[prop]
+                        var sourceProp = source[prop]
                         dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
                     } else {
                         if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
@@ -189,7 +189,7 @@ mainContainer.pa.utils = {
 
             propsList.RunEach(function (prop) {
                 if (nullOrEmptyAsUndefined) {
-                    let sourceProp = source[prop]
+                    var sourceProp = source[prop]
                     dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
                 } else {
                     if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
