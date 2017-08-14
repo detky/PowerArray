@@ -11,8 +11,8 @@ if (typeof window === 'object') {
     isBrowser = false;
     mainContainer = global;
 }
-if (mainContainer.pa) {
-    throw new Error('PowerArray => Cannot load, global variable "pa" already exists. Loading twice?');
+if (mainContainer.pa && console && console.warn) {
+    console.warn('PowerArray => Cannot load, global variable "pa" already exists. Assuming that pa is already loaded => Trusting older instance');
 }
 mainContainer.PowerArray = mainContainer.pa = function (object) {
     if (object.constructor === Array || object.paIsArray) {
@@ -166,16 +166,17 @@ mainContainer.pa.utils = {
      * @param {Object} source source object
      * @param {Object} dest destination object
      * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
+     * @param {boolean} excludeEmptyProps avoid the copy of empty props to the target
      * @param {boolean} ignoreEmptyProps 
      * @returns {} 
      */
-    CopyObjectProps: function (source, dest, propsList, excludeEmptyProps, nullOrEmptyAsUndefined) {
+    CopyObjectProps: function (source, dest, propsList, excludeEmptyProps, nullOrUndefinedAsEmptyString) {
         if (!propsList) {
             for (var prop in source) {
                 if (source.hasOwnProperty(prop)) {
-                    if (nullOrEmptyAsUndefined) {
+                    if (nullOrUndefinedAsEmptyString) {
                         var sourceProp = source[prop]
-                        dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
+                        dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? '' : sourceProp;
                     } else {
                         if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
                             continue;
@@ -188,9 +189,9 @@ mainContainer.pa.utils = {
         } else {
 
             propsList.RunEach(function (prop) {
-                if (nullOrEmptyAsUndefined) {
+                if (nullOrUndefinedAsEmptyString) {
                     var sourceProp = source[prop]
-                    dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? undefined : sourceProp;
+                    dest[prop] = (pa.utils.isNullEmptyOrUndefined(sourceProp)) ? '' : sourceProp;
                 } else {
                     if (excludeEmptyProps && pa.utils.isNullEmptyOrUndefined(source[prop])) {
                         return;
@@ -257,7 +258,7 @@ mainContainer.pa.utils = {
         }
         return result;
     },
-    generateUid: function (prefix, sufix) {
+    GenerateUid: function (prefix, sufix) {
         function getRandom4Chars() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -788,6 +789,9 @@ mainContainer.pa.auxiliaryFunctions = {
         };
     },
     LikeIgnoreCase: function (value) {
+        if(value === undefined) 
+            throw new Error("PowerArray Error => undefined was passed to LikeIgnoreCase");
+
         var valueCaseInsensitive = '';
         if (!value.paIsArray) {
             value = Array.prototype.slice.call(arguments);
@@ -1117,18 +1121,18 @@ mainContainer.pa.prototypedFunctions_Array = {
                             case mainContainer.pa.Sort.Asc:
                             case mainContainer.pa.Sort.AscendingIgnoringCase:
                             case mainContainer.pa.Sort.AscIgnoringCase:
-                                if (a[currentColumn] < b[currentColumn]) return 1;
-                                if (a[currentColumn] > b[currentColumn]) return -1;
+                                if (a[currentColumn] < b[currentColumn]) return  -1;
+                                if (a[currentColumn] > b[currentColumn]) return 1;
                             case mainContainer.pa.Sort.Descending:
                             case mainContainer.pa.Sort.Desc:
                             case mainContainer.pa.Sort.DescendingIgnoringCase:
                             case mainContainer.pa.Sort.DescIgnoringCase:
-                                if (a[currentColumn] < b[currentColumn]) return -1;
-                                if (a[currentColumn] > b[currentColumn]) return 1;
+                                if (a[currentColumn] < b[currentColumn]) return 1;
+                                if (a[currentColumn] > b[currentColumn]) return -1;
                         }
                     }
                     return 0;
-                  
+
                 });
             case "undefined":
                 //No parameters passed, sorting by default
@@ -1140,6 +1144,10 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
     },
     Exists: function (whereConditions) {
+        if(typeof(whereConditions) === 'string') {
+            //transform single match strings to an EqualTo3
+            whereConditions = EqualTo3(whereConditions);
+        }
         if (pa.prototypedFunctions_Array.First.call(this, whereConditions)) {
             return true;
         } else {
@@ -1147,6 +1155,10 @@ mainContainer.pa.prototypedFunctions_Array = {
         }
     },
     Remove: function (whereConditions) {
+        if(typeof(whereConditions) === 'string') {
+            //transform single match strings to an EqualTo3
+            whereConditions = EqualTo3(whereConditions);
+        }
         var first = this.FirstIndex(whereConditions);
         while (first !== undefined) {
             this.splice(first, 1);
@@ -1246,6 +1258,17 @@ mainContainer.pa.prototypedFunctions_Array = {
                     }
                 }
             }
+        }
+        if (justFirst) {
+            if (result!== undefined) { //it is important to check with undefined! (0 is a valid result when justIndexes = true)
+                if (result.paIsArray) {
+                    if(result.length > 0) 
+                        return result[0]
+                    return undefined; // there is only one
+                }
+                return result;
+            }
+            return undefined;
         }
         return result;
     },
