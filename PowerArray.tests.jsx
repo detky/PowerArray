@@ -1,4 +1,4 @@
-/// <reference path="PowerArray.js" />
+require('./PowerArray.js');
 describe('PowerArrayTests', function () {
 
     function createDummies(quantity) {
@@ -167,7 +167,7 @@ describe('PowerArrayTests', function () {
     }
 
     describe('Initialization', function () {
-        it('should register each auxiliary function on the window object and window.pa object', function () {
+        it('should register each auxiliary function on the window object and window.pa object', () => {
             var obj = window.pa.auxiliaryFunctions;
             for (var p in obj) {
                 if (obj.hasOwnProperty(p)) {
@@ -556,7 +556,7 @@ describe('PowerArrayTests', function () {
                 expect(result2.length).toBe(3);
             });
         });
-        fdescribe('Process condition-objects with multiple conditions for a single property (a property of whereConditions is an array)', function () {
+        describe('Process condition-objects with multiple conditions for a single property (a property of whereConditions is an array)', function () {
             it('should apply multiple simple filters for a property as an AND condition', function () {
                 //arrange
                 var items = [
@@ -803,7 +803,7 @@ describe('PowerArrayTests', function () {
                     //assert
                     expect(function () {
                         elements.Where({ age: pa.Between(40, 20) }).Sort({ age: "Asc" });
-                    }).toThrow();
+                    }).not.toThrow();
 
                 });
                 it('Should find values within a range of numbers', function () {

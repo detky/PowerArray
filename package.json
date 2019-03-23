@@ -1,0 +1,38 @@
+{
+	"name": "PowerArray",
+	"version": "1.0.0",
+	"description": "",
+	"main": ".",
+	"scripts": {
+		"deploy": "webpack -p --config webpack.deployment.config.js --colors",
+		"test": "jest --watchAll --testPathPattern=.*\\.tests.jsx$ --silent"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"clone": "^2.1.2"
+	},
+	"devDependencies": {
+		"@babel/preset-env": "^7.3.1",
+		"babel": "^6.23.0",
+		"babel-cli": "^6.26.0",
+		"babel-core": "^6.26.3",
+		"babel-generator": "6.17.0",
+		"babel-jest": "^24.1.0",
+		"babel-loader": "^7.1.5",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-es2015": "^6.24.1",
+		"enzyme": "^3.9.0",
+		"jest": "^24.1.0",
+		"terser-webpack-plugin": "^1.2.2",
+		"webpack": "^4.19.1",
+		"webpack-cli": "^3.2.1"
+	},
+	"jest": {
+		"verbose": true,
+		"testMatch": [
+			"**/**tests.jsx"
+		]
+	}
+}
