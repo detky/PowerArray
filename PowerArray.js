@@ -1064,15 +1064,15 @@ if (mainContainer.pa && console && console.warn) {
          *                      returns something different than undefined, that will be returned instead of the
          *                      . If not,
          */
-        RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
-            var l = this.length, i = 0, result = new Array(this.length), tmp;
+        RunEach: function (task, callback, keepOrder) {// jshint ignore:line
+            var l = this.length, t = l, i = 0, result = new Array(this.length), tmp;
             if (!keepOrder) {
                 while (l--) {
-                    result[l] = task(this[l], l, this);
+                    result[l] = task(this[l], l, t, this);
                 }
             } else {
                 for (; i < l; i++) {
-                    result[i] = task(this[i], i, this);
+                    result[i] = task(this[i], i, t, this);
                 }
             }
             if (callback) {

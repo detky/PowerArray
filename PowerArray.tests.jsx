@@ -300,6 +300,16 @@ describe('PowerArrayTests', function () {
 
             expect(counter).toBe(70);
         });
+
+        it('Should pass the expected parameters to the provided function (item, item index, array length, and array)', () => {
+            var counter = 0;
+            var func = jasmine.createSpy();
+            let arr = createDummies(2);
+            arr.RunEach(func);
+            
+            expect(func).toHaveBeenCalledWith(arr[0],0,2,arr);
+            expect(func).toHaveBeenCalledWith(arr[1],1,2,arr);
+        });
     });
 
     describe('GetByProperty', function () {
