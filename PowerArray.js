@@ -19,13 +19,18 @@ if (mainContainer.pa && console && console.warn) {
             return new paArray(object);
         } else {
             //console.warn('PowerArray => The passed object is not natively an array. Trying to handle it as an array-like object...')
-            if ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) {
-                //  console.log('Compatible openlayers object detected (ol.Collection)');
+
+            if (
+                ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) || /** Detect openlayers collections created without modules (old versions) */
+                (typeof object.getArray === 'function')) /** Detect openlayers collections created with modules (newer versions) */
+                {
                 return paArray(object.getArray());
             }
+
             if (object.length === undefined) {
                 throw new Error('PowerArray => The passed object is not an array, or usable as such.');
             }
+
             return new paArray(object);
         }
     };
@@ -92,6 +97,69 @@ if (mainContainer.pa && console && console.warn) {
             }
             return true;
         },
+        AreWhereConditionsObjectsEqual: function (a, b) {
+            if (pa.utils.isNullEmptyOrUndefined(a) && pa.utils.isNullEmptyOrUndefined(b)) return true; //if both are undefined, null, or empty, return a true.
+
+            var comparableA = pa.utils.GetComparableConditionsObject(a);
+            var comparableB = pa.utils.GetComparableConditionsObject(b);
+
+            return pa.utils.Equals(comparableA, comparableB, false, false);
+        },
+        GetWCOFunctionValueHash: function (func) {
+            let result = func.paParams.name + "(";
+            if (func.paParams) {
+                result += mainContainer.pa.utils.ArgumentsToArray(func.paParams)
+                    .RunEach((param) => {
+                        if (param === undefined) {
+                            return '?und';
+                        }
+                        return param.toString();
+                    }, false, true).join(',');
+            } else {
+                console.warn("PowerArray => GetWCOFunctionValueHash received a function that were not normalized (missing paParams). This is not necessary a problem, if you know why it is like that!")
+                result = func.toString();
+            }
+
+            return result + ")";
+        },
+        GetComparableConditionsObject: function (wco) {
+            var result = {};
+            function iterate(obj, dest) {
+                for (var property in obj) {
+                    if (obj.hasOwnProperty(property)) {
+                        switch (typeof obj[property]) {
+                            case "object":
+                                dest[property] = {};
+                                iterate(obj[property], dest[property]);
+                                break;
+                            case "function":
+                                dest[property] = mainContainer.pa.utils.GetWCOFunctionValueHash(obj[property]);
+                                break;
+                            default:
+                                dest[property] = obj[property];
+                        }
+                    }
+                }
+            }
+
+            for (var property in wco) {
+                if (wco.hasOwnProperty(property)) {
+                    switch (typeof wco[property]) {
+                        case "object":
+                            result[property] = {};
+                            iterate(wco[property], result[property]);
+                            break;
+                        case "function":
+                            result[property] = mainContainer.pa.utils.GetWCOFunctionValueHash(wco[property]);
+                            break;
+                        default:
+                            result[property] = wco[property];
+                    }
+                }
+            }
+            return result;
+        },
+
         /**
          * Parses a string to boolean value. This function searches strictly for the strings "true", "True", "trUE", "falsE", etc.
          * @param str the string to be evaluated
@@ -126,22 +194,20 @@ if (mainContainer.pa && console && console.warn) {
         isNullEmptyOrUndefined: function (what) {
             // null has to be evaluated before checking typeof
 
-            if (what === null || what === undefined) {
+            if (what === null || what === undefined || what === '') {
                 return true;
             }
             var t = typeof what;
-            if (t === "boolean") {
-                return false;
+            switch (t) {
+                case "boolean":
+                case "function":
+                    return false;
             }
 
             //Array        
             if (what.paIsArray && what.length > 0)
                 return false;
 
-            if (t === 'function') { 
-                return false;
-            }
-            
             //Object
             if (t === 'object') {
                 var count = 0;
@@ -150,10 +216,6 @@ if (mainContainer.pa && console && console.warn) {
                         return false;
                 }
                 return true;
-            }
-
-            if (t !== "number" && t !== "string" && t !== "undefined") {
-                throw new Error("PowerArray => The function IsNullOrEmpty is designed to evaluate strings and numbers, but something different was provided (" + t + ")");
             }
 
             if (t === "number" && what === 0) {
@@ -166,14 +228,14 @@ if (mainContainer.pa && console && console.warn) {
             return (what + "").length === 0;
         },
         /**
-         * Copy properties from a source object to a destination object
-         * @param {Object} source source object
-         * @param {Object} dest destination object
-         * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
-         * @param {boolean} excludeEmptyProps avoid the copy of empty props to the target
-         * @param {boolean} ignoreEmptyProps 
-         * @returns {} 
-         */
+        * Copy properties from a source object to a destination object
+        * @param {Object} source source object
+        * @param {Object} dest destination object
+        * @param {Array<String>} propsList list of properties to copy. if falsy is passed, all properties will be copied.
+        * @param {boolean} excludeEmptyProps avoid the copy of empty props to the target
+        * @param {boolean} ignoreEmptyProps 
+        * @returns {} 
+        */
         CopyObjectProps: function (source, dest, propsList, excludeEmptyProps, nullOrUndefinedAsEmptyString) {
             if (!propsList) {
                 for (var prop in source) {
@@ -205,8 +267,8 @@ if (mainContainer.pa && console && console.warn) {
                 });
             }
         },
-        Equals: function(a, b, enforce_properties_order, cyclic) {
-            return mainContainer.pa.paWhereHelper.equals(a,b,enforce_properties_order, cyclic);
+        Equals: function (a, b, enforce_properties_order, cyclic) {
+            return mainContainer.pa.paWhereHelper.equals(a, b, enforce_properties_order, cyclic);
         },
         GetTypeOf: function (element, analyzeData) {
 
@@ -265,26 +327,39 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
-        GenerateUid: function (prefix, sufix) {
+        /**
+         * Generates a guid-like string
+         * @param {*} prefix 
+         * @param {*} sufix 
+         * @param {string} separator character between guid char blocks
+         */
+
+        GenerateUid: function (prefix, sufix, separator) {
+            let localSeparator = (separator === undefined) ? '-' : separator;
             function getRandom4Chars() {
                 return Math.floor((1 + Math.random()) * 0x10000)
                     .toString(16)
                     .substring(1);
             }
-            return ((prefix !== undefined) ? prefix + '-' : '') +
-                getRandom4Chars() + '-' +
-                getRandom4Chars() + '-' +
+            return ((prefix !== undefined) ? prefix + localSeparator : '') +
+                getRandom4Chars() + localSeparator +
+                getRandom4Chars() + localSeparator +
                 getRandom4Chars() +
-                getRandom4Chars() + ((sufix !== undefined) ? '-' + sufix : '');
+                getRandom4Chars() + ((sufix !== undefined) ? localSeparator + sufix : '');
         },
-        
-        GenerateGuid: function () {
+        /**
+         * Generates a guid-like string
+         * @param {string} separator character between guid char blocks
+         */
+        GenerateGuid: function (separator) {
+
+            let localSeparator = separator === undefined ? '-' : separator;
             function s4() {
                 return Math.floor((1 + Math.random()) * 0x10000)
                     .toString(16)
                     .substring(1);
             }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+            return s4() + s4() + localSeparator + s4() + localSeparator + s4() + localSeparator + s4() + localSeparator + s4() + s4() + s4();
         },
         PropsToArray: function (obj, valueProcessor) {
             var result = [];
@@ -359,10 +434,12 @@ if (mainContainer.pa && console && console.warn) {
             }
             return true;
         },
+
+
         ProcessConditionObject: function (whereConditions, keepOrder, isArrayOfConditions, justFirst, justIndexes) {
             //to call this function, "this" should be an array!
             var fc = mainContainer.pa.paWhereHelper.FillConditions,
-                i, w, item, lw, assert, l, result = [];
+                i, w, item, lw, assert, l, result = [], realConditionsArr = [];
 
             if (!isArrayOfConditions) {
                 //whereConditions is not an array, but i need it in that form
@@ -379,7 +456,7 @@ if (mainContainer.pa && console && console.warn) {
                     });
                 } else {
                     for (var property in whereConditionObject) {
-                        if (property !== 'realConditions' && whereConditionObject.hasOwnProperty(property)) {
+                        if (whereConditionObject.hasOwnProperty(property)) {
                             //transform the keys into a better object with properties Column and Condition
 
                             //if whereConditionObject[property] is an array, that means that its a multi filter for a single column, for example: array.Where({age : [GreatherThan(33), BiggerThan(21)], otherField : '33'   });
@@ -400,8 +477,8 @@ if (mainContainer.pa && console && console.warn) {
                         }
                     }
                 }
-
-                whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
+                realConditionsArr.push(realConditions);
+                //whereConditionObject.realConditions = realConditions; //attach the result of this loop direct to the whereConditionObject
             }
             //Real conditions stored
             l = this.length;
@@ -409,7 +486,7 @@ if (mainContainer.pa && console && console.warn) {
                 for (i = 0; i < l; i++) {
                     item = this[i];
                     for (w = 0, lw = whereConditions.length; w < lw; w++) {
-                        assert = fc(item, whereConditions[w].realConditions);
+                        assert = fc(item, realConditionsArr[w]);
                         if (assert) {
                             break;
                         }
@@ -425,7 +502,7 @@ if (mainContainer.pa && console && console.warn) {
                 while (l--) {
                     item = this[l];
                     for (w = 0, lw = whereConditions.length; w < lw; w++) {
-                        assert = fc(item, whereConditions[w].realConditions);
+                        assert = fc(item, realConditionsArr[w]);
                         if (assert) {
                             if (justFirst) {
                                 return (justIndexes) ? l : item;
@@ -627,15 +704,15 @@ if (mainContainer.pa && console && console.warn) {
                 } // _reference_equals()
             } // reference_equals()
         } // equals()
-   
-   
-   
+
+
+
     };
     mainContainer.pa.Equals = mainContainer.pa.paWhereHelper.equals;
 
     mainContainer.pa.auxiliaryFunctions = {
         Contains: function (value, enforcePropsOrder, cyclic) {
-            return function (val) {
+            var result = function (val) {
                 if (!val.paIsArray) {
                     throw new Error("PowerArray error => parameter val passed to Contains function should be an array.");
                 }
@@ -669,127 +746,184 @@ if (mainContainer.pa && console && console.warn) {
                 return false;
 
             };
+            result.paParams = arguments;
+            result.paParams.name = "Contains";
+            return result;
         },
         Between: function (from, to, excludeExactMatches) {
+            var result;
             if (to < from) {
                 console.warn("PowerArray warn => Parameters 'from' and 'to' passed to function Between() makes no sense: Parameter 'to' (" + to + ") should be greater than from (" + from + ")");
             }
             if (!excludeExactMatches) {
-                return function (val) {
+                result = function (val) {
                     return val >= from && val <= to;
                 };
             } else {
-                return function (val) {
+                result = function (val) {
                     return val > from && val < to;
                 };
             }
+
+            result.paParams = arguments;
+            result.paParams.name = "Between";
+            return result;
         },
         EndsWith: function (value) {
             var value2 = value + '';
-            return function (endsWithString) {
+            var result = function (endsWithString) {
 
                 endsWithString = endsWithString + '';
                 return endsWithString.substr(endsWithString.length - (value2).length) === value2;
             };
+            result.paParams = arguments;
+            result.paParams.name = "EndsWith";
+            return result;
         },
         NotEndsWith: function (value) {
             var value2 = value + '';
-            return function (endsWithString) {
+            var result = function (endsWithString) {
 
                 endsWithString = endsWithString + '';
                 return !(endsWithString.substr(endsWithString.length - (value2).length) === value2);
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotEndsWith";
+            return result;
         },
         StartsWith: function (value) {
             var value2 = value + '';
-            return function (val) {
+            var result = function (val) {
                 val = val + '';
                 return val.indexOf(value2) === 0;
             };
+            result.paParams = arguments;
+            result.paParams.name = "StartsWith";
+            return result;
         },
         GreaterOrEqualThan: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val >= value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "GreaterOrEqualThan";
+            return result;
         },
         GreaterThan: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val > value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "GreaterThan";
+            return result;
         },
         SmallerOrEqualThan: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val <= value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "SmallerOrEqualThan";
+            return result;
         },
         SmallerThan: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val < value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "SmallerThan";
+            return result;
         },
         EqualTo3: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val === value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "EqualTo3";
+            return result;
         },
         NotEqualTo3: function (value) {
-            return function (val) {
+            var result = function (val) {
                 return val !== value;
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotEqualTo3";
+            return result;
         },
         EqualTo2: function (value) {
-            return function (val) {
+            var result = function (val) {
                 // ReSharper disable once CoercedEqualsUsing
                 return val == value; // jshint ignore:line
             };
+            result.paParams = arguments;
+            result.paParams.name = "EqualTo2";
+            return result;
         },
         NotEqualTo2: function (value) {
-            return function (val) {
+            var result = function (val) {
                 // ReSharper disable once CoercedEqualsUsing
                 return val != value; // jshint ignore:line
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotEqualTo2";
+            return result;
         },
         IsUndefined: function () {
-            return function (val) {
+            var result = function (val) {
                 return val === undefined;
             };
+            result.paParams = arguments;
+            result.paParams.name = "IsUndefined";
+            return result;
         },
         IsDefined: function () {
-            return function (val) {
+            var result = function (val) {
                 return val !== undefined;
             };
+
+            result.paParams = arguments;
+            result.paParams.name = "IsDefined";
+            return result;
         },
         In: function (list) {
 
             if (arguments.length > 1) {
                 list = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 return list.indexOf(val) !== -1; // jshint ignore:line
             };
+            result.paParams = arguments;
+            result.paParams.name = "In";
+            return result;
         },
         NotIn: function (list) {
             if (arguments.length > 1) {
                 list = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 return list.indexOf(val) === -1; // jshint ignore:line
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotIn";
+            return result;
         },
         EqualTo: function (object, func, enforcePropsOrder, cyclic) {
-            return function (val) {
+            var result = function (val) {
                 if (func) {
                     return func(val, object);
                 } else {
                     return pa.paWhereHelper.equals(object, val, enforcePropsOrder, cyclic);
                 }
             };
+            result.paParams = arguments;
+            result.paParams.name = "EqualTo";
+            return result;
         },
         Like: function (value) {
             if (!value.paIsArray) {
                 value = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 var l = value.length;
                 while (l--) {
                     if (val.indexOf(value[l]) === -1) {
@@ -798,12 +932,15 @@ if (mainContainer.pa && console && console.warn) {
                 }
                 return true;
             };
+            result.paParams = arguments;
+            result.paParams.name = "Like";
+            return result;
         },
         NotLike: function (value) {
             if (!value.paIsArray) {
                 value = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 var l = value.length;
                 while (l--) {
                     if (val.indexOf(value[l]) > -1) {
@@ -812,6 +949,9 @@ if (mainContainer.pa && console && console.warn) {
                 }
                 return true;
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotLike";
+            return result;
         },
         LikeIgnoreCase: function (value) {
             if (value === undefined)
@@ -821,7 +961,7 @@ if (mainContainer.pa && console && console.warn) {
             if (!value.paIsArray) {
                 value = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 if (val === null || val === undefined)
                     return false;
                 var l = value.length;
@@ -833,13 +973,16 @@ if (mainContainer.pa && console && console.warn) {
                 }
                 return true;
             };
+            result.paParams = arguments;
+            result.paParams.name = "LikeIgnoreCase";
+            return result;
         },
         NotLikeIgnoreCase: function (value) {
             var valueCaseInsensitive = '';
             if (!value.paIsArray) {
                 value = Array.prototype.slice.call(arguments);
             }
-            return function (val) {
+            var result = function (val) {
                 var l = value.length;
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
@@ -849,65 +992,108 @@ if (mainContainer.pa && console && console.warn) {
                 }
                 return true;
             };
+            result.paParams = arguments;
+            result.paParams.name = "NotLikeIgnoreCase";
+            return result;
         },
         IsTruthy: function () {
-            return function (val) {
+            var result = function (val) {
                 return (val) ? true : false;
             };
+            result.paParams = arguments;
+            result.paParams.name = "IsTruthy";
+            return result;
         },
         IsFalsy: function () {
-            return function (val) {
+            var result = function (val) {
                 return (val) ? false : true;
-            }
+            };
+            result.paParams = arguments;
+            result.paParams.name = "IsFalsy";
+            return result;
         },
         IsTrue: function () {
-            return function (val) {
+            var result = function (val) {
                 return val === true;
             };
+            result.paParams = arguments;
+            result.paParams.name = "IsTrue";
+            return result;
         },
         IsFalse: function () {
-            return function (val) {
+            var result = function (val) {
                 return val === false;
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsFalse";
+            return result;
         },
         IsEmpty: function () {
-            return function (val) {
+            var result = function (val) {
                 return val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsEmpty";
+            return result;
         },
         IsNotEmpty: function () {
-            return function (val) {
+            var result = function (val) {
                 if (val === undefined || val === null) {
                     return false;
                 }
                 return (val + "").length > 0;
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsNotEmpty";
+            return result;
         },
         IsNull: function () {
-            return function (val) {
+            var result = function (val) {
                 return val === null;
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsNull";
+            return result;
         },
         IsNotNull: function () {
-            return function (val) {
+            var result = function (val) {
                 return val !== null;
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsNotNull";
+            return result;
         },
         IsNaN: function () {
-            return function (val) {
+            var result = function (val) {
                 return isNaN(val);
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsNaN";
+            return result;
         },
         IsNotNaN: function () {
-            return function (val) {
+            var result = function (val) {
                 return !isNaN(val);
             }
+            result.paParams = arguments;
+            result.paParams.name = "IsNotNaN";
+            return result;
         },
-        IsNumeric: function (num) {
-            return !isNaN(parseFloat(num)) && isFinite(num);
+        IsNumeric: function () {
+            var result = function (val) {
+                return !isNaN(parseFloat(val)) && isFinite(val);
+            };
+            result.paParams = arguments;
+            result.paParams.name = "IsNumeric";
+            return result;
         },
-        IsInteger: function (num) {
-            return num === parseInt(num, 10);
+        IsInteger: function () {
+            var result = function (val) {
+                return val === parseInt(val, 10);
+            };
+            result.paParams = arguments;
+            result.paParams.name = "IsInteger";
+            return result;
         }
 
     };
@@ -933,19 +1119,19 @@ if (mainContainer.pa && console && console.warn) {
                 }
                 cache[item[fromProp]] = item;
             })
-                
+
             //attach the finder function
             this[getterFuncName] = function (id) {
                 return cache[id];
             }
 
             this[getterFuncName + "_cache"] = cache;
-            
+
             return cache;
         },
         getIndexByProperty: function (valueToSearchFor) {// jshint ignore:line
             /**
-             * This function, evaluates properties (or function results) over each object on an array, and answers with an
+             * This function, evaluates properties (or function results) over each object on an array, and returns an
              * array of the found elements that matches the specified condition. The condition is given by the parameters
              * provided after position 2. The only fixed parameters are the objects array and the value to search for.
              * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
@@ -1064,15 +1250,15 @@ if (mainContainer.pa && console && console.warn) {
          *                      returns something different than undefined, that will be returned instead of the
          *                      . If not,
          */
-        RunEach: function (task, callback, keepOrder) {// jshint ignore:line
-            var l = this.length, t = l, i = 0, result = new Array(this.length), tmp;
+        RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
+            var l = this.length, i = 0, result = new Array(this.length), tmp;
             if (!keepOrder) {
                 while (l--) {
-                    result[l] = task(this[l], l, t, this);
+                    result[l] = task(this[l], l, this);
                 }
             } else {
                 for (; i < l; i++) {
-                    result[i] = task(this[i], i, t, this);
+                    result[i] = task(this[i], i, this);
                 }
             }
             if (callback) {
@@ -1317,7 +1503,7 @@ if (mainContainer.pa && console && console.warn) {
                     if (keepOrder) {
                         for (i = 0; i < l; i++) {
                             item = this[i];
-                            if (whereConditions(item, index)) {
+                            if (whereConditions(item, i)) {
                                 if (justFirst) {
                                     return (justIndexes) ? i : item;
                                 }
@@ -1327,7 +1513,7 @@ if (mainContainer.pa && console && console.warn) {
                     } else {
                         while (l--) {
                             item = this[l];
-                            if (whereConditions(item)) {
+                            if (whereConditions(item, l)) {
                                 if (justFirst) {
                                     return (justIndexes) ? l : item;
                                 }
@@ -1433,6 +1619,9 @@ if (mainContainer.pa && console && console.warn) {
             } else if (al > 1) {
 
             }
+        },
+        Skip: function(quantity) {
+            return this.slice(quantity);
         },
         Take: function (count, skip) {
             skip = skip || 0;
