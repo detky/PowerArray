@@ -1131,7 +1131,7 @@ if (mainContainer.pa && console && console.warn) {
         },
         getIndexByProperty: function (valueToSearchFor) {// jshint ignore:line
             /**
-             * This function, evaluates properties (or function results) over each object on an array, and returns an
+             * This function, evaluates properties (or function results) over each object on an array, and answers with an
              * array of the found elements that matches the specified condition. The condition is given by the parameters
              * provided after position 2. The only fixed parameters are the objects array and the value to search for.
              * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
