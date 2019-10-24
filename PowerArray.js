@@ -1632,8 +1632,9 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
-        Last: function () {
-            var idx = this.length - 1;
+        Last: function (stepsBack) {
+            let toRest = (stepsBack !== undefined) ? parseInt(stepsBack) : 0;
+            let idx = this.length - 1 - toRest;
             return (idx > -1) ? this[idx] : null;
         }
     };
