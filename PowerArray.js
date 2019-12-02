@@ -327,13 +327,6 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
-        /**
-         * Generates a guid-like string
-         * @param {*} prefix 
-         * @param {*} sufix 
-         * @param {string} separator character between guid char blocks
-         */
-
         GenerateUid: function (prefix, sufix, separator) {
             let localSeparator = (separator === undefined) ? '-' : separator;
             function getRandom4Chars() {
@@ -349,18 +342,11 @@ if (mainContainer.pa && console && console.warn) {
         },
         /**
          * Generates a guid-like string
+         * @param {*} prefix 
+         * @param {*} sufix 
          * @param {string} separator character between guid char blocks
          */
-        GenerateGuid: function (separator) {
 
-            let localSeparator = separator === undefined ? '-' : separator;
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-            return s4() + s4() + localSeparator + s4() + localSeparator + s4() + localSeparator + s4() + localSeparator + s4() + s4() + s4();
-        },
         PropsToArray: function (obj, valueProcessor) {
             var result = [];
             for (var prop in obj) {
@@ -692,7 +678,7 @@ if (mainContainer.pa && console && console.warn) {
                 return (reference_equals = _reference_equals)(a, b); // jshint ignore:line
 
                 function _reference_equals(a, b) {
-                    var l = object_references.length;
+                   var l = object_references.length;
 
                     while (l--)
                         if (object_references[l--] === b) // jshint ignore:line
@@ -765,7 +751,7 @@ if (mainContainer.pa && console && console.warn) {
                 };
             }
 
-            result.paParams = arguments;
+           result.paParams = arguments;
             result.paParams.name = "Between";
             return result;
         },
@@ -1096,7 +1082,7 @@ if (mainContainer.pa && console && console.warn) {
             return result;
         }
 
-    };
+   };
 
     mainContainer.pa.prototypedFunctions_Array = {
         /**
@@ -1131,7 +1117,7 @@ if (mainContainer.pa && console && console.warn) {
         },
         getIndexByProperty: function (valueToSearchFor) {// jshint ignore:line
             /**
-             * This function, evaluates properties (or function results) over each object on an array, and answers with an
+             * This function, evaluates properties (or function results) over each object on an array, and returns an
              * array of the found elements that matches the specified condition. The condition is given by the parameters
              * provided after position 2. The only fixed parameters are the objects array and the value to search for.
              * You can provide so many parameters as you want. Each parameter means one level deeper to search for. For example:
@@ -1632,9 +1618,8 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
-        Last: function (stepsBack) {
-            let toRest = (stepsBack !== undefined) ? parseInt(stepsBack) : 0;
-            let idx = this.length - 1 - toRest;
+        Last: function () {
+            var idx = this.length - 1;
             return (idx > -1) ? this[idx] : null;
         }
     };
