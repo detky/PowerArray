@@ -143,7 +143,7 @@ Examples:
     // Task: find all invoices "from location "Sydney" having an amount <= 1000" or "having amount > 50000, regardless location"
     var result = ordersArray.Where(
         { amount : SmallerOrEqualThan(1000), location : 'Sydney' }, // Auxiliar function 'SmallerOrEqualThan' used
-        { amoung : GreaterThan(50000) } // Auxiliar function 'GreaterThan' used
+        { amount : GreaterThan(50000) } // Auxiliar function 'GreaterThan' used
     );
 
     // In this two exmaples, we have multiple criterions that overlap each oder (age on the first example, amount on the second). 
