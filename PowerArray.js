@@ -22,8 +22,7 @@ if (mainContainer.pa && console && console.warn) {
 
             if (
                 ((mainContainer.ol !== undefined && ol.Collection) && object instanceof ol.Collection) || /** Detect openlayers collections created without modules (old versions) */
-                (typeof object.getArray === 'function')) /** Detect openlayers collections created with modules (newer versions) */
-                {
+                (typeof object.getArray === 'function')) /** Detect openlayers collections created with modules (newer versions) */ {
                 return paArray(object.getArray());
             }
 
@@ -79,9 +78,6 @@ if (mainContainer.pa && console && console.warn) {
             Function: 'Function',
             Null: 'Null',
             Undefined: 'Undefined'
-        },
-        IsStringDate: function (str) {
-            return (str.length === 20 && str.substr(19, 1) === 'Z' && str.substr(10, 1) === 'T');
         },
         IsArrayOfObjects: function (val) {
             var l;
@@ -327,19 +323,6 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
-        GenerateUid: function (prefix, sufix, separator) {
-            let localSeparator = (separator === undefined) ? '-' : separator;
-            function getRandom4Chars() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-            return ((prefix !== undefined) ? prefix + localSeparator : '') +
-                getRandom4Chars() + localSeparator +
-                getRandom4Chars() + localSeparator +
-                getRandom4Chars() +
-                getRandom4Chars() + ((sufix !== undefined) ? localSeparator + sufix : '');
-        },
         /**
          * Generates a guid-like string
          * @param {*} prefix 
@@ -347,6 +330,35 @@ if (mainContainer.pa && console && console.warn) {
          * @param {string} separator character between guid char blocks
          */
 
+        GenerateUuid: function (prefix, sufix, separator) {
+            let localSeparator = (separator === undefined) ? '-' : separator;
+            function getRandom4Chars() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return ((prefix !== undefined) ? prefix + localSeparator : '') +
+                getRandom4Chars() + getRandom4Chars() +
+                localSeparator + getRandom4Chars() + localSeparator + getRandom4Chars() +
+                localSeparator + getRandom4Chars() + localSeparator + getRandom4Chars() + getRandom4Chars() + getRandom4Chars() +
+                ((sufix !== undefined) ? localSeparator + sufix : '');
+        },
+        /**
+         * Generates a guid-like string
+         * @param {string} separator character between guid char blocks
+         */
+        GenerateGuid: function (separator) {
+
+            let localSeparator = separator === undefined ? '-' : separator;
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() +
+                localSeparator + s4() + localSeparator + s4() +
+                localSeparator + s4() + localSeparator + s4() + s4() + s4();
+        },
         PropsToArray: function (obj, valueProcessor) {
             var result = [];
             for (var prop in obj) {
@@ -414,7 +426,9 @@ if (mainContainer.pa && console && console.warn) {
                     condition.condition = pa.EqualTo3(condition.condition); //transforms an explicit value into an === evaluation
                 }
 
-                if (!item || !condition.condition(item[condition.column])) { //if one condition is not fulfilled, just return false;
+                
+                const valueToEvaluate = condition.column ? item[condition.column] : item;
+                if (!item || !condition.condition(valueToEvaluate)) { //if one condition is not fulfilled, just return false;
                     return false;
                 }
             }
@@ -678,7 +692,7 @@ if (mainContainer.pa && console && console.warn) {
                 return (reference_equals = _reference_equals)(a, b); // jshint ignore:line
 
                 function _reference_equals(a, b) {
-                   var l = object_references.length;
+                    var l = object_references.length;
 
                     while (l--)
                         if (object_references[l--] === b) // jshint ignore:line
@@ -751,7 +765,7 @@ if (mainContainer.pa && console && console.warn) {
                 };
             }
 
-           result.paParams = arguments;
+            result.paParams = arguments;
             result.paParams.name = "Between";
             return result;
         },
@@ -870,6 +884,20 @@ if (mainContainer.pa && console && console.warn) {
             result.paParams.name = "IsDefined";
             return result;
         },
+        IsEmptyOrUndefined: function (val) {
+            if (val === undefined) {
+                return true;
+            }
+
+            if (val.paIsArray && val.length === 0) {
+                return true
+            }
+
+            if ((val + '') === '')
+                return true;
+
+            return false;
+        },
         In: function (list) {
 
             if (arguments.length > 1) {
@@ -953,7 +981,7 @@ if (mainContainer.pa && console && console.warn) {
                 var l = value.length;
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                    if ((val+'').toUpperCase().indexOf(valueCaseInsensitive) === -1) {
                         return false;
                     }
                 }
@@ -972,7 +1000,7 @@ if (mainContainer.pa && console && console.warn) {
                 var l = value.length;
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
-                    if (val.toUpperCase().indexOf(valueCaseInsensitive) > -1) {
+                    if ((val+'').toUpperCase().indexOf(valueCaseInsensitive) > -1) {
                         return false;
                     }
                 }
@@ -1014,6 +1042,7 @@ if (mainContainer.pa && console && console.warn) {
             result.paParams.name = "IsFalse";
             return result;
         },
+
         IsEmpty: function () {
             var result = function (val) {
                 return val === undefined || val === '' || val === null || val === 0 || (val.paIsArray && val.length === 0);
@@ -1027,6 +1056,10 @@ if (mainContainer.pa && console && console.warn) {
                 if (val === undefined || val === null) {
                     return false;
                 }
+                if (val.paIsArray) {
+                    return val.length > 0;
+                }
+
                 return (val + "").length > 0;
             }
             result.paParams = arguments;
@@ -1082,7 +1115,7 @@ if (mainContainer.pa && console && console.warn) {
             return result;
         }
 
-   };
+    };
 
     mainContainer.pa.prototypedFunctions_Array = {
         /**
@@ -1179,6 +1212,15 @@ if (mainContainer.pa && console && console.warn) {
             }
             return result;
         },
+        GetSumByProperty: function (propertyName) {
+            const propertyValues = this.GetPropertyFlat(propertyName, false, true, false);
+            return this.reduce(function (pv, cv) { return pv + cv; }, 0);
+        },
+        GetAverageByProperty: function (propertyName) {
+            const propertyValues = this.GetPropertyFlat(propertyName, false, true, false);
+            const sum = propertyValues.reduce(function (pv, cv) { return pv + cv; }, 0);
+            return sum / propertyValues.length;
+        },
         GetByProperty: function (valueToSearchFor) {// jshint ignore:line
             /**
              * This function, evaluates properties (or function results) over each object on an array, and answers with an
@@ -1236,7 +1278,7 @@ if (mainContainer.pa && console && console.warn) {
          *                      returns something different than undefined, that will be returned instead of the
          *                      . If not,
          */
-        RunEach: function (task, callback, keepOrder, progress) {// jshint ignore:line
+        RunEach: function (task, callback, keepOrder) {// jshint ignore:line
             var l = this.length, i = 0, result = new Array(this.length), tmp;
             if (!keepOrder) {
                 while (l--) {
@@ -1253,6 +1295,15 @@ if (mainContainer.pa && console && console.warn) {
                 result = callback(result) || result;
             }
             return result;
+        },
+        RunEachAsync: async function (task, keepOrder) {
+            return new Promise((resolve, reject) => {
+                try {
+                    resolve(mainContainer.pa.prototypedFunctions_Array.RunEach.call(this, task, undefined, keepOrder));
+                } catch (error) {
+                    reject(error);
+                }
+            })
         },
         Sort: function (sortConditions) { // jshint ignore:line
             var realConditions = [];
@@ -1324,7 +1375,7 @@ if (mainContainer.pa && console && console.warn) {
                         if (sortConditions.hasOwnProperty(property)) {
 
                             //transform the keys into a better object with properties Column and SortOrder
-                            var value = sortConditions[property].toUpperCase();
+                            var value = sortConditions[property+''].toUpperCase();
 
                             if (!mainContainer.pa.Sort._validSortConfigStrings.indexOf(sortConditions[property]) === -1) {
                                 throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "'");
@@ -1416,15 +1467,16 @@ if (mainContainer.pa && console && console.warn) {
             }
             return this;
         },
-        Distinct: function () {
-            var val, l = this.length, results = [], item, cache = [],
+        Distinct: function (fieldName) {
+            var val, l = this.length, results = [], item,
                 type = pa.utils.GetTypeOf(this, true),
                 types = pa.utils.DataTypes;
+
             if (type !== types.ArrayOfPrimitives && type !== types.ArrayOfObjects) {
                 throw new Error("PowerArray => Distinct => Currently, the distinct function works only for arrays of primitive data.");
             }
             if (type !== types.ArrayOfObjects) {
-                //it's a primitive
+                //it's a primitives array
                 while (l--) {
                     val = this[l];
                     if (results.indexOf(val) === -1 && val !== undefined) {
@@ -1432,13 +1484,12 @@ if (mainContainer.pa && console && console.warn) {
                     }
                 }
             } else {
-                //TODO: this is very slow!
+                //its an array of objects
                 while (l--) {
                     item = this[l];
-                    val = JSON.stringify(item);
-                    if (cache.indexOf(val) === -1 && val !== undefined) {
-                        cache.push(val);
-                        results.push(item);
+                    val = item[fieldName];
+                    if (results.indexOf(val) === -1 && val !== undefined) {
+                        results.push(val);
                     }
                 }
             }
@@ -1460,7 +1511,8 @@ if (mainContainer.pa && console && console.warn) {
         Where: function (whereConditions, keepOrder, justFirst, justIndexes) {// jshint ignore:line
             var i, l = this.length, item, result = [], tmp;
             justIndexes = (justIndexes) ? true : false; //just to avoid casting when comparing during loop
-            if (typeof whereConditions === 'object' && !(whereConditions.paIsArray)) {
+            const typeOfWhereConditions = (typeof whereConditions).toString();
+            if (typeOfWhereConditions === 'object' && !(whereConditions.paIsArray)) {
                 if (!Object.keys(whereConditions).length) // when the conditions-object is empty (no properties), then exit returning the same array
                     return this;
 
@@ -1473,7 +1525,14 @@ if (mainContainer.pa && console && console.warn) {
                 //                                          => an pa.EqualTo,
                 //                                          => an Array of condition-objects
 
-                if (typeof whereConditions === 'undefined') {
+
+
+                if (typeOfWhereConditions === 'string' || typeOfWhereConditions === 'number') {
+                    tmp = pa.paWhereHelper.ProcessConditionObject.call(this, EqualTo3(whereConditions), keepOrder, false, justFirst, justIndexes);
+                    if (justFirst)
+                        return tmp;
+                    result.push.apply(result, tmp);
+                } else if (typeOfWhereConditions === 'undefined') {
                     var a = new Error("PowerArray => Where function => No condition object provided to function 'Where(whereConditions, keepOrder)'");
                     a.message = "InvalidWhereCondition";
                     throw a;
@@ -1529,12 +1588,20 @@ if (mainContainer.pa && console && console.warn) {
             return pa.prototypedFunctions_Array.Where.call(this, whereConditions, false, false).length;
         },
         First: function (whereConditions) {// jshint ignore:line
+            // if (typeof (whereConditions) === 'string') {
+            //     //transform single match strings to an EqualTo3
+            //     whereConditions = EqualTo3(whereConditions);
+            // }
             if (arguments.length === 0) {
                 return (this.length > 0) ? this[0] : undefined;
             }
             return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true);
         },
         FirstIndex: function (whereConditions) {// jshint ignore:line
+            if (typeof (whereConditions) === 'string') {
+                //transform single match strings to an EqualTo3
+                whereConditions = EqualTo3(whereConditions);
+            }
             if (arguments.length === 0) {
                 return (this.length > 0) ? 0 : undefined;
             }
@@ -1546,7 +1613,18 @@ if (mainContainer.pa && console && console.warn) {
         Average: function () {
             //TODO: the same way to work as Max()
         },
-        /*Return an object containing min and max values of one or more propeties in an objects array */
+        /**
+         * Used to get min and max values of one or multiple properties of items in the array. Desired columns can be passed as parameter names. 
+         * Usage: 
+         *          const myArray = [{a:1, b: 4}, {a:2, b:5}, {a:3, b:6}]
+         * 
+         *          myArray.Bounds('a')     =================> {min: 1, max: 3}
+         *          myArray.Bounds('a','b') =================> { a: {min: 1, max: 3}, b: { min: 4, max: 6}
+         *          Bounds('a')             =================> {min: 1, max: 3}
+         * 
+         * 
+         * @returns A
+         */
         Bounds: function () {
             var l = this.length, alc, al = arguments.length, maxVal, result = {}, arrayItemValue, currentArgName = '';
             if (al === 0) {
@@ -1570,6 +1648,9 @@ if (mainContainer.pa && console && console.warn) {
                     }
                 }
             }
+
+            if(arguments.length === 1)
+                return result[ arguments[0]]; //return only the result, in order to avoid the duplication of the property name when only using 1 prop.
 
             return result;
 
@@ -1606,7 +1687,7 @@ if (mainContainer.pa && console && console.warn) {
 
             }
         },
-        Skip: function(quantity) {
+        Skip: function (quantity) {
             return this.slice(quantity);
         },
         Take: function (count, skip) {
@@ -1617,6 +1698,18 @@ if (mainContainer.pa && console && console.warn) {
                 added++;
             }
             return result;
+        },
+        /**
+         * Returns a new array but inverted from arr.length-1 to 0
+         * @param {*} skip quantity of parameters to skip (from right to left)
+         * @param {*} maxCount optional maximal expected results length - the excedent will not be returned
+         */
+        Reverse: function (skip) {
+            var newArr = [], skip = skip || 0, l = this.length - skip;
+            while (l--) {
+                newArr.push(this[l]);
+            }
+            return newArr;
         },
         Last: function () {
             var idx = this.length - 1;
@@ -1649,10 +1742,17 @@ if (mainContainer.pa && console && console.warn) {
     mainContainer.Sort = mainContainer.pa.Sort;
 
     var paArray = function (array) {
-        if (!array.paIsArray) {
-            throw new Error('PowerArray => paArray warning => Invalid array passed to pa() function"');
+
+        var newArray;
+        if (array.paIsArray) {
+            newArray = array.slice(0);
+        } else {
+            if (pa.utils.GetTypeOf(array) === pa.utils.DataTypes.String) {
+                newArray = array.split('');
+            } else {
+                throw new Error('PowerArray => paArray error => Invalid data type passed to pa() or paArray() function. Allowed are arrays and strings');
+            }
         }
-        var newArray = array.slice(0);
 
         var functionsToAttach = mainContainer.pa.prototypedFunctions_Array;
         for (var currentFunctionName in functionsToAttach) {
