@@ -1528,7 +1528,7 @@ if (mainContainer.pa && console && console.warn) {
 
 
                 if (typeOfWhereConditions === 'string' || typeOfWhereConditions === 'number') {
-                    tmp = pa.paWhereHelper.ProcessConditionObject.call(this, EqualTo3(whereConditions), keepOrder, false, justFirst, justIndexes);
+                    tmp = pa.paWhereHelper.ProcessConditionObject.call(this, typeOfWhereConditions === 'string' ? EqualTo3(whereConditions) : EqualTo2(whereConditions), keepOrder, false, justFirst, justIndexes);
                     if (justFirst)
                         return tmp;
                     result.push.apply(result, tmp);
@@ -1742,7 +1742,7 @@ if (mainContainer.pa && console && console.warn) {
             arr.split(0) will return = [[1,2,3,4],[2,3,6,3],[5,2,5,54],[2,6]]
         */
         Split: function (whereConditions) {
-            var result = [], nextStartIdx = 0;
+            var result = [];
             var allIndexes = this.AllIndexes(whereConditions);
             var prevIndexVal = -1;
             allIndexes.RunEach((val, i) => {
@@ -1787,16 +1787,23 @@ if (mainContainer.pa && console && console.warn) {
     mainContainer.pa.Sort._validSortConfigStrings = validSortingConf;
     mainContainer.Sort = mainContainer.pa.Sort;
 
-    var paArray = function (array) {
+    var paArray = function (arrayCandidate) {
 
         var newArray;
-        if (array.paIsArray) {
-            newArray = array.slice(0);
+        if (arrayCandidate.paIsArray) {
+            newArray = arrayCandidate.slice(0);
         } else {
-            if (pa.utils.GetTypeOf(array) === pa.utils.DataTypes.String) {
-                newArray = array.split('');
+            if (pa.utils.GetTypeOf(arrayCandidate) === pa.utils.DataTypes.String) {
+                newArray = arrayCandidate.split('');
             } else {
-                throw new Error('PowerArray => paArray error => Invalid data type passed to pa() or paArray() function. Allowed are arrays and strings');
+                if (Buffer) {
+                    //we're in nodejs!
+                    if (Buffer.isBuffer(arrayCandidate)) {
+                        newArray = Array.prototype.slice.call(arrayCandidate);
+                    }
+                } else {
+                    throw new Error('PowerArray => paArray error => Invalid data type passed to pa() or paArray() function. Allowed are arrays and strings');
+                }
             }
         }
 
