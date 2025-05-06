@@ -426,7 +426,7 @@ if (mainContainer.pa && console && console.warn) {
                     condition.condition = pa.EqualTo3(condition.condition); //transforms an explicit value into an === evaluation
                 }
 
-
+                
                 const valueToEvaluate = condition.column ? item[condition.column] : item;
                 if (!item || !condition.condition(valueToEvaluate)) { //if one condition is not fulfilled, just return false;
                     return false;
@@ -981,7 +981,7 @@ if (mainContainer.pa && console && console.warn) {
                 var l = value.length;
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
-                    if ((val + '').toUpperCase().indexOf(valueCaseInsensitive) === -1) {
+                    if ((val+'').toUpperCase().indexOf(valueCaseInsensitive) === -1) {
                         return false;
                     }
                 }
@@ -1000,7 +1000,7 @@ if (mainContainer.pa && console && console.warn) {
                 var l = value.length;
                 while (l--) {
                     valueCaseInsensitive = value[l].toUpperCase();
-                    if ((val + '').toUpperCase().indexOf(valueCaseInsensitive) > -1) {
+                    if ((val+'').toUpperCase().indexOf(valueCaseInsensitive) > -1) {
                         return false;
                     }
                 }
@@ -1375,7 +1375,7 @@ if (mainContainer.pa && console && console.warn) {
                         if (sortConditions.hasOwnProperty(property)) {
 
                             //transform the keys into a better object with properties Column and SortOrder
-                            var value = sortConditions[property + ''].toUpperCase();
+                            var value = sortConditions[property+''].toUpperCase();
 
                             if (!mainContainer.pa.Sort._validSortConfigStrings.indexOf(sortConditions[property]) === -1) {
                                 throw new Error("PowerArray Configuration Error => Invalid sort direction for property " + property + ": '" + sortConditions[property] + "'");
@@ -1528,7 +1528,7 @@ if (mainContainer.pa && console && console.warn) {
 
 
                 if (typeOfWhereConditions === 'string' || typeOfWhereConditions === 'number') {
-                    tmp = pa.paWhereHelper.ProcessConditionObject.call(this, typeOfWhereConditions === 'string' ? EqualTo3(whereConditions) : EqualTo2(whereConditions), keepOrder, false, justFirst, justIndexes);
+                    tmp = pa.paWhereHelper.ProcessConditionObject.call(this, EqualTo3(whereConditions), keepOrder, false, justFirst, justIndexes);
                     if (justFirst)
                         return tmp;
                     result.push.apply(result, tmp);
@@ -1598,7 +1598,7 @@ if (mainContainer.pa && console && console.warn) {
             return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true);
         },
         FirstIndex: function (whereConditions) {// jshint ignore:line
-            if (typeof (whereConditions) === 'string' || typeof (whereConditions) === 'number') {
+            if (typeof (whereConditions) === 'string') {
                 //transform single match strings to an EqualTo3
                 whereConditions = EqualTo3(whereConditions);
             }
@@ -1606,26 +1606,6 @@ if (mainContainer.pa && console && console.warn) {
                 return (this.length > 0) ? 0 : undefined;
             }
             return pa.prototypedFunctions_Array.Where.call(this, whereConditions, true, true, true);
-        },
-        /*        
-        returns an array of numbers, with the index position of all matching elements
-        given:
-        var arr =  [1,2,3,4,2,56,2,64];
-        arr.AllIndexes(2) => [1,4,6];
-        arr.AllIndexes(325) => [];
-        arr.AllIndexes(1) => [0]
-
-        */
-        AllIndexes: function (whereConditions) {
-            var newArray = this;
-            var foundIndex = newArray.FirstIndex(whereConditions);
-            var result = [], toSkip = 0;
-            while ((foundIndex = newArray.FirstIndex(whereConditions)) !== undefined) {
-                result.push(foundIndex + toSkip);
-                newArray = this.Skip(toSkip + foundIndex + 1);
-                toSkip += foundIndex + 1;
-            }
-            return result;
         },
         AttachIndex: function (getterName, fromProp) {
             return pa.prototypedFunctions_Array.attachIndex.call(this, getterName, fromProp);
@@ -1669,8 +1649,8 @@ if (mainContainer.pa && console && console.warn) {
                 }
             }
 
-            if (arguments.length === 1)
-                return result[arguments[0]]; //return only the result, in order to avoid the duplication of the property name when only using 1 prop.
+            if(arguments.length === 1)
+                return result[ arguments[0]]; //return only the result, in order to avoid the duplication of the property name when only using 1 prop.
 
             return result;
 
@@ -1686,10 +1666,6 @@ if (mainContainer.pa && console && console.warn) {
                 throw new Error("PowerArray => Max => invalid params, please provide one or more target parameters");
             }
             alc = al;
-            while (alc) {
-                //evaluate if the passed arguments are integers. this means that the collection has indexable objects (arrays or array like objects)
-
-            }
             while (l--) {
                 alc = al;
                 while (alc--) {
@@ -1734,32 +1710,6 @@ if (mainContainer.pa && console && console.warn) {
         Last: function () {
             var idx = this.length - 1;
             return (idx > -1) ? this[idx] : null;
-        },
-        /*returns an array of arrays, by splitting the current array by matching the first occurences of the passed whereconditions object
-        given: 
-            arr = [1,2,3,4,0,2,3,6,3,0,5,2,5,54,0,2,6]
-            condition = 0; its a number, but it could be any where condition or array of them
-            arr.split(0) will return = [[1,2,3,4],[2,3,6,3],[5,2,5,54],[2,6]]
-        */
-        Split: function (whereConditions) {
-            var result = [];
-            var allIndexes = this.AllIndexes(whereConditions);
-            var prevIndexVal = -1;
-            allIndexes.RunEach((val, i) => {
-                var toTake = val - (prevIndexVal + 1);
-                result.push(this.Take(toTake, prevIndexVal < 0 ? 0 : prevIndexVal + 1));
-                prevIndexVal = val;
-            }, null, true);
-
-            if (allIndexes.length === 0)
-                return [this];
-
-            var lastIndex = allIndexes.Last();
-            if (lastIndex < this.length) { //add the elements between the last index and the end of the array
-                result.push(this.Take(this.length - lastIndex, lastIndex + 1));
-            }
-
-            return result;
         }
     };
 
@@ -1787,23 +1737,16 @@ if (mainContainer.pa && console && console.warn) {
     mainContainer.pa.Sort._validSortConfigStrings = validSortingConf;
     mainContainer.Sort = mainContainer.pa.Sort;
 
-    var paArray = function (arrayCandidate) {
+    var paArray = function (array) {
 
         var newArray;
-        if (arrayCandidate.paIsArray) {
-            newArray = arrayCandidate.slice(0);
+        if (array.paIsArray) {
+            newArray = array.slice(0);
         } else {
-            if (pa.utils.GetTypeOf(arrayCandidate) === pa.utils.DataTypes.String) {
-                newArray = arrayCandidate.split('');
+            if (pa.utils.GetTypeOf(array) === pa.utils.DataTypes.String) {
+                newArray = array.split('');
             } else {
-                if (Buffer) {
-                    //we're in nodejs!
-                    if (Buffer.isBuffer(arrayCandidate)) {
-                        newArray = Array.prototype.slice.call(arrayCandidate);
-                    }
-                } else {
-                    throw new Error('PowerArray => paArray error => Invalid data type passed to pa() or paArray() function. Allowed are arrays and strings');
-                }
+                throw new Error('PowerArray => paArray error => Invalid data type passed to pa() or paArray() function. Allowed are arrays and strings');
             }
         }
 
